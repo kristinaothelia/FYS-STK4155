@@ -1,0 +1,10 @@
+Mean Square Error:   0.002665411493226088
+R^2 Score function:  0.9677173927290292
+
+Values using Scikit's built in functions
+----------------------------------------
+MSE
+0.002665411493226088
+R2
+0.9677173927290292
+

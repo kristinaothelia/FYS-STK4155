@@ -1,0 +1,12 @@
+The best lambda value for each degree:
+For degree=0 - Best alpha=0.1 - Min MSE=1.09172
+For degree=1 - Best alpha=0.1 - Min MSE=1.03255
+For degree=2 - Best alpha=0.1 - Min MSE=1.02948
+For degree=3 - Best alpha=0.1 - Min MSE=1.0163
+For degree=4 - Best alpha=0.0327455 - Min MSE=1.01291
+For degree=5 - Best alpha=0.00385353 - Min MSE=1.00929
+For degree=6 - Best alpha=3.3516e-05 - Min MSE=1.00675
+For degree=7 - Best alpha=0.000148497 - Min MSE=1.00677
+For degree=8 - Best alpha=0.000413201 - Min MSE=1.00704
+For degree=9 - Best alpha=0.000236449 - Min MSE=1.00722
+For degree=10 - Best alpha=0.000343047 - Min MSE=1.00719

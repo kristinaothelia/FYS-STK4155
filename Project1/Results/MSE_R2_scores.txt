@@ -1,0 +1,28 @@
+Values using train_test_split and my own functions
+--------------------------------------------------
+Training MSE
+1.0027022290003849
+Training R2
+0.07799936580528366
+Test MSE
+0.9885242139417919
+Test R2
+0.07135720821383984
+
+Values using Scikit's built in functions
+----------------------------------------
+Training MSE
+1.0027022290003849
+Training R2
+0.07799936580528366
+Test MSE
+0.9885242139417919
+Test R2
+0.07135720821383984
+
+Values using own k-fold function
+--------------------------------
+Train MSE
+1.0018264590344619
+Test MSE
+1.0052371323039393
