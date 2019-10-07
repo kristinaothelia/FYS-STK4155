@@ -26,8 +26,7 @@ np.random.seed(5)
 
 if __name__ == "__main__":
 
-	parser = argparse.ArgumentParser(description="The Franke function:\
-		Regression analysis and resampling methods")
+	parser = argparse.ArgumentParser(description="Regression analysis and resampling methods")
 
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument('-a', '--OLS',            action="store_true", help="Ordinary Least Squares")
@@ -42,7 +41,6 @@ if __name__ == "__main__":
 		sys.argv.append('--help')
 
 	args                    = parser.parse_args()
-
 	OLS_method              = args.OLS
 	k_fold_cross_validation = args.k_fold
 	bias_varience_tradeoff  = args.bias_var_trade
@@ -137,8 +135,6 @@ if __name__ == "__main__":
 
 			file.close()
 
-
-
 	elif k_fold_cross_validation == True:
 		print('Part b: k-fold cross validation')
 
@@ -205,7 +201,6 @@ if __name__ == "__main__":
 
 		file.close()
 
-
 	elif bias_varience_tradeoff == True:
 		print('Part c: bias-variance tradeoff')
 		print('------------------------------')
@@ -270,7 +265,6 @@ if __name__ == "__main__":
 		plt.show()
 
 
-
 	elif Lasso_method == True:
 		print('Part e: Lasso Regression on The Franke function with resampling')
 		print('---------------------------------------------------------------')
@@ -321,9 +315,11 @@ if __name__ == "__main__":
 		print('Part f: Real data')
 		print('-----------------')
 
-		terrain_image = scipy.misc.imread("PIA23328.tif") 	# Crater on Mars
+		terrain_image = scipy.misc.imread("PIA23328.tif")
 		#terrain_image = imread('PIA23328.tif')
-		reduced_image = terrain_image[700:1100, 200:600]
+		reduced_image = terrain_image[700:1100, 200:600]  # Crater on Mars
+
+		print(terrain_image.shape, reduced_image.shape)
 
 
 		terrain_arr   = np.array(terrain_image)
@@ -333,12 +329,13 @@ if __name__ == "__main__":
 		y             = np.arange(0, terrain_arr.shape[0])/(terrain_arr.shape[0]-1)
 		x,y           = np.meshgrid(x,y)
 
-		final_image = cv2.resize(reduced_image, dsize=(200, 200), interpolation=cv2.INTER_NEAREST)
+		#final_image = cv2.resize(reduced_image, dsize=(200, 200), interpolation=cv2.INTER_NEAREST)
 		x_          = np.arange(0, final_image.shape[1])/(final_image.shape[1]-1)
 		y_          = np.arange(0, final_image.shape[0])/(final_image.shape[0]-1)
 		x_,y_       = np.meshgrid(x_,y_)
 
 		#print(final_image.shape)
+
 
 
 		'''
@@ -358,7 +355,7 @@ if __name__ == "__main__":
 	elif Best_fit == True:
 		print('Part g: Best fit of Terrain data')
 		print('----------------')
-
+		"""
 		poly = 8
 
 		terrain_image = imread('PIA23328.tif')
@@ -391,10 +388,10 @@ if __name__ == "__main__":
 		#model_plot = np.reshape(model, (len(y_), len(x_)))
 		project1_plot.plot_terrain(x_,y_,model, "Terrain_model", func="Original", string='Unnamed crater in Utopia Planitia, Mars', savefig=False)
 		plt.show()
+		"""
 
 
 
-		
 
 		#model = project1_func.OrdinaryLeastSquares(terrain_arr, X)
 		#l_r = LinearRegression()
