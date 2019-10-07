@@ -84,32 +84,6 @@ def Plot_3D_Franke(x, y, z, model, p, file_name, func="OLS", scatter=False, save
 	if savefig == True:
 		plt.savefig('Results/' + file_name + '.png')
 
-def plot_terrain(x, y, terrain, file_name, func="OLS", string='', savefig=False):
-	"""
-	Function to plot a 2D image of the terrain, with a colorbar
-	"""
-	# Reshape terrain input if the shape is < 2
-	if len(terrain.shape) < 2:
-		terrain = np.reshape(terrain, (len(x[:,0]), len(y[0,:])))
-
-	# Make title
-	if func == "OLS":
-		plt.title("%s, with OLS" %string, fontsize=16)
-	elif func == "Ridge":
-		plt.title("%s, with Ridge" %string, fontsize=16)
-	elif func == "Lasso":
-		plt.title("%s, with Lasso" %string, fontsize=16)
-	elif func == "Original":
-		plt.title("%s" %string, fontsize=16)
-
-	plt.imshow(terrain, cmap='afmhot', alpha=1)
-	plt.colorbar(shrink=0.5, aspect=7.5)
-	plt.xlabel('x', fontsize=16)
-	plt.ylabel('y', fontsize=16)
-
-	if savefig == True:
-		plt.savefig('Results/' + file_name + '.png')
-
 
 def MSE_BV_Terrain(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle=False):
 	"""
@@ -149,8 +123,8 @@ def MSE_BV_Terrain(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle
 			method_name = "Lasso"
 
 
-	file = open("Results/MSE_test_%s_p%s_Terrain.txt" %(method,p_degree), "w") 
-	sys.stdout = file 
+	file = open("Results/MSE_test_%s_p%s_Terrain.txt" %(method,p_degree), "w")
+	sys.stdout = file
 
 	print("bias+variance")
 	print(bias+variance)
@@ -225,8 +199,8 @@ def MSE_BV_Franke(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle=
 			method_name = "Lasso"
 
 
-	file = open("Results/MSE_test_%s_p%s_Franke.txt" %(method,p_degree), "w") 
-	sys.stdout = file 
+	file = open("Results/MSE_test_%s_p%s_Franke.txt" %(method,p_degree), "w")
+	sys.stdout = file
 
 	print("bias+variance")
 	print(bias+variance)
@@ -380,6 +354,33 @@ def plot_both(x, y, model, file_name, string='', savefig=False):
 	plt.title('3D terrain', fontsize=14)
 	ax.set_xlabel('x', fontsize=16)
 	ax.set_ylabel('y', fontsize=16)
+
+	if savefig == True:
+		plt.savefig('Results/' + file_name + '.png')
+
+
+def plot_terrain(x, y, terrain, file_name, func="OLS", string='', savefig=False):
+	"""
+	Function to plot a 2D image of the terrain, with a colorbar
+	"""
+	# Reshape terrain input if the shape is < 2
+	if len(terrain.shape) < 2:
+		terrain = np.reshape(terrain, (len(x[:,0]), len(y[0,:])))
+
+	# Make title
+	if func == "OLS":
+		plt.title("%s, with OLS" %string, fontsize=16)
+	elif func == "Ridge":
+		plt.title("%s, with Ridge" %string, fontsize=16)
+	elif func == "Lasso":
+		plt.title("%s, with Lasso" %string, fontsize=16)
+	elif func == "Original":
+		plt.title("%s" %string, fontsize=16)
+
+	plt.imshow(terrain, cmap='afmhot', alpha=1)
+	plt.colorbar(shrink=0.5, aspect=7.5)
+	plt.xlabel('x', fontsize=16)
+	plt.ylabel('y', fontsize=16)
 
 	if savefig == True:
 		plt.savefig('Results/' + file_name + '.png')

@@ -3,11 +3,12 @@ FYS-STK4155 - Main code for project 1
 """
 import argparse
 import sys
-import cv2
+#import cv2
+import scipy
 import numpy                 as np
 import matplotlib.pyplot     as plt
 
-from imageio                 import imread
+#from imageio                 import imread
 from PIL                     import Image
 from mpl_toolkits.mplot3d    import Axes3D
 from matplotlib              import cm
@@ -51,16 +52,16 @@ if __name__ == "__main__":
 	Best_fit                = args.best_fit
 
 	# Global variables
-	n_x      = 200 			# number of points 
-	p_degree = 10 			# degree of polynomial 
+	n_x      = 200 			# number of points
+	p_degree = 10 			# degree of polynomial
 	k        = 20
 
-	# Creating data values x and y 
+	# Creating data values x and y
 	x    = np.sort(np.random.uniform(0, 1, n_x))
 	y    = np.sort(np.random.uniform(0, 1, n_x))
 
 	x, y = np.meshgrid(x,y)
-	z 	 = project1_func.FrankeFunction(x,y)  # true function 
+	z 	 = project1_func.FrankeFunction(x,y)  # true function
 
 
 	if OLS_method == True:
@@ -80,7 +81,7 @@ if __name__ == "__main__":
 			data = project1_func.Create_data(x, y, z, noise=True)
 			betas, model = project1_func.OrdinaryLeastSquares(data, X)
 
-		else: 
+		else:
 			print('The data does not contain noise')
 			print("")
 			data = project1_func.Create_data(x, y, z, noise=False)
@@ -102,14 +103,14 @@ if __name__ == "__main__":
 		project1_func.CI(data, X, betas, model, method='OLS', dataset='Franke')
 
 		if noize == True:
-			file = open("Results/MSE_R2_noise_exercise_a.txt", "w") 
-			sys.stdout = file 
+			file = open("Results/MSE_R2_noise_exercise_a.txt", "w")
+			sys.stdout = file
 
 			print('Mean Square Error:  ' ,MSE)
 			print('R^2 Score function: ' ,R_2)
 
 			print("")
-			print("Values using Scikit's built in functions") 
+			print("Values using Scikit's built in functions")
 			print("----------------------------------------")
 			print("MSE")
 			print(mean_squared_error(np.ravel(z), model))
@@ -119,14 +120,14 @@ if __name__ == "__main__":
 
 			file.close()
 		else:
-			file = open("Results/MSE_R2_exercise_a.txt", "w") 
-			sys.stdout = file 
+			file = open("Results/MSE_R2_exercise_a.txt", "w")
+			sys.stdout = file
 
 			print('Mean Square Error:  ' ,MSE)
 			print('R^2 Score function: ' ,R_2)
 
 			print("")
-			print("Values using Scikit's built in functions") 
+			print("Values using Scikit's built in functions")
 			print("----------------------------------------")
 			print("MSE")
 			print(mean_squared_error(np.ravel(z), model))
@@ -143,25 +144,25 @@ if __name__ == "__main__":
 
 		X = project1_func.CreateDesignMatrix(x,y, n=p_degree)
 
-		noize = True # planning to have this as an argument input 
+		noize = True # planning to have this as an argument input
 
 		if noize == True:
 			print('The data contains a normally distributed noise')
 			print("")
 			data = project1_func.Create_data(x, y, z, noise=True)
 
-		else: 
+		else:
 			print('The data does not contain noise')
 			print("")
 			data = project1_func.Create_data(x, y, z, noise=False)
-		
+
 		X_train, X_test, data_train, data_test = train_test_split(X, data, shuffle=True, test_size=1./k)
 		betas = project1_func.beta(data_train, X_train, method='OLS')
 
 
 		# Write values to file
-		file = open("Results/MSE_R2_scores.txt", "w") 
-		sys.stdout = file 
+		file = open("Results/MSE_R2_scores.txt", "w")
+		sys.stdout = file
 
 		print("Values using train_test_split and my own functions")
 		print("--------------------------------------------------")
@@ -170,7 +171,7 @@ if __name__ == "__main__":
 		print(project1_func.MeanSquaredError(data_train,ytilde))
 		print("Training R2")
 		print(project1_func.R2_ScoreFunction(data_train,ytilde))
-	
+
 		ypredict = X_test @ betas
 		print("Test MSE")
 		print(project1_func.MeanSquaredError(data_test,ypredict))
@@ -178,7 +179,7 @@ if __name__ == "__main__":
 		print(project1_func.R2_ScoreFunction(data_test,ypredict))
 		print("")
 
-		print("Values using Scikit's built in functions") 
+		print("Values using Scikit's built in functions")
 		print("----------------------------------------")
 		print("Training MSE")
 		print(mean_squared_error(data_train,ytilde))
@@ -209,27 +210,27 @@ if __name__ == "__main__":
 		print('Part c: bias-variance tradeoff')
 		print('------------------------------')
 
-		noize = True 
+		noize = True
 
 		if noize == True:
 			print('The data contains a normally distributed noise')
 			print("")
 			data = project1_func.Create_data(x, y, z, noise=True)
 
-		else: 
+		else:
 			print('The data does not contain noise')
 			print("")
 			data = project1_func.Create_data(x, y, z, noise=False)
 
 
-		# Plotting MSE test and train, and printing values to file 
+		# Plotting MSE test and train, and printing values to file
 		project1_plot.MSE_BV_Franke(x, y, data, k, p_degree, method='OLS', shuffle=False, savefig=True)
 		plt.show()
 
 
 		# Use best p_deg from plot, make a new 3D plot with that value
 		# Make new model
-		p_deg_optimal  = 6 
+		p_deg_optimal  = 6
 
 		X_new = project1_func.CreateDesignMatrix(x, y, p_deg_optimal)
 		beta_new = project1_func.beta(np.ravel(z), X_new, method='OLS')
@@ -267,8 +268,8 @@ if __name__ == "__main__":
 		#project1_plot.plot_3D(x, y, model_new, p_deg_optimal, 'file_name', func="Ridge", savefig=False)
 		project1_plot.Plot_3D_Franke(x, y, z, model_new, p_deg_optimal, 'final_model_Ridge_franke', func="Ridge", scatter=True, savefig=True, l=lambda_optimal)
 		plt.show()
-		
-		
+
+
 
 	elif Lasso_method == True:
 		print('Part e: Lasso Regression on The Franke function with resampling')
@@ -276,14 +277,14 @@ if __name__ == "__main__":
 
 		#X = project1_func.CreateDesignMatrix(x,y, n=p_degree)
 
-		noize = True # planning to have this as an argument input 
+		noize = True # planning to have this as an argument input
 
 		if noize == True:
 			print('The data contains a normally distributed noise')
 			print("")
 			data = project1_func.Create_data(x, y, z, noise=True)
 
-		else: 
+		else:
 			print('The data does not contain noise')
 			print("")
 			data = project1_func.Create_data(x, y, z, noise=False)
@@ -300,7 +301,7 @@ if __name__ == "__main__":
 
 		#Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x, y, data, k, p_min, p_max, lambdas, "Franke_Lasso", method='Lasso', shuffle=False, savefig=True)
 		#plt.show()
-		
+
 		project1_plot.MSE_BV_Franke(x, y, data, k, p_max, method='Lasso', savefig=True, l=lambda_optimal)
 		plt.show()
 
@@ -314,15 +315,17 @@ if __name__ == "__main__":
 
 		project1_plot.Plot_3D_Franke(x, y, z, model_new, p_deg_optimal, 'final_model_Lasso_franke', func="Lasso", scatter=True, savefig=True, l=lambda_optimal)
 		plt.show()
-		
+
 
 	elif Real_data == True:
 		print('Part f: Real data')
 		print('-----------------')
 
-		terrain_image = imread('PIA23328.tif')
-		reduced_image = terrain_image[700:1100, 200:600]  # Mars
-		
+		terrain_image = scipy.misc.imread("PIA23328.tif") 	# Crater on Mars
+		#terrain_image = imread('PIA23328.tif')
+		reduced_image = terrain_image[700:1100, 200:600]
+
+
 		terrain_arr   = np.array(terrain_image)
 		n_x           = len(terrain_arr)
 
@@ -335,7 +338,8 @@ if __name__ == "__main__":
 		y_          = np.arange(0, final_image.shape[0])/(final_image.shape[0]-1)
 		x_,y_       = np.meshgrid(x_,y_)
 
-		print(final_image.shape)
+		#print(final_image.shape)
+
 
 		'''
 		plt.figure(1)
@@ -349,7 +353,7 @@ if __name__ == "__main__":
 		plt.show()
 		'''
 
-		
+
 
 	elif Best_fit == True:
 		print('Part g: Best fit of Terrain data')
@@ -359,7 +363,7 @@ if __name__ == "__main__":
 
 		terrain_image = imread('PIA23328.tif')
 		reduced_image = terrain_image[700:1100, 200:600]  # Mars
-		
+
 		terrain_arr   = np.array(terrain_image)
 		n_x           = len(terrain_arr)
 
@@ -367,13 +371,13 @@ if __name__ == "__main__":
 		y             = np.arange(0, terrain_arr.shape[0])/(terrain_arr.shape[0]-1)
 		x,y           = np.meshgrid(x,y)
 
-		final_image = cv2.resize(reduced_image, dsize=(200, 200), interpolation=cv2.INTER_NEAREST)
+		#final_image = cv2.resize(reduced_image, dsize=(200, 200), interpolation=cv2.INTER_NEAREST)
 		x_          = np.arange(0, final_image.shape[1])/(final_image.shape[1]-1)
 		y_          = np.arange(0, final_image.shape[0])/(final_image.shape[0]-1)
 		x_,y_       = np.meshgrid(x_,y_)
 
 		X = project1_func.CreateDesignMatrix(x_,y_, n=poly)
-		
+
 		z = np.ravel(final_image)
 
 		betas, model = project1_func.OrdinaryLeastSquares(z, X)
@@ -390,7 +394,7 @@ if __name__ == "__main__":
 
 
 
-
+		
 
 		#model = project1_func.OrdinaryLeastSquares(terrain_arr, X)
 		#l_r = LinearRegression()
@@ -402,7 +406,7 @@ if __name__ == "__main__":
 		lasso.set_params(alpha=1e-3)
 		lasso.fit(X, terrain_arr)
 		model = lasso.predict(X)
-		
+
 		MSE = project1_func.MeanSquaredError(terrain_arr, model)
 		R_2 = project1_func.R2_ScoreFunction(terrain_arr, model)
 
