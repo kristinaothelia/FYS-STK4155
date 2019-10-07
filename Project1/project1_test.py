@@ -66,22 +66,18 @@ def test_ridge():
     print('Ridge with lambda=0 is not equal to OLS. MSE_Ridge=%s, MSE_OLS=%s' %(MSE_Ridge, MSE_Lasso))
     print('The MSE for Ridge with lambda=0 is equal to MSE for OLS')
 
-
+"""
 # Computing MSE for Lasso with lambda = 0
 
-reg = LinearRegression().fit(X, np.ravel(z))
-betas = reg.coef_
-betas = reg.intercept_
+#   alpha = 0 is equivalent to an ordinary least square, solved by the LinearRegression object.
+#   For numerical reasons, using alpha = 0 with the Lasso object is not advised.
 
-
-#lasso = Lasso(max_iter = 1e4, tol=0.00001, normalize = True, fit_intercept=False)
+lasso = Lasso(max_iter = 1e4, tol=0.00001, normalize = True, fit_intercept=False)
 #lasso.set_params(alpha=0)
 #lasso = Lasso(alpha=0, fit_intercept=False)
-#betas_lasso = lasso.fit(X, np.ravel(z)).coef_                 # Noe galt her! Dims
+betas_lasso = lasso.fit(X, np.ravel(z)).coef_                 # Noe galt her! Dims
 model_lasso = np.dot(X, betas)
 #model_lasso = lasso.predict(np.ravel(z))
-
-
 
 MSE_Lasso   = project1_func.MeanSquaredError(np.ravel(z), model_lasso)
 
@@ -89,3 +85,4 @@ def test_lasso():
     assert MSE_Lasso == MSE_OLS, \
     print('Lasso with lambda=0 is not equal to OLS. MSE_Lasso=%s, MSE_OLS=%s' %(MSE_Lasso, MSE_OLS))
     print('The MSE for Lasso with lambda=0 is equal to MSE for OLS')
+"""
