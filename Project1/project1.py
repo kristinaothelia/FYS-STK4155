@@ -84,15 +84,13 @@ if __name__ == "__main__":
 	x_,y_               = np.meshgrid(x_,y_)
 	z_terrain           = np.ravel(final_image)
 
+
 	if OLS_method == True:
 		print('Part a: Ordinary Least Square on The Franke function with resampling')
 		print('--------------------------------------------------------------------')
 
-		# confidence interval on the betas
-
-		m = 5
-		X = project1_func.CreateDesignMatrix(x,y, n=m)
-
+		m     = 5 										    # Polynomial degree
+		X     = project1_func.CreateDesignMatrix(x, y, n=m) # Design matrix
 		noize = True
 
 		if noize == True:
@@ -100,7 +98,6 @@ if __name__ == "__main__":
 			print("")
 			data = project1_func.Create_data(x, y, z, noise=True)
 			betas, model = project1_func.OrdinaryLeastSquares(data, X)
-
 		else:
 			print('The data does not contain noise')
 			print("")
@@ -111,21 +108,25 @@ if __name__ == "__main__":
 		MSE = project1_func.MeanSquaredError(np.ravel(z), model)
 		R_2 = project1_func.R2_ScoreFunction(np.ravel(z), model)
 
+		# Plotting the true franke function
+		project1_plot.Plot_3D_Franke(x, y, data, np.ravel(z), m, 'franke_true_function', func="True", savefig=False)
+		plt.show()
 
 		# Plotting the 3D model of the Franke function
 		project1_plot.Plot_3D_Franke(x, y, data, model, m, 'franke_model', func="OLS", savefig=False)
 		plt.show()
 
-		# Plotting the true franke function
-		project1_plot.Plot_3D_Franke(x, y, data, np.ravel(z), m, 'franke_true_function', func="True", savefig=False)
+		# Plotting the confidence interval
+		project1_func.CI(data, X, betas, model, m, method='OLS', dataset='Franke', plot=True)
 		plt.show()
+		# Writing the confidence interval values to terminal
+		CI_OLS_F = project1_func.CI(data, X, betas, model, m, method='OLS', dataset='Franke', plot=False)
+		print("CI for OLS, p=5, without kfold. Franke function \n")
+		print(CI_OLS_F)
 
-		# Calculating and plotting the confidence interval
-		project1_func.CI(data, X, betas, model, method='OLS', dataset='Franke')
-		plt.show()
-
+		# Write MSE and R2 values to file
 		if noize == True:
-			file = open("Results/MSE_R2_noise_exercise_a.txt", "w")
+			file = open("Results/MSE_R2_noise_exercise_a_Franke.txt", "w")
 			sys.stdout = file
 
 			print('Mean Square Error:  ' ,MSE)
@@ -142,7 +143,7 @@ if __name__ == "__main__":
 
 			file.close()
 		else:
-			file = open("Results/MSE_R2_exercise_a.txt", "w")
+			file = open("Results/MSE_R2_exercise_a_Franke.txt", "w")
 			sys.stdout = file
 
 			print('Mean Square Error:  ' ,MSE)
@@ -164,24 +165,22 @@ if __name__ == "__main__":
 
 		X = project1_func.CreateDesignMatrix(x,y, n=p_degree)
 
-		noize = True # planning to have this as an argument input
+		noize = True
 
 		if noize == True:
-			print('The data contains a normally distributed noise')
-			print("")
-			data = project1_func.Create_data(x, y, z, noise=True)
-
+			print('The data contains a normally distributed noise. Writes values to file')
+			data   = project1_func.Create_data(x, y, z, noise=True)
+			string = "noise"
 		else:
-			print('The data does not contain noise')
-			print("")
-			data = project1_func.Create_data(x, y, z, noise=False)
+			print('The data does not contain noise. Writes values to file')
+			data   = project1_func.Create_data(x, y, z, noise=False)
+			string = "no_noise"
 
 		X_train, X_test, data_train, data_test = train_test_split(X, data, shuffle=True, test_size=1./k)
 		betas = project1_func.beta(data_train, X_train, method='OLS')
 
-
 		# Write values to file
-		file = open("Results/MSE_R2_scores.txt", "w")
+		file = open("Results/MSE_R2_scores_OLS_kfold_%s_Franke.txt" % string, "w")
 		sys.stdout = file
 
 		print("Values using train_test_split and my own functions")
@@ -215,7 +214,6 @@ if __name__ == "__main__":
 		print("--------------------------------")
 
 		index = np.arange(len(np.ravel(data)))
-
 		MSE_train, MSE_test, bias, variance, R2_train, R2_test = project1_func.k_fold(data, X, k, index, method='OLS', shuffle=True)
 
 		print("MSE Train")
@@ -234,28 +232,22 @@ if __name__ == "__main__":
 		print('------------------------------')
 
 		noize = True
+		lamb  = 0
 
 		if noize == True:
-			print('The data contains a normally distributed noise')
-			print("")
+			print('The data contains a normally distributed noise \n')
 			data = project1_func.Create_data(x, y, z, noise=True)
-
 		else:
-			print('The data does not contain noise')
-			print("")
+			print('The data does not contain noise \n')
 			data = project1_func.Create_data(x, y, z, noise=False)
 
-
-		# Plotting MSE test and train, and printing values to file
-		lamb=0
-		project1_plot.MSE_BV_Franke(x, y, data, k, p_degree, lamb, method='OLS', shuffle=False, savefig=True)
+		# Plotting MSE/R2 test and train, and Bias-Variance. Prints values to terminal
+		project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_degree, lamb, method='OLS', dataset='Franke', savefig=True)
 		plt.show()
 
-
 		# Use best p_deg from plot, make a new 3D plot with that value
-		# Make new model
 		p_deg_optimal  = 6
-
+		# Make new model
 		X_new = project1_func.CreateDesignMatrix(x, y, p_deg_optimal)
 		beta_new = project1_func.beta(np.ravel(z), X_new, method='OLS')
 		model_new  = X_new @ beta_new
@@ -273,94 +265,97 @@ if __name__ == "__main__":
 
 		best_lambda = np.zeros(p_degree)
 
+		# Change p_min if you want a plot with less graphs
+		# Need to run this from 0 to p_degree to get all the values
 		p_min =  6
 		p_max =  9
 
-		p_deg_optimal  = 7
-		lambda_optimal = 0.00148497
+		MSEvsLambda = False
+		if MSEvsLambda == True:
 
-		#Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x, y, data, k, p_min, p_max, lambdas, "Franke_Ridge", method='Ridge', shuffle=False, savefig=False)
-		#plt.show()
-		#project1_plot.MSE_BV_Franke(x, y, data, k, p_max, lambda_optimal, method='Ridge', savefig=False)
-		#plt.show()
+			Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x, y, data, k, p_min, p_max, lambdas, "Franke_Ridge", method='Ridge', shuffle=False, savefig=False)
+			plt.show()
+
+		lambda_optimal = 0.00148497
+		p_deg_optimal  = 7
+
+		project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_max, lambda_optimal, method='Ridge', dataset='Franke', savefig=True)
+		plt.show()
 
 		X_new = project1_func.CreateDesignMatrix(x,y, p_deg_optimal)
 		beta_new = project1_func.beta(np.ravel(z), X_new, method='Ridge', l=lambda_optimal)
 		model_new  = X_new @ beta_new
 
-		#project1_plot.plot_3D(x, y, z, 10, 'file_name', func="Ridge", savefig=False)
-		#project1_plot.plot_3D(x, y, model_new, p_deg_optimal, 'file_name', func="Ridge", savefig=False)
-		#project1_plot.Plot_3D_Franke(x, y, z, model_new, p_deg_optimal, 'final_model_Ridge_franke', func="Ridge", scatter=True, savefig=True, l=lambda_optimal)
-		#plt.show()
+		# Plot 3D imgage for the best model
+		project1_plot.Plot_3D_Franke(x, y, z, model_new, p_deg_optimal, 'final_model_Ridge_franke', func="Ridge", scatter=True, savefig=True, l=lambda_optimal)
+		plt.show()
 
 		# Printing and calculating the confidence intervals for Ridge with the best lambda
-		# Need to comment out MSE_BV_Franke before running (ValueError: I/O operation on closed file.)
-		project1_func.CI(z, X_new, beta_new, model_new, method='Ridge', dataset='Franke')
+		project1_func.CI(z, X_new, beta_new, model_new, p_deg_optimal, method='Ridge', dataset='Franke', plot=True)
 		plt.show()
+		CI_Ridge_F = project1_func.CI(z, X_new, beta_new, model_new, p_deg_optimal, method='Ridge', dataset='Franke', plot=False)
+		print(CI_Ridge_F)
 
 
 	elif Lasso_method == True:
 		print('Part e: Lasso Regression on The Franke function with resampling')
 		print('---------------------------------------------------------------')
 
-		#X = project1_func.CreateDesignMatrix(x,y, n=p_degree)
-
 		noize = True
 
 		if noize == True:
-			print('The data contains a normally distributed noise')
-			print("")
+			print('The data contains a normally distributed noise \n')
 			data = project1_func.Create_data(x, y, z, noise=True)
 
 		else:
-			print('The data does not contain noise')
-			print("")
+			print('The data does not contain noise \n')
 			data = project1_func.Create_data(x, y, z, noise=False)
 
 		lambdas = np.logspace(-6.8, -5, 100)
 
-		best_lambda = np.zeros(p_degree)
-
+		# Change p_min if you want a plot with less graphs
+		# Need to run this from 0 to p_degree to get all the values
 		p_min =  4
 		p_max =  6
+
+		MSEvsLambda = False
+		if MSEvsLambda == True:
+
+			Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x, y, data, k, p_min, p_max, lambdas, "Franke_Lasso", method='Lasso', shuffle=False, savefig=True)
+			plt.show()
+			#'The best lambda value for each degree:'
+			#'For degree=4 - Best alpha=1.67683e-06 - Min MSE=1.01693'
+			#'For degree=5 - Best alpha=2.17137e-07 - Min MSE=1.01728'
+			#'For degree=6 - Best alpha=1.25893e-07 - Min MSE=1.01672'
 
 		p_deg_optimal  = 4
 		lambda_optimal = 1.67683e-6
 
-		# Need to run this from 0 to p_degree to get all the values
-
-		#'The best lambda value for each degree:'
-		#'For degree=4 - Best alpha=1.67683e-06 - Min MSE=1.01693'
-		#'For degree=5 - Best alpha=2.17137e-07 - Min MSE=1.01728'
-		#'For degree=6 - Best alpha=1.25893e-07 - Min MSE=1.01672'
-
-		Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x, y, data, k, p_min, p_max, lambdas, "Franke_Lasso", method='Lasso', shuffle=False, savefig=True)
+		project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_max, lambda_optimal, method='Lasso', dataset='Franke', savefig=True)
 		plt.show()
 
-		#project1_plot.MSE_BV_Franke(x, y, data, k, p_max, method='Lasso', savefig=True, l=lambda_optimal)
-		#plt.show()
-
-		X_new = project1_func.CreateDesignMatrix(x,y, p_deg_optimal)
-		lasso = Lasso(max_iter = 1e2, tol=0.001, normalize = True) #fit_intercept=False
-		scaler = StandardScaler()
+		# Make a new model
+		X_new     = project1_func.CreateDesignMatrix(x,y, p_deg_optimal)
+		lasso     = Lasso(max_iter = 1e2, tol=0.001, normalize = True) #fit_intercept=False
 		lasso.set_params(alpha=lambda_optimal)
 		lasso.fit(X_new, data)
-		beta_new = lasso.coef_
+		beta_new  = lasso.coef_
 		model_new = lasso.predict(X_new)
 
-		#project1_plot.Plot_3D_Franke(x, y, z, model_new, p_deg_optimal, 'final_model_Lasso_franke_', func="Lasso", scatter=True, savefig=True, l=lambda_optimal)
-		#plt.show()
-
+		# Plot 3D imgage for the best model
+		project1_plot.Plot_3D_Franke(x, y, z, model_new, p_deg_optimal, 'final_model_Lasso_franke_', func="Lasso", scatter=True, savefig=True, l=lambda_optimal)
+		plt.show()
 
 		# Printing and calculating the confidence intervals for Lasso with the best lambda
-		# Need to comment out MSE_BV_Franke before running (ValueError: I/O operation on closed file.)
-		#project1_func.CI(z, X_new, beta_new, model_new, method='Lasso', dataset='Franke')
-		#plt.show()
+		project1_func.CI(z, X_new, beta_new, model_new, p_deg_optimal, method='Lasso', dataset='Franke', plot=True)
+		plt.show()
+		CI_Lasso_F = project1_func.CI(z, X_new, beta_new, model_new, p_deg_optimal, method='Lasso', dataset='Franke', plot=False)
+		print(CI_Lasso_F)
 
 		# Plotting MSE test and train for all the model in the same plot
-		#project1_plot.MSE_BV_Franke(x, y, data, k, p_max, method='Lasso', savefig=False, l=1.67683e-6)
-		#project1_plot.MSE_BV_Franke(x, y, data, k, p_max, method='Ridge', savefig=False, l=0.00148497)
-		#project1_plot.MSE_BV_Franke(x, y, data, k, p_max, method='OLS', savefig=False)
+		#project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_degree, 0,          method='OLS',   dataset='Franke', savefig=False)
+		#project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_degree, 0.00148497, method='Ridge', dataset='Franke', savefig=False)
+		#project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_degree, 1.67683e-6, method='Lasso', dataset='Franke', savefig=False)
 		#plt.show()
 
 
@@ -391,7 +386,7 @@ if __name__ == "__main__":
 							  Used to find the polynomial degree and lambda value for Lasso which gives the model with the lowest/best MSE.
 		Lasso_best 			| Uses the best fit model, best p_degree and lambda value, to plot a MSE vs comlexity plot and terrain 2D and 3D images
 		Confidence_interval | Confidence interval for the best OLS, Ridge and Lasso model. txt file
-							  Note: OLS_best_BV = Terrain_Ridge_calc = Terrain_Lasso_calc = True
+							  NB!: OLS_best_BV = Terrain_Ridge_calc = Terrain_Lasso_calc = True
 		"""
 		print('Part g: Terrain data - Best fit calculations')
 		print('----------------')
@@ -465,9 +460,9 @@ if __name__ == "__main__":
 			p_max = 12
 			lamb  = 0
 
-			# Plotting MSE test and train, and printing values to file
-			#project1_plot.MSE_BV_Terrain(x_, y_, z_terrain, k, p_max, lamb, method='OLS', shuffle=False, savefig=True)
-			#plt.show()
+			# Plotting MSE/R2 test and train, bias-variance, and prints values to terminal
+			project1_plot.Plot_MSE_R2_BV(x_, y_, z_terrain, k, p_max, lamb, method='OLS', dataset='Terrain', savefig=True)
+			plt.show()
 
 			# Use best p_deg from plot, make a new 3D plot with that value. Make new model
 			p_deg_optimal  = 8
@@ -481,7 +476,6 @@ if __name__ == "__main__":
 			plt.show()
 
 			# Calculate the confidence interval for the best OLS model. Printed to terminal
-			# Need to comment out MSE_BV_Franke before running (ValueError: I/O operation on closed file.)
 			project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='OLS', dataset='Terrain')
 			plt.show()
 
@@ -495,14 +489,12 @@ if __name__ == "__main__":
 			print("Terrain data - Ex.d: Ridge regression on terrain data")
 			print("--"*35)
 
-			#best_lambda = np.zeros(p_degree)
 			p_min =  9
 			p_max =  14
 
 			if Ridge_MSEvsLambda == True:
 
 				lambdas     = np.logspace(-6.9, -4.5, 20)
-				#lam_for_BV  = [1e-4, 1e-3, 0.01, 0.1, 0, 1]
 
 				Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x_, y_, z_terrain, k, p_min, p_max, lambdas, "Terrain_Ridge", method='Ridge', shuffle=False, savefig=True)
 				plt.show()
@@ -511,8 +503,9 @@ if __name__ == "__main__":
 			lambda_optimal = 5.38988e-07
 			p_deg_optimal  = 9
 
-			#project1_plot.MSE_BV_Terrain(x_, y_, z_terrain, k, p_max, lambda_optimal, method='Ridge', savefig=True)
-			#plt.show()
+			# Plotting MSE/R2 test and train, bias-variance, and prints values to terminal
+			project1_plot.Plot_MSE_R2_BV(x_, y_, z_terrain, k, p_max, lambda_optimal, method='Ridge', dataset='Terrain', savefig=True)
+			plt.show()
 
 			X_new = project1_func.CreateDesignMatrix(x_, y_, p_deg_optimal)
 			beta_new = project1_func.beta(z_terrain, X_new, method='Ridge', l=lambda_optimal)
@@ -524,38 +517,43 @@ if __name__ == "__main__":
 			plt.show()
 
 			# Printing and calculating the confidence intervals for Ridge with the best lambda
-			# Need to comment out MSE_BV_Franke before running (ValueError: I/O operation on closed file.)
 			project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='Ridge', dataset='Terrain', plot=True)
 			plt.show()
 			CI_Ridge = project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='Ridge', dataset='Terrain', plot=False)
-
+			#print(CI_Ridge)
 
 		if Terrain_Lasso_calc == True:
 			print("Terrain data - Ex.e: Lasso regression on terrain data")
 			print("--"*35)
 
-			p_min =  9
-			p_max =  12
+			p_min =  0
+			p_max =  11
 
 			if Lasso_MSEvsLambda == True:
 
-				lambdas = np.logspace(-6.9, -5.5, 20)
-				#lambdas = [1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 0.1, 1.0, 10, 1e2, 1e3]
+				lambdas = np.logspace(-6, -1, 10)
+				"""
+				For degree=9 - Best alpha=0.00774264 - Min MSE=1534.91
+				For degree=10 - Best alpha=0.00774264 - Min MSE=1513.16
+				For degree=11 - Best alpha=0.000599484 - Min MSE=1489.17
+				For degree=12 - Best alpha=1e-06 - Min MSE=1465.84
+				"""
 
-				Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x_, y_, z_terrain, k, p_min, p_max, lambdas, "Terrain_Lasso", method='Lasso', shuffle=False, savefig=False)
+				Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x_, y_, z_terrain, k, p_min, p_max, lambdas, "Terrain_Lasso", method='Lasso', shuffle=True, savefig=False)
 				plt.show()
 
-			p_deg_optimal  = 10
-			lambda_optimal = 3e-5
+			p_deg_optimal  = 8
+			lambda_optimal = 0.01
 
-			#project1_plot.MSE_BV_Terrain(x_, y_, z_terrain, k, p_max, lambda_optimal, method='Lasso', savefig=True)
-			#plt.show()
+			# Plotting MSE/R2 test and train, bias-variance, and prints values to terminal
+			project1_plot.Plot_MSE_R2_BV(x_, y_, z_terrain, k, p_max, lambda_optimal, method='Lasso', dataset='Terrain', savefig=True)
+			plt.show()
 
 			X_new     = project1_func.CreateDesignMatrix(x_,y_, p_deg_optimal)
-			lasso     = Lasso(max_iter = 5e3, tol=0.00001, normalize=True, fit_intercept=False)
+			lasso     = Lasso(max_iter = 5e3, tol=0.0001, normalize=True, fit_intercept=False)
 			lasso.set_params(alpha=lambda_optimal)
 			lasso.fit(X_new, z_terrain)
-			beta      = lasso.coef_
+			beta_new  = lasso.coef_
 			model_new = lasso.predict(X_new)
 
 			project1_plot.plot_3D(x_, y_, model_new, p_deg_optimal, "Lasso_final_model_Terrain_", func="Lasso", savefig=True)
@@ -563,24 +561,23 @@ if __name__ == "__main__":
 			project1_plot.plot_terrain(x_, y_, model_new, p_deg_optimal, lambda_optimal, 'Terrain_final_best_p_Lasso', func="Lasso", string='Unnamed crater in Utopia Planitia, Mars', savefig=True)
 			plt.show()
 
+			# Calculate MSE and R2 for the best model
 			MSE = project1_func.MeanSquaredError(z_terrain, model_new)
 			R_2 = project1_func.R2_ScoreFunction(z_terrain, model_new)
-
-			print('MSE:', MSE)
-			print('R_2:', R_2)
+			print('Model mean MSE: %-10g, and R2 score: %-10g' (MSE, R_2))
 
 			# Printing and calculating the confidence intervals for Ridge with the best lambda
-			# Need to comment out MSE_BV_Franke before running (ValueError: I/O operation on closed file.)
 			project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='Lasso', dataset='Terrain', plot=True)
 			plt.show()
 			CI_Lasso = project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='Lasso', dataset='Terrain', plot=False)
-
-
+			#print(CI_Lasso)
 
 		if Confidence_interval == True:
 
 			file_ = open("Results/Confidence_interval_Terrain_ALL.txt", "w")
 			sys.stdout = file_
+			print("Confidence interval for all models for the terrain dataset")
+			print("--"*35)
 			print("OLS")
 			print("        Beta             -                + ")
 			print(CI_OLS)

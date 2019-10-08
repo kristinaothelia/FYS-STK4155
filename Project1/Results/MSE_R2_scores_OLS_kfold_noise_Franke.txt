@@ -22,7 +22,11 @@ Test R2
 
 Values using own k-fold function
 --------------------------------
-Train MSE
+MSE Train
 1.0018264590344619
-Test MSE
+MSE Test
 1.0052371323039393
+R2 Train
+0.07786659781580212
+R2 Test
+0.07402694547972073

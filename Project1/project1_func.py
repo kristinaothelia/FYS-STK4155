@@ -266,7 +266,7 @@ def CI(z, X, beta, model, p, method=False, dataset=False, plot=False):
 		plt.savefig('Results/CI_%s_%s' %(dataset, method))
 
 	else:
-		
+
 		for i in range(len(beta)):
 			CI_list[i,0] = beta[i]
 			CI_list[i,1] = beta[i] - Z_score*np.sqrt(XTX_inv[i,i])*sigma
