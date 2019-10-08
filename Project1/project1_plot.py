@@ -85,7 +85,7 @@ def Plot_3D_Franke(x, y, z, model, p, file_name, func="OLS", scatter=False, save
 		plt.savefig('Results/' + file_name + '.png')
 
 
-def MSE_BV_Terrain(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle=False):
+def MSE_BV_Terrain(x, y, data, k, p_degree, lamb, method='OLS', savefig=False, shuffle=False):
 	"""
 	Function that plots MSE test and MSE train vs Complexity (polynomial degree)
 	or Bias-Variance tradeoff.
@@ -97,10 +97,10 @@ def MSE_BV_Terrain(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle
 	"""
 	MSE_train       = np.zeros(p_degree)
 	MSE_test        = np.zeros(p_degree)
+	R2_train        = np.zeros(p_degree)
+	R2_test         = np.zeros(p_degree)
 	bias            = np.zeros(p_degree)
 	variance        = np.zeros(p_degree)
-	MSE_train_check = np.zeros(p_degree)
-	MSE_test_check  = np.zeros(p_degree)
 
 	for degree in range(0, p_degree):
 
@@ -111,27 +111,32 @@ def MSE_BV_Terrain(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle
 
 		if method == 'OLS':
 			X = project1_func.CreateDesignMatrix(x,y, n=degree)
-			MSE_train[degree], MSE_test[degree], bias[degree], variance[degree] =  project1_func.k_fold(data, X, k, index, method='OLS')
+			MSE_train[degree], MSE_test[degree], bias[degree], variance[degree], R2_train[degree], R2_test[degree] =  project1_func.k_fold(data, X, k, index, method='OLS')
 			method_name = "OLS"
 		if method == 'Ridge':
 			X = project1_func.CreateDesignMatrix(x,y, n=degree)
-			MSE_train[degree], MSE_test[degree], bias[degree], variance[degree] =  project1_func.k_fold(data, X, k, index, method='Ridge', l=0.0011)
+			MSE_train[degree], MSE_test[degree], bias[degree], variance[degree], R2_train[degree], R2_test[degree] =  project1_func.k_fold(data, X, k, index, method='Ridge', l=lamb)
 			method_name = "Ridge"
 		if method == 'Lasso':
 			X = project1_func.CreateDesignMatrix(x,y, n=degree)
-			MSE_train[degree], MSE_test[degree], bias[degree], variance[degree] =  project1_func.k_fold(data, X, k, index, method='Lasso', l=1.7e-5)
+			MSE_train[degree], MSE_test[degree], bias[degree], variance[degree], R2_train[degree], R2_test[degree] =  project1_func.k_fold(data, X, k, index, method='Lasso', l=lamb)
 			method_name = "Lasso"
 
 
 	file = open("Results/MSE_test_%s_p%s_Terrain.txt" %(method,p_degree), "w")
 	sys.stdout = file
 
+	print("Results/%s_p%s_Terrain.txt" %(method,p_degree))
 	print("bias+variance")
 	print(bias+variance)
 	print("Train MSE")
 	print(MSE_train)
 	print("Test MSE")
 	print(MSE_test)
+	print("Train R2")
+	print(R2_train)
+	print("Test R2")
+	print(R2_test)
 	print("Bias")
 	print(bias)
 	print("Variance")
@@ -141,6 +146,18 @@ def MSE_BV_Terrain(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle
 
 	complexity = np.arange(0,p_degree)
 
+	plt.figure(1)
+	plt.plot(complexity, R2_test, label='R2 Test')
+	plt.plot(complexity, R2_train, label='R2 Train')
+	plt.title('R2 for %s (Terrain)' % method_name, fontsize=16)
+	plt.xlabel('Complexity (polynomial degree)', fontsize=16)
+	plt.ylabel('Predicted error (R2 score)', fontsize=16)
+	plt.legend(fontsize=16)
+
+	if savefig == True:
+		plt.savefig('Results/R2_%sdeg_Terrain.png' %p_degree)
+
+	plt.figure(2)
 	plt.plot(complexity, bias, label="Bias")
 	plt.plot(complexity, variance, label="Variance")
 	plt.title('Bias-variance tradeoff for %s (Terrain)' %(method_name), fontsize=16)
@@ -151,8 +168,9 @@ def MSE_BV_Terrain(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle
 	if savefig == True:
 		plt.savefig('Results/BV_%sdeg_Terrain.png' %p_degree)
 
-	plt.plot(complexity, MSE_test, label='Test')
-	plt.plot(complexity, MSE_train, label='Train')
+	plt.figure(3)
+	plt.plot(complexity, MSE_test, label='MSE Test')
+	plt.plot(complexity, MSE_train, label='MSE Train')
 	plt.title('MSE for %s (Terrain)' % method_name, fontsize=16)
 	plt.xlabel('Complexity (polynomial degree)', fontsize=16)
 	plt.ylabel('Predicted error (MSE)', fontsize=16)
@@ -161,7 +179,7 @@ def MSE_BV_Terrain(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle
 	if savefig == True:
 		plt.savefig('Results/MSE_%sdeg_Terrain.png' %p_degree)
 
-def MSE_BV_Franke(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle=False, l=0):
+def MSE_BV_Franke(x, y, data, k, p_degree, lamb, method='OLS', savefig=False, shuffle=False, l=0):
 	"""
 	Function that plots MSE test and MSE train vs Complexity (polynomial degree)
 	or Bias-Variance tradeoff.
@@ -173,10 +191,10 @@ def MSE_BV_Franke(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle=
 	"""
 	MSE_train       = np.zeros(p_degree)
 	MSE_test        = np.zeros(p_degree)
+	R2_train        = np.zeros(p_degree)
+	R2_test         = np.zeros(p_degree)
 	bias            = np.zeros(p_degree)
 	variance        = np.zeros(p_degree)
-	MSE_train_check = np.zeros(p_degree)
-	MSE_test_check  = np.zeros(p_degree)
 
 	for degree in range(0, p_degree):
 
@@ -187,27 +205,32 @@ def MSE_BV_Franke(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle=
 
 		if method == 'OLS':
 			X = project1_func.CreateDesignMatrix(x,y, n=degree)
-			MSE_train[degree], MSE_test[degree], bias[degree], variance[degree] =  project1_func.k_fold(data, X, k, index, method='OLS')
+			MSE_train[degree], MSE_test[degree], bias[degree], variance[degree], R2_train[degree], R2_test[degree] =  project1_func.k_fold(data, X, k, index, method='OLS')
 			method_name = "OLS"
 		if method == 'Ridge':
 			X = project1_func.CreateDesignMatrix(x,y, n=degree)
-			MSE_train[degree], MSE_test[degree], bias[degree], variance[degree] =  project1_func.k_fold(data, X, k, index, method='Ridge', l=l)
+			MSE_train[degree], MSE_test[degree], bias[degree], variance[degree], R2_train[degree], R2_test[degree] =  project1_func.k_fold(data, X, k, index, method='Ridge', l=lamb)
 			method_name = "Ridge"
 		if method == 'Lasso':
 			X = project1_func.CreateDesignMatrix(x,y, n=degree)
-			MSE_train[degree], MSE_test[degree], bias[degree], variance[degree] =  project1_func.k_fold(data, X, k, index, method='Lasso', l=1.7e-5)
+			MSE_train[degree], MSE_test[degree], bias[degree], variance[degree], R2_train[degree], R2_test[degree] =  project1_func.k_fold(data, X, k, index, method='Lasso', l=lamb)
 			method_name = "Lasso"
 
 
 	file = open("Results/MSE_test_%s_p%s_Franke.txt" %(method,p_degree), "w")
 	sys.stdout = file
 
+	print("Results/%s_p%s_Franke.txt" %(method,p_degree))
 	print("bias+variance")
 	print(bias+variance)
 	print("Train MSE")
 	print(MSE_train)
 	print("Test MSE")
 	print(MSE_test)
+	print("Train R2")
+	print(R2_train)
+	print("Test R2")
+	print(R2_test)
 	print("Bias")
 	print(bias)
 	print("Variance")
@@ -217,6 +240,18 @@ def MSE_BV_Franke(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle=
 
 	complexity = np.arange(0,p_degree)
 
+	plt.figure(1)
+	plt.plot(complexity, R2_test, label='Test')
+	plt.plot(complexity, R2_train, label='Train')
+	plt.title('R2 for %s (Franke)' % method_name, fontsize=16)
+	plt.xlabel('Complexity (polynomial degree)', fontsize=16)
+	plt.ylabel('Predicted error (R2 score)', fontsize=16)
+	plt.legend(fontsize=16)
+
+	if savefig == True:
+		plt.savefig('Results/R2_%sdeg_Franke.png' %p_degree)
+
+	plt.figure(2)
 	plt.plot(complexity, bias, label="Bias")
 	plt.plot(complexity, variance, label="Variance")
 	plt.title('Bias-variance tradeoff for %s (Franke)' %(method_name), fontsize=16)
@@ -228,6 +263,7 @@ def MSE_BV_Franke(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle=
 		plt.savefig('Results/BV_%s_%sdeg_Franke.png' %(method_name,p_degree))
 	plt.show()
 
+	plt.figure(3)
 	plt.plot(complexity, MSE_test, label='MSE test')
 	plt.plot(complexity, MSE_train, label='MSE train')
 	plt.title('MSE for %s (Franke)' % method_name, fontsize=16)
@@ -238,39 +274,7 @@ def MSE_BV_Franke(x, y, data, k, p_degree, method='OLS', savefig=False, shuffle=
 	if savefig == True:
 		plt.savefig('Results/MSE_%s_%sdeg_Franke.png' %(method_name,p_degree))
 
-'''
-def plot_MSE_lambda(x, y, data, k, degree_start, degree_stop, lambdas, method=None):
 
-	if method == None:
-		print('you need to pass a method')
-		sys.exit()
-
-	for degree in range(degree_start, degree_stop+1):
-
-
-
-			train_MSE = np.zeros(len(lambdas))
-			test_MSE = np.zeros(len(lambdas))
-			bias = np.zeros(len(lambdas))
-			variance = np.zeros(len(lambdas))
-
-			for l in range(0, len(lambdas)):
-
-				X = project1_func.CreateDesignMatrix(x,y, n=degree)
-				if method == 'Ridge':
-					train_MSE[l], test_MSE[l], bias[l], variance[l] = project1_func.k_fold(data, X, 10, method='Ridge', l=lambdas[l], shuffle=False)
-				elif method == 'Lasso':
-					train_MSE[l], test_MSE[l], bias[l], variance[l] = project1_func.k_fold(data, X, 10, method='Lasso', l=lambdas[l], shuffle=False)
-
-			lambda_min = np.argmin(test_MSE)
-			plt.plot(lambdas, test_MSE, label='p = %g' %degree)
-			plt.plot(lambdas[lambda_min], test_MSE[lambda_min], 'ro')
-			print('for degree=%g, best alpha=%g' %(degree, lambdas[lambda_min]))
-
-	#plt.imshow(grid, origin='lower')
-	plt.legend()
-	plt.show()
-'''
 def plot_MSE_lambda(x, y, data, k, degree_start, degree_stop, lambdas, file_name, method=None, shuffle=False, savefig=False):
 	"""
 	Function to plot MSE vs Lambda, for varoius polynomial degrees
@@ -292,6 +296,8 @@ def plot_MSE_lambda(x, y, data, k, degree_start, degree_stop, lambdas, file_name
 
 		train_MSE = np.zeros(len(lambdas))
 		test_MSE  = np.zeros(len(lambdas))
+		train_R2  = np.zeros(len(lambdas))
+		test_R2   = np.zeros(len(lambdas))
 		bias      = np.zeros(len(lambdas))
 		variance  = np.zeros(len(lambdas))
 
@@ -300,10 +306,10 @@ def plot_MSE_lambda(x, y, data, k, degree_start, degree_stop, lambdas, file_name
 			X = project1_func.CreateDesignMatrix(x,y, n=degree)
 			if method == 'Ridge':
 				method_name = "Ridge"
-				train_MSE[l], test_MSE[l], bias[l], variance[l] = project1_func.k_fold(data, X, k, index, method='Ridge', l=lambdas[l])
+				train_MSE[l], test_MSE[l], bias[l], variance[l], train_R2[l], test_R2[l] = project1_func.k_fold(data, X, k, index, method='Ridge', l=lambdas[l])
 			elif method == 'Lasso':
 				method_name = "Lasso"
-				train_MSE[l], test_MSE[l], bias[l], variance[l] = project1_func.k_fold(data, X, k, index, method='Lasso', l=lambdas[l])
+				train_MSE[l], test_MSE[l], bias[l], variance[l], train_R2[l], test_R2[l] = project1_func.k_fold(data, X, k, index, method='Lasso', l=lambdas[l])
 
 		Min_MSE.append(min(test_MSE))
 		lambda_min = np.argmin(test_MSE)
@@ -322,7 +328,7 @@ def plot_MSE_lambda(x, y, data, k, degree_start, degree_stop, lambdas, file_name
 	plt.legend(fontsize=16)
 
 	if savefig == True:
-		plt.savefig('Results/' + file_name + '.png')
+		plt.savefig('Results/MSEvsLambda_' + file_name + '.png')
 
 
 	return Deg, Best_lamb, Min_MSE
@@ -359,7 +365,7 @@ def plot_both(x, y, model, file_name, string='', savefig=False):
 		plt.savefig('Results/' + file_name + '.png')
 
 
-def plot_terrain(x, y, terrain, file_name, func="OLS", string='', savefig=False):
+def plot_terrain(x, y, terrain, deg, lamb, file_name, func="OLS", string='', savefig=False):
 	"""
 	Function to plot a 2D image of the terrain, with a colorbar
 	"""
@@ -369,11 +375,11 @@ def plot_terrain(x, y, terrain, file_name, func="OLS", string='', savefig=False)
 
 	# Make title
 	if func == "OLS":
-		plt.title("%s, with OLS" %string, fontsize=16)
+		plt.title("%s \n OLS, k-fold CV, p=%g" %(string, deg), fontsize=16)
 	elif func == "Ridge":
-		plt.title("%s, with Ridge" %string, fontsize=16)
+		plt.title("%s \n Ridge, k-fold CV, p=%g, $\\lambda$=%g" %(string, deg, lamb), fontsize=16)
 	elif func == "Lasso":
-		plt.title("%s, with Lasso" %string, fontsize=16)
+		plt.title("%s \n Lasso, k-fold CV, p=%g, $\\lambda$=%g" %(string, deg, lamb), fontsize=16)
 	elif func == "Original":
 		plt.title("%s" %string, fontsize=16)
 
@@ -383,4 +389,4 @@ def plot_terrain(x, y, terrain, file_name, func="OLS", string='', savefig=False)
 	plt.ylabel('y', fontsize=16)
 
 	if savefig == True:
-		plt.savefig('Results/' + file_name + '.png')
+		plt.savefig('Results/Terrain_' + file_name + '.png')

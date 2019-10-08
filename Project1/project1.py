@@ -3,12 +3,12 @@ FYS-STK4155 - Main code for project 1
 """
 import argparse
 import sys
-#import cv2
+import cv2
 import scipy
 import numpy                 as np
 import matplotlib.pyplot     as plt
 
-#from imageio                 import imread
+from imageio                 import imread
 from PIL                     import Image
 from mpl_toolkits.mplot3d    import Axes3D
 from matplotlib              import cm
@@ -54,13 +54,35 @@ if __name__ == "__main__":
 	p_degree = 10 			# degree of polynomial
 	k        = 20
 
-	# Creating data values x and y
+	# Creating data values x and y (Franke)
+	#--------------------------------------------------------------------------
+
 	x    = np.sort(np.random.uniform(0, 1, n_x))
 	y    = np.sort(np.random.uniform(0, 1, n_x))
 
 	x, y = np.meshgrid(x,y)
 	z 	 = project1_func.FrankeFunction(x,y)  # true function
 
+	# Variables and data values for Terrain data
+	#--------------------------------------------------------------------------
+
+	# Reading and creating data array from the .tif file
+	terrain_image       = imread('PIA23328.tif')
+
+	# Cropping the image (zooming in on the crater)
+	reduced_image       = terrain_image[700:1100, 200:600]
+
+	terrain_arr         = np.array(terrain_image)
+	x_terrain           = np.arange(0, terrain_arr.shape[1])/(terrain_arr.shape[1]-1)
+	y_terrain           = np.arange(0, terrain_arr.shape[0])/(terrain_arr.shape[0]-1)
+	x_terrain,y_terrain = np.meshgrid(x_terrain, y_terrain)
+
+	# Reduce internal points in the cropped image
+	final_image         = cv2.resize(reduced_image, dsize=(200, 200), interpolation=cv2.INTER_NEAREST)
+	x_                  = np.arange(0, final_image.shape[1])/(final_image.shape[1]-1)
+	y_                  = np.arange(0, final_image.shape[0])/(final_image.shape[0]-1)
+	x_,y_               = np.meshgrid(x_,y_)
+	z_terrain           = np.ravel(final_image)
 
 	if OLS_method == True:
 		print('Part a: Ordinary Least Square on The Franke function with resampling')
@@ -91,14 +113,16 @@ if __name__ == "__main__":
 
 
 		# Plotting the 3D model of the Franke function
-		project1_plot.Plot_3D_Franke(x, y, data, model, m, 'franke_model', func="OLS", noise=True, savefig=True)
+		project1_plot.Plot_3D_Franke(x, y, data, model, m, 'franke_model', func="OLS", savefig=False)
 		plt.show()
 
 		# Plotting the true franke function
-		project1_plot.Plot_3D_Franke(x, y, data, np.ravel(z), m, 'franke_true_function', func="True", noise=True, savefig=False)
+		project1_plot.Plot_3D_Franke(x, y, data, np.ravel(z), m, 'franke_true_function', func="True", savefig=False)
 		plt.show()
 
+		# Calculating and plotting the confidence interval
 		project1_func.CI(data, X, betas, model, method='OLS', dataset='Franke')
+		plt.show()
 
 		if noize == True:
 			file = open("Results/MSE_R2_noise_exercise_a.txt", "w")
@@ -192,12 +216,16 @@ if __name__ == "__main__":
 
 		index = np.arange(len(np.ravel(data)))
 
-		MSE_train, MSE_test, bias, variance = project1_func.k_fold(data, X, k, index, method='OLS', shuffle=True)
+		MSE_train, MSE_test, bias, variance, R2_train, R2_test = project1_func.k_fold(data, X, k, index, method='OLS', shuffle=True)
 
-		print("Training MSE")
+		print("MSE Train")
 		print(MSE_train)
-		print("Test MSE")
+		print("MSE Test")
 		print(MSE_test)
+		print("R2 Train")
+		print(R2_train)
+		print("R2 Test")
+		print(R2_test)
 
 		file.close()
 
@@ -219,7 +247,8 @@ if __name__ == "__main__":
 
 
 		# Plotting MSE test and train, and printing values to file
-		project1_plot.MSE_BV_Franke(x, y, data, k, p_degree, method='OLS', shuffle=False, savefig=True)
+		lamb=0
+		project1_plot.MSE_BV_Franke(x, y, data, k, p_degree, lamb, method='OLS', shuffle=False, savefig=True)
 		plt.show()
 
 
@@ -252,8 +281,8 @@ if __name__ == "__main__":
 
 		#Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x, y, data, k, p_min, p_max, lambdas, "Franke_Ridge", method='Ridge', shuffle=False, savefig=False)
 		#plt.show()
-		project1_plot.MSE_BV_Franke(x, y, data, k, p_max, method='Ridge', savefig=False, l=lambda_optimal)
-		plt.show()
+		#project1_plot.MSE_BV_Franke(x, y, data, k, p_max, lambda_optimal, method='Ridge', savefig=False)
+		#plt.show()
 
 		X_new = project1_func.CreateDesignMatrix(x,y, p_deg_optimal)
 		beta_new = project1_func.beta(np.ravel(z), X_new, method='Ridge', l=lambda_optimal)
@@ -261,7 +290,12 @@ if __name__ == "__main__":
 
 		#project1_plot.plot_3D(x, y, z, 10, 'file_name', func="Ridge", savefig=False)
 		#project1_plot.plot_3D(x, y, model_new, p_deg_optimal, 'file_name', func="Ridge", savefig=False)
-		project1_plot.Plot_3D_Franke(x, y, z, model_new, p_deg_optimal, 'final_model_Ridge_franke', func="Ridge", scatter=True, savefig=True, l=lambda_optimal)
+		#project1_plot.Plot_3D_Franke(x, y, z, model_new, p_deg_optimal, 'final_model_Ridge_franke', func="Ridge", scatter=True, savefig=True, l=lambda_optimal)
+		#plt.show()
+
+		# Printing and calculating the confidence intervals for Ridge with the best lambda
+		# Need to comment out MSE_BV_Franke before running (ValueError: I/O operation on closed file.)
+		project1_func.CI(z, X_new, beta_new, model_new, method='Ridge', dataset='Franke')
 		plt.show()
 
 
@@ -271,7 +305,7 @@ if __name__ == "__main__":
 
 		#X = project1_func.CreateDesignMatrix(x,y, n=p_degree)
 
-		noize = True # planning to have this as an argument input
+		noize = True
 
 		if noize == True:
 			print('The data contains a normally distributed noise')
@@ -283,133 +317,280 @@ if __name__ == "__main__":
 			print("")
 			data = project1_func.Create_data(x, y, z, noise=False)
 
-		lambdas = np.logspace(-7, -4, 50)
+		lambdas = np.logspace(-6.8, -5, 100)
 
 		best_lambda = np.zeros(p_degree)
 
 		p_min =  4
-		p_max =  5
+		p_max =  6
 
-		p_deg_optimal  = 5
-		lambda_optimal = 1e-6
+		p_deg_optimal  = 4
+		lambda_optimal = 1.67683e-6
 
-		#Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x, y, data, k, p_min, p_max, lambdas, "Franke_Lasso", method='Lasso', shuffle=False, savefig=True)
-		#plt.show()
+		# Need to run this from 0 to p_degree to get all the values
 
-		project1_plot.MSE_BV_Franke(x, y, data, k, p_max, method='Lasso', savefig=True, l=lambda_optimal)
+		#'The best lambda value for each degree:'
+		#'For degree=4 - Best alpha=1.67683e-06 - Min MSE=1.01693'
+		#'For degree=5 - Best alpha=2.17137e-07 - Min MSE=1.01728'
+		#'For degree=6 - Best alpha=1.25893e-07 - Min MSE=1.01672'
+
+		Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x, y, data, k, p_min, p_max, lambdas, "Franke_Lasso", method='Lasso', shuffle=False, savefig=True)
 		plt.show()
+
+		#project1_plot.MSE_BV_Franke(x, y, data, k, p_max, method='Lasso', savefig=True, l=lambda_optimal)
+		#plt.show()
 
 		X_new = project1_func.CreateDesignMatrix(x,y, p_deg_optimal)
 		lasso = Lasso(max_iter = 1e2, tol=0.001, normalize = True) #fit_intercept=False
-		#scaler = StandardScaler()
+		scaler = StandardScaler()
 		lasso.set_params(alpha=lambda_optimal)
 		lasso.fit(X_new, data)
-		beta = lasso.coef_
+		beta_new = lasso.coef_
 		model_new = lasso.predict(X_new)
 
-		project1_plot.Plot_3D_Franke(x, y, z, model_new, p_deg_optimal, 'final_model_Lasso_franke', func="Lasso", scatter=True, savefig=True, l=lambda_optimal)
-		plt.show()
+		#project1_plot.Plot_3D_Franke(x, y, z, model_new, p_deg_optimal, 'final_model_Lasso_franke_', func="Lasso", scatter=True, savefig=True, l=lambda_optimal)
+		#plt.show()
+
+
+		# Printing and calculating the confidence intervals for Lasso with the best lambda
+		# Need to comment out MSE_BV_Franke before running (ValueError: I/O operation on closed file.)
+		#project1_func.CI(z, X_new, beta_new, model_new, method='Lasso', dataset='Franke')
+		#plt.show()
+
+		# Plotting MSE test and train for all the model in the same plot
+		#project1_plot.MSE_BV_Franke(x, y, data, k, p_max, method='Lasso', savefig=False, l=1.67683e-6)
+		#project1_plot.MSE_BV_Franke(x, y, data, k, p_max, method='Ridge', savefig=False, l=0.00148497)
+		#project1_plot.MSE_BV_Franke(x, y, data, k, p_max, method='OLS', savefig=False)
+		#plt.show()
 
 
 	elif Real_data == True:
-		print('Part f: Real data')
+		print('Part f: Real data. Plot terrain images')
 		print('-----------------')
 
-		terrain_image = scipy.misc.imread("PIA23328.tif")
-		#terrain_image = imread('PIA23328.tif')
-		reduced_image = terrain_image[700:1100, 200:600]  # Crater on Mars
-
-		print(terrain_image.shape, reduced_image.shape)
-
-
-		terrain_arr   = np.array(terrain_image)
-		n_x           = len(terrain_arr)
-
-		x             = np.arange(0, terrain_arr.shape[1])/(terrain_arr.shape[1]-1)
-		y             = np.arange(0, terrain_arr.shape[0])/(terrain_arr.shape[0]-1)
-		x,y           = np.meshgrid(x,y)
-
-		#final_image = cv2.resize(reduced_image, dsize=(200, 200), interpolation=cv2.INTER_NEAREST)
-		x_          = np.arange(0, final_image.shape[1])/(final_image.shape[1]-1)
-		y_          = np.arange(0, final_image.shape[0])/(final_image.shape[0]-1)
-		x_,y_       = np.meshgrid(x_,y_)
-
-		#print(final_image.shape)
-
-
-
-		'''
 		plt.figure(1)
-		project1_plot.plot_terrain(x,y,terrain_image, "Terrain_original", func="Original", string='Utopia Planitia, Mars', savefig=True)
+		project1_plot.plot_terrain(x_terrain,y_terrain,terrain_image, "Terrain_original", func="Original", string='Utopia Planitia, Mars', savefig=True)
 		plt.figure(2)
-		project1_plot.plot_terrain(x,y,reduced_image, "Terrain_cropped", func="Original", string='Unnamed crater in Utopia Planitia, Mars', savefig=True)
+		project1_plot.plot_terrain(x_terrain,y_terrain,reduced_image, "Terrain_cropped", func="Original", string='Unnamed crater in Utopia Planitia, Mars', savefig=True)
 		plt.figure(3)
 		project1_plot.plot_terrain(x_,y_,final_image, "Terrain_final", func="Original", string='Unnamed crater in Utopia Planitia, Mars', savefig=True)
 		plt.figure(4)
 		project1_plot.plot_3D(x_, y_,final_image, p_degree, "3D_terrain_real_data", "Final_terrain", savefig=True)
 		plt.show()
-		'''
-
 
 
 	elif Best_fit == True:
-		print('Part g: Best fit of Terrain data')
+		"""
+		OLS_p5 				| Runs a similar scenario as ex a), for polynomial degree 5.
+		OLS_kfold_p5
+		OLS_best			| Runs a OLS regression with k-fold CV, with the best model/p_degree. Calculates the bias-variance tradeoff
+		Ridge_MSEvsLambda 	| Runs a simulation and plots MSE vs Lambda values for i-polynomial degrees. A little slow process
+							  Used to find the polynomial degree and lambda value for Ridge which gives the model with the lowest/best MSE.
+		Terrain_Ridge_calc  | Uses the best fit model, best p_degree and lambda value, to plot a MSE vs comlexity plot and terrain 2D and 3D images
+		Lasso_MSEvsLambda 	| Runs a simulation and plots MSE vs Lambda values for i-polynomial degrees. A VERY slow process
+							  Used to find the polynomial degree and lambda value for Lasso which gives the model with the lowest/best MSE.
+		Lasso_best 			| Uses the best fit model, best p_degree and lambda value, to plot a MSE vs comlexity plot and terrain 2D and 3D images
+		Confidence_interval | Confidence interval for the best OLS, Ridge and Lasso model. txt file
+							  Note: OLS_best_BV = Terrain_Ridge_calc = Terrain_Lasso_calc = True
+		"""
+		print('Part g: Terrain data - Best fit calculations')
 		print('----------------')
-		"""
-		poly = 8
 
-		terrain_image = imread('PIA23328.tif')
-		reduced_image = terrain_image[700:1100, 200:600]  # Mars
+		OLS_p5              = False
+		OLS_kfold_p5        = False
+		OLS_best_BV         = True
 
-		terrain_arr   = np.array(terrain_image)
-		n_x           = len(terrain_arr)
+		Ridge_MSEvsLambda   = False		# A little slow to run
+		Terrain_Ridge_calc  = True
 
-		x             = np.arange(0, terrain_arr.shape[1])/(terrain_arr.shape[1]-1)
-		y             = np.arange(0, terrain_arr.shape[0])/(terrain_arr.shape[0]-1)
-		x,y           = np.meshgrid(x,y)
+		Lasso_MSEvsLambda   = False		# VERY slow to run!
+		Terrain_Lasso_calc  = True
 
-		#final_image = cv2.resize(reduced_image, dsize=(200, 200), interpolation=cv2.INTER_NEAREST)
-		x_          = np.arange(0, final_image.shape[1])/(final_image.shape[1]-1)
-		y_          = np.arange(0, final_image.shape[0])/(final_image.shape[0]-1)
-		x_,y_       = np.meshgrid(x_,y_)
+		Confidence_interval = True
 
-		X = project1_func.CreateDesignMatrix(x_,y_, n=poly)
+		#----------------------------------------------------------------------
+		if OLS_p5 == True:
+			print("Terrain data - Ex.a: OLS. Polynomial degree 5")
+			print("--"*35)
 
-		z = np.ravel(final_image)
+			p_degree_a   = 5
+			X_a          = project1_func.CreateDesignMatrix(x_,y_, n=p_degree_a)
+			betas, model = project1_func.OrdinaryLeastSquares(z_terrain, X_a)
+			project1_plot.plot_3D(x_, y_,final_image, p_degree_a, "3D_terrain_model", "Final_terrain", savefig=True)
+			plt.show()
+			project1_plot.plot_3D(x_, y_, model, p_degree_a, 'file_name', func="OLS", savefig=True)
 
-		betas, model = project1_func.OrdinaryLeastSquares(z, X)
+			plt.show()
+			project1_plot.plot_terrain(x_, y_, model, p_degree_a, 0, "OLS_p5", func="OLS", string='Unnamed crater in Utopia Planitia, Mars', savefig=True)
+			plt.show()
+
+			# Computing the MSE and R2 score between the true data and the model
+			MSE = project1_func.MeanSquaredError(z_terrain, model)
+			R_2 = project1_func.R2_ScoreFunction(z_terrain, model)
+
+			print("MSE and R2 vs scikit learn, bias and variance:")
+			print('Mean Square Error, Terrain:  ' , MSE)
+			print('MSE sklearn, Terrain:        ' , mean_squared_error(z_terrain, model))
+			print('R^2 Score function, Terrain: ' , R_2)
+			print('R^2 sklearn, Terrain:        ' , r2_score(z_terrain, model))
+			print('Bias:                        ' , project1_func.Bias(z_terrain, model))
+			print('Variance:                    ' , np.var(model))
+
+			# Confidence interval. Plotted and printed to terminal
+			project1_func.CI(z_terrain, X_a, betas, model, p_degree_a, method='OLS', dataset='Terrain', plot=True)
+			plt.show()
+			project1_func.CI(z_terrain, X_a, betas, model, p_degree_a, method='OLS', dataset='Terrain', plot=False)
+
+		if OLS_kfold_p5 == True:
+			print("Terrain data - Ex.b: OLS with k-fold CV")
+			print("--"*35)
+
+			p_degree_a   = 5
+			index        = np.arange(len(np.ravel(z_terrain)))
+			X_a          = project1_func.CreateDesignMatrix(x_,y_, n=p_degree_a)
+			betas, model = project1_func.OrdinaryLeastSquares(z_terrain, X_a)
+
+			MSE_train, MSE_test, bias, variance, R2_train, R2_test = project1_func.k_fold(z_terrain, X_a, k, index, method='OLS', shuffle=True)
+			# Print MSE, R2, bias and variance to terminal
+			print('MSE Test:                    ' , MSE_test)
+			print('R2 Test:                     ' , R2_test)
+			print('Bias:                        ' , project1_func.Bias(z_terrain, model))
+			print('Variance:                    ' , np.var(model))
 
 
-		project1_plot.plot_3D(x_, y_,final_image, p_degree, "3D_terrain_model", "Final_terrain", savefig=False)
-		plt.show()
-		project1_plot.plot_3D(x_, y_, model, poly, 'file_name', func="OLS", savefig=False)
+		if OLS_best_BV == True:
+			print("Terrain data - Ex.c: Bias-Variance Tradeoff and best model for OLS with k-fold CV")
+			print("--"*35)
 
-		plt.show()
-		#model_plot = np.reshape(model, (len(y_), len(x_)))
-		project1_plot.plot_terrain(x_,y_,model, "Terrain_model", func="Original", string='Unnamed crater in Utopia Planitia, Mars', savefig=False)
-		plt.show()
-		"""
+			p_max = 12
+			lamb  = 0
+
+			# Plotting MSE test and train, and printing values to file
+			#project1_plot.MSE_BV_Terrain(x_, y_, z_terrain, k, p_max, lamb, method='OLS', shuffle=False, savefig=True)
+			#plt.show()
+
+			# Use best p_deg from plot, make a new 3D plot with that value. Make new model
+			p_deg_optimal  = 8
+			X_new          = project1_func.CreateDesignMatrix(x_, y_, p_deg_optimal)
+			beta_new       = project1_func.beta(z_terrain, X_new, method='OLS')
+			model_new      = X_new @ beta_new
+
+			project1_plot.plot_3D(x_, y_, model_new, p_deg_optimal, "OLS_final_model_Terrain", func="OLS", savefig=False)
+			plt.show()
+			project1_plot.plot_terrain(x_,y_,model_new, p_deg_optimal, lamb, "Terrain_final_best_p_OLS", func="OLS", string='Unnamed crater in Utopia Planitia, Mars', savefig=False)
+			plt.show()
+
+			# Calculate the confidence interval for the best OLS model. Printed to terminal
+			# Need to comment out MSE_BV_Franke before running (ValueError: I/O operation on closed file.)
+			project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='OLS', dataset='Terrain')
+			plt.show()
+
+			# Confidence interval. Plotted and printed to terminal
+			project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='OLS', dataset='Terrain', plot=True)
+			plt.show()
+			CI_OLS = project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='OLS', dataset='Terrain', plot=False)
+			#print(CI_OLS)
+
+		if Terrain_Ridge_calc == True:
+			print("Terrain data - Ex.d: Ridge regression on terrain data")
+			print("--"*35)
+
+			#best_lambda = np.zeros(p_degree)
+			p_min =  9
+			p_max =  14
+
+			if Ridge_MSEvsLambda == True:
+
+				lambdas     = np.logspace(-6.9, -4.5, 20)
+				#lam_for_BV  = [1e-4, 1e-3, 0.01, 0.1, 0, 1]
+
+				Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x_, y_, z_terrain, k, p_min, p_max, lambdas, "Terrain_Ridge", method='Ridge', shuffle=False, savefig=True)
+				plt.show()
+
+			# Found from Ridge_MSEvsLambda
+			lambda_optimal = 5.38988e-07
+			p_deg_optimal  = 9
+
+			#project1_plot.MSE_BV_Terrain(x_, y_, z_terrain, k, p_max, lambda_optimal, method='Ridge', savefig=True)
+			#plt.show()
+
+			X_new = project1_func.CreateDesignMatrix(x_, y_, p_deg_optimal)
+			beta_new = project1_func.beta(z_terrain, X_new, method='Ridge', l=lambda_optimal)
+			model_new  = X_new @ beta_new
+
+			project1_plot.plot_3D(x_, y_, model_new, p_deg_optimal, "Ridge_final_model_Terrain_", func="Ridge", savefig=True)
+			plt.show()
+			project1_plot.plot_terrain(x_, y_, model_new, p_deg_optimal, lambda_optimal, 'Terrain_final_best_p_Ridge', func="Ridge", string='Unnamed crater in Utopia Planitia, Mars', savefig=True)
+			plt.show()
+
+			# Printing and calculating the confidence intervals for Ridge with the best lambda
+			# Need to comment out MSE_BV_Franke before running (ValueError: I/O operation on closed file.)
+			project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='Ridge', dataset='Terrain', plot=True)
+			plt.show()
+			CI_Ridge = project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='Ridge', dataset='Terrain', plot=False)
+
+
+		if Terrain_Lasso_calc == True:
+			print("Terrain data - Ex.e: Lasso regression on terrain data")
+			print("--"*35)
+
+			p_min =  9
+			p_max =  12
+
+			if Lasso_MSEvsLambda == True:
+
+				lambdas = np.logspace(-6.9, -5.5, 20)
+				#lambdas = [1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 0.1, 1.0, 10, 1e2, 1e3]
+
+				Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x_, y_, z_terrain, k, p_min, p_max, lambdas, "Terrain_Lasso", method='Lasso', shuffle=False, savefig=False)
+				plt.show()
+
+			p_deg_optimal  = 10
+			lambda_optimal = 3e-5
+
+			#project1_plot.MSE_BV_Terrain(x_, y_, z_terrain, k, p_max, lambda_optimal, method='Lasso', savefig=True)
+			#plt.show()
+
+			X_new     = project1_func.CreateDesignMatrix(x_,y_, p_deg_optimal)
+			lasso     = Lasso(max_iter = 5e3, tol=0.00001, normalize=True, fit_intercept=False)
+			lasso.set_params(alpha=lambda_optimal)
+			lasso.fit(X_new, z_terrain)
+			beta      = lasso.coef_
+			model_new = lasso.predict(X_new)
+
+			project1_plot.plot_3D(x_, y_, model_new, p_deg_optimal, "Lasso_final_model_Terrain_", func="Lasso", savefig=True)
+			plt.show()
+			project1_plot.plot_terrain(x_, y_, model_new, p_deg_optimal, lambda_optimal, 'Terrain_final_best_p_Lasso', func="Lasso", string='Unnamed crater in Utopia Planitia, Mars', savefig=True)
+			plt.show()
+
+			MSE = project1_func.MeanSquaredError(z_terrain, model_new)
+			R_2 = project1_func.R2_ScoreFunction(z_terrain, model_new)
+
+			print('MSE:', MSE)
+			print('R_2:', R_2)
+
+			# Printing and calculating the confidence intervals for Ridge with the best lambda
+			# Need to comment out MSE_BV_Franke before running (ValueError: I/O operation on closed file.)
+			project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='Lasso', dataset='Terrain', plot=True)
+			plt.show()
+			CI_Lasso = project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='Lasso', dataset='Terrain', plot=False)
 
 
 
+		if Confidence_interval == True:
 
-		#model = project1_func.OrdinaryLeastSquares(terrain_arr, X)
-		#l_r = LinearRegression()
-		#l_r.fit(X, terrain_arr)
-		#model = l_r.predict(X)
+			file_ = open("Results/Confidence_interval_Terrain_ALL.txt", "w")
+			sys.stdout = file_
+			print("OLS")
+			print("        Beta             -                + ")
+			print(CI_OLS)
+			print("--"*20)
+			print("Ridge")
+			print("        Beta             -                + ")
+			print(CI_Ridge)
+			print("--"*20)
+			print("Lasso")
+			print("        Beta             -                + ")
+			print(CI_Lasso)
 
-		'''
-		lasso = Lasso(max_iter = 1e3, tol=0.001, normalize = True)
-		lasso.set_params(alpha=1e-3)
-		lasso.fit(X, terrain_arr)
-		model = lasso.predict(X)
-
-		MSE = project1_func.MeanSquaredError(terrain_arr, model)
-		R_2 = project1_func.R2_ScoreFunction(terrain_arr, model)
-
-		print('MSE:', MSE)
-		print('R_2:', R_2)
-
-		project1_plot.plot_terrain(x,y,model, string='Lasso')
-		project1_plot.plot_3D(x, y,model, string='Lasso')
-		'''
+			file_.close()
