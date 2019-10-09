@@ -252,6 +252,11 @@ if __name__ == "__main__":
 		beta_new = project1_func.beta(np.ravel(z), X_new, method='OLS')
 		model_new  = X_new @ beta_new
 
+		# Calculate MSE and R2 for the best model
+		MSE = project1_func.MeanSquaredError(np.ravel(z), model_new)
+		R_2 = project1_func.R2_ScoreFunction(np.ravel(z), model_new)
+		print('Model mean MSE: %-10g, and R2 score: %-10g' %(MSE, R_2))
+
 		project1_plot.Plot_3D_Franke(x, y, np.ravel(z), model_new, p_deg_optimal, "OLS_final_model", func="OLS", scatter=True, savefig=True)
 		plt.show()
 
@@ -290,6 +295,11 @@ if __name__ == "__main__":
 		project1_plot.Plot_3D_Franke(x, y, z, model_new, p_deg_optimal, 'final_model_Ridge_franke', func="Ridge", scatter=True, savefig=True, l=lambda_optimal)
 		plt.show()
 
+		# Calculate MSE and R2 for the best model
+		MSE = project1_func.MeanSquaredError(np.ravel(z), model_new)
+		R_2 = project1_func.R2_ScoreFunction(np.ravel(z), model_new)
+		print('Model mean MSE: %-10g, and R2 score: %-10g' %(MSE, R_2))
+
 		# Printing and calculating the confidence intervals for Ridge with the best lambda
 		project1_func.CI(z, X_new, beta_new, model_new, p_deg_optimal, method='Ridge', dataset='Franke', plot=True)
 		plt.show()
@@ -323,10 +333,6 @@ if __name__ == "__main__":
 
 			Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x, y, data, k, p_min, p_max, lambdas, "Franke_Lasso", method='Lasso', shuffle=False, savefig=True)
 			plt.show()
-			#'The best lambda value for each degree:'
-			#'For degree=4 - Best alpha=1.67683e-06 - Min MSE=1.01693'
-			#'For degree=5 - Best alpha=2.17137e-07 - Min MSE=1.01728'
-			#'For degree=6 - Best alpha=1.25893e-07 - Min MSE=1.01672'
 
 		p_deg_optimal  = 4
 		lambda_optimal = 1.67683e-6
@@ -352,11 +358,11 @@ if __name__ == "__main__":
 		CI_Lasso_F = project1_func.CI(z, X_new, beta_new, model_new, p_deg_optimal, method='Lasso', dataset='Franke', plot=False)
 		print(CI_Lasso_F)
 
-		# Plotting MSE test and train for all the model in the same plot
-		#project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_degree, 0,          method='OLS',   dataset='Franke', savefig=False)
-		#project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_degree, 0.00148497, method='Ridge', dataset='Franke', savefig=False)
-		#project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_degree, 1.67683e-6, method='Lasso', dataset='Franke', savefig=False)
-		#plt.show()
+		# Calculate MSE and R2 for the best model
+		MSE = project1_func.MeanSquaredError(np.ravel(z), model_new)
+		R_2 = project1_func.R2_ScoreFunction(np.ravel(z), model_new)
+		print('Model mean MSE: %-10g, and R2 score: %-10g' %(MSE, R_2))
+
 
 
 	elif Real_data == True:
@@ -479,6 +485,11 @@ if __name__ == "__main__":
 			project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='OLS', dataset='Terrain')
 			plt.show()
 
+			# Calculate MSE and R2 for the best model
+			MSE = project1_func.MeanSquaredError(z_terrain, model_new)
+			R_2 = project1_func.R2_ScoreFunction(z_terrain, model_new)
+			print('Model mean MSE: %-10g, and R2 score: %-10g' %(MSE, R_2))
+
 			# Confidence interval. Plotted and printed to terminal
 			project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='OLS', dataset='Terrain', plot=True)
 			plt.show()
@@ -516,6 +527,11 @@ if __name__ == "__main__":
 			project1_plot.plot_terrain(x_, y_, model_new, p_deg_optimal, lambda_optimal, 'Terrain_final_best_p_Ridge', func="Ridge", string='Unnamed crater in Utopia Planitia, Mars', savefig=True)
 			plt.show()
 
+			# Calculate MSE and R2 for the best model
+			MSE = project1_func.MeanSquaredError(z_terrain, model_new)
+			R_2 = project1_func.R2_ScoreFunction(z_terrain, model_new)
+			print('Model mean MSE: %-10g, and R2 score: %-10g' %(MSE, R_2))
+
 			# Printing and calculating the confidence intervals for Ridge with the best lambda
 			project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='Ridge', dataset='Terrain', plot=True)
 			plt.show()
@@ -526,24 +542,23 @@ if __name__ == "__main__":
 			print("Terrain data - Ex.e: Lasso regression on terrain data")
 			print("--"*35)
 
-			p_min =  0
-			p_max =  11
+			p_min =  5
+			p_max =  6
 
 			if Lasso_MSEvsLambda == True:
 
-				lambdas = np.logspace(-6, -1, 10)
+				lambdas = np.logspace(-6, -1, 15)
 				"""
-				For degree=9 - Best alpha=0.00774264 - Min MSE=1534.91
+				For degree=8  - Best alpha=0.00129155 - Min MSE=1476.89
+				For degree=9  - Best alpha=0.00774264 - Min MSE=1534.91
 				For degree=10 - Best alpha=0.00774264 - Min MSE=1513.16
 				For degree=11 - Best alpha=0.000599484 - Min MSE=1489.17
-				For degree=12 - Best alpha=1e-06 - Min MSE=1465.84
 				"""
-
 				Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x_, y_, z_terrain, k, p_min, p_max, lambdas, "Terrain_Lasso", method='Lasso', shuffle=True, savefig=False)
 				plt.show()
 
 			p_deg_optimal  = 8
-			lambda_optimal = 0.01
+			lambda_optimal = 0.00129155
 
 			# Plotting MSE/R2 test and train, bias-variance, and prints values to terminal
 			project1_plot.Plot_MSE_R2_BV(x_, y_, z_terrain, k, p_max, lambda_optimal, method='Lasso', dataset='Terrain', savefig=True)
@@ -564,7 +579,7 @@ if __name__ == "__main__":
 			# Calculate MSE and R2 for the best model
 			MSE = project1_func.MeanSquaredError(z_terrain, model_new)
 			R_2 = project1_func.R2_ScoreFunction(z_terrain, model_new)
-			print('Model mean MSE: %-10g, and R2 score: %-10g' (MSE, R_2))
+			print('Model mean MSE: %-10g, and R2 score: %-10g' %(MSE, R_2))
 
 			# Printing and calculating the confidence intervals for Ridge with the best lambda
 			project1_func.CI(z_terrain, X_new, beta_new, model_new, p_deg_optimal, method='Lasso', dataset='Terrain', plot=True)

@@ -1,4 +1,4 @@
-Results/Ridge_Terrain_p14
+Ridge Terrain p: 0-14
 
 Train MSE:
 [2120.417242   1879.71927524 1711.4420355  1621.25163457 1353.94699598

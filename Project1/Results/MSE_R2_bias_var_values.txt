@@ -2,33 +2,21 @@ MSE og R2 score
 -----------------------------------------------------------------
 Franke
 -----------------------------------------------------------------
-OLS, m=5
---------------------------
-ADD
-
-OLS, m=5, with kfold, k=5
---------------------------
-ADD
-
 
 Best models
--------------------------------------------------------
+-----------------------------------------------------------------
 
 OLS	m=6
+Model mean MSE: 0.00115391, and R2 score: 0.986024
 --------------------------
 
-
-
-Ridge	m=7 	MSE=		lambda=0.00148497
+Ridge	m=7 	lambda=0.00148497
+Model mean MSE: 0.00146716, and R2 score: 0.98223
 --------------------------
 
-
-
-
-Lasso	m= 	MSE=		lambda=
+Lasso	m= 4	lambda= 1.67683e-6
+Model mean MSE: 0.0104423 , and R2 score: 0.873526
 --------------------------
-
-
 
 -----------------------------------------------------------------
 Terrain
@@ -50,27 +38,17 @@ Bias:                         2120.5439014775
 Variance:                     902.2923715616073
 
 
-
 Best models
 -------------------------------------------------------
 
-OLS	m=8 	MSE=919.0552386
+OLS	m=8 	
+Model mean MSE: 752.996   , and R2 score: 0.644904
 --------------------------
 
-
--
-The best lambda value for each degree:
-For degree=9 - Best alpha=2.25233e-07 - Min MSE=842.993
-For degree=10 - Best alpha=9.64296e-07 - Min MSE=844.082
-For degree=11 - Best alpha=3.08655e-06 - Min MSE=850.915
-For degree=12 - Best alpha=5.52211e-06 - Min MSE=861.549
--
-
-Ridge	m= 	MSE=		lambda=
+Ridge	m= 9	lambda= 5.38988e-07
+Model mean MSE: 729.121   , and R2 score: 0.656163
 --------------------------
 
-
-
-
-Lasso	m= 	MSE=		lambda=
+Lasso	m= 8	lambda= 0.00129155
+Model mean MSE: 1166.15   , and R2 score: 0.450073
 --------------------------

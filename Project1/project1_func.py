@@ -192,7 +192,7 @@ def k_fold(data, X, k, index, method=None, l=None, shuffle=False):
 			ypredict = X_test @ betas
 
 		elif method == 'Lasso':
-			lasso    = Lasso(max_iter = 1e2, tol=0.001, normalize=True, fit_intercept=False)
+			lasso    = Lasso(max_iter = 2e2, tol=0.001, normalize=True, fit_intercept=False)
 			scaler   = StandardScaler()
 			lasso.set_params(alpha=l)
 			lasso.fit(X_train, z_train)
