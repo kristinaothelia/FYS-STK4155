@@ -32,6 +32,7 @@ def FrankeFunction(x, y):
 
 def Create_data(x, y, z, noise=False):
 	"""
+	z-input is from FrankeFunction
 	Function that adds noise to data if wanted, and returns data (z)
 	as np.ravel(z)
 	"""
@@ -51,7 +52,7 @@ def Create_data(x, y, z, noise=False):
 def CreateDesignMatrix(x, y, n):
 	"""
 	Function for creating a design X-matrix,
-	with rows [1, x, y, x^2, xy, xy^2 , etc.]
+	with rows [1, x, y, x^2, xy, y^2 , etc.]
 	Input x, y 		| Datpoints x and y after meshgrid
 	Input n			| The degree of the polynomial you want to fit
 	"""
