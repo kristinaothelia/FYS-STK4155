@@ -47,7 +47,7 @@ def Plot_MSE_R2_BV(x, y, data, k, p_degree, lamb, method='OLS', dataset='Franke'
 
 	print("Calculations for %s, %s with p: 0-%g" %(method, dataset, p_degree))
 	print("--"*35)
-	
+
 	print("Train MSE:")
 	print(MSE_train)
 	print("Test MSE:")

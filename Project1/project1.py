@@ -247,6 +247,7 @@ if __name__ == "__main__":
 
 		# Use best p_deg from plot, make a new 3D plot with that value
 		p_deg_optimal  = 6
+
 		# Make new model
 		X_new = project1_func.CreateDesignMatrix(x, y, p_deg_optimal)
 		beta_new = project1_func.beta(np.ravel(z), X_new, method='OLS')
@@ -264,11 +265,8 @@ if __name__ == "__main__":
 		print('Part d: Ridge Regression on The Franke function with resampling')
 		print('---------------------------------------------------------------')
 
-		data = project1_func.Create_data(x, y, z, noise=True)
-
+		data    = project1_func.Create_data(x, y, z, noise=True)
 		lambdas = np.logspace(-5, -3, 50)
-
-		best_lambda = np.zeros(p_degree)
 
 		# Change p_min if you want a plot with less graphs
 		# Need to run this from 0 to p_degree to get all the values
@@ -284,7 +282,7 @@ if __name__ == "__main__":
 		lambda_optimal = 0.00148497
 		p_deg_optimal  = 7
 
-		project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_max, lambda_optimal, method='Ridge', dataset='Franke', savefig=True)
+		project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_degree, lambda_optimal, method='Ridge', dataset='Franke', savefig=True)
 		plt.show()
 
 		X_new = project1_func.CreateDesignMatrix(x,y, p_deg_optimal)
@@ -297,6 +295,7 @@ if __name__ == "__main__":
 
 		# Calculate MSE and R2 for the best model
 		MSE = project1_func.MeanSquaredError(np.ravel(z), model_new)
+		MSE = mean_squared_error(np.ravel(z), model_new)
 		R_2 = project1_func.R2_ScoreFunction(np.ravel(z), model_new)
 		print('Model mean MSE: %-10g, and R2 score: %-10g' %(MSE, R_2))
 
@@ -337,7 +336,7 @@ if __name__ == "__main__":
 		p_deg_optimal  = 4
 		lambda_optimal = 1.67683e-6
 
-		project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_max, lambda_optimal, method='Lasso', dataset='Franke', savefig=True)
+		project1_plot.Plot_MSE_R2_BV(x, y, data, k, p_degree, lambda_optimal, method='Lasso', dataset='Franke', savefig=True)
 		plt.show()
 
 		# Make a new model
