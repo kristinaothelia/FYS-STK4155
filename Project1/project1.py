@@ -273,10 +273,10 @@ if __name__ == "__main__":
 		p_min =  6
 		p_max =  9
 
-		MSEvsLambda = False
+		MSEvsLambda = True
 		if MSEvsLambda == True:
 
-			Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x, y, data, k, p_min, p_max, lambdas, "Franke_Ridge", method='Ridge', shuffle=False, savefig=False)
+			Deg, Best_lamb, Min_MSE = project1_plot.plot_MSE_lambda(x, y, data, k, p_min, p_max, lambdas, "Franke_Ridge", method='Ridge', shuffle=False, savefig=True)
 			plt.show()
 
 		lambda_optimal = 0.00148497
@@ -546,6 +546,7 @@ if __name__ == "__main__":
 
 			if Lasso_MSEvsLambda == True:
 
+				#Find the best lambda value
 				lambdas = np.logspace(-6, -1, 15)
 				"""
 				For degree=8  - Best alpha=0.00129155 - Min MSE=1476.89
@@ -560,6 +561,7 @@ if __name__ == "__main__":
 			lambda_optimal = 0.00129155
 
 			# Plotting MSE/R2 test and train, bias-variance, and prints values to terminal
+			# Finnd the best polynomial degree.
 			project1_plot.Plot_MSE_R2_BV(x_, y_, z_terrain, k, p_max, lambda_optimal, method='Lasso', dataset='Terrain', savefig=True)
 			plt.show()
 
