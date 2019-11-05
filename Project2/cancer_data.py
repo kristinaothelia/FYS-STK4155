@@ -28,3 +28,22 @@ logReg = linear_model.LogisticRegression()  # estimator
 kfold = KFold(n_splits=5,random_state=7)
 cv_results = cross_val_score(logReg, X, y, cv=kfold)
 #print(cv_results.mean()*100, "%")
+
+
+
+'''
+	# Setting the eta and gamma parameters
+	eta = 0.001
+	gamma = 0.0001  # learning rate? 
+	cancer = load_breast_cancer()
+	X = cancer.data
+	y = cancer.target
+
+	X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=0)
+
+	scaler = StandardScaler()
+	X_train = scaler.fit_transform(X_train)
+	X_test = scaler.transform(X_test)
+	logReg = LogisticRegression()
+	logReg.fit(X_train, y_train)
+'''
