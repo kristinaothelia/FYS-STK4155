@@ -43,7 +43,8 @@ def CreditCard():
     df = df.drop(df[(df.EDUCATION > 4)].index)
     df = df.drop(df[(df.EDUCATION < 1)].index)
 
-
+    
+    '''
     df = df.drop(df[(df.BILL_AMT1 == 0) &
                     (df.BILL_AMT2 == 0) &
                     (df.BILL_AMT3 == 0) &
@@ -57,14 +58,17 @@ def CreditCard():
                     (df.PAY_AMT4 == 0) &
                     (df.PAY_AMT5 == 0) &
                     (df.PAY_AMT6 == 0)].index)
+    '''
 
 
+    
     df = df.drop(df[(df.PAY_0 == 0)].index)
     df = df.drop(df[(df.PAY_2 == 0)].index)
     df = df.drop(df[(df.PAY_3 == 0)].index)
     df = df.drop(df[(df.PAY_4 == 0)].index)
     df = df.drop(df[(df.PAY_5 == 0)].index)
     df = df.drop(df[(df.PAY_6 == 0)].index)
+    
 
     df = df.drop(df[(df.PAY_0 < -1)].index)
     df = df.drop(df[(df.PAY_2 < -1)].index)
@@ -72,6 +76,16 @@ def CreditCard():
     df = df.drop(df[(df.PAY_4 < -1)].index)
     df = df.drop(df[(df.PAY_5 < -1)].index)
     df = df.drop(df[(df.PAY_6 < -1)].index)
+
+    df = df.drop(df[(df.PAY_0 > 9)].index)
+    df = df.drop(df[(df.PAY_2 > 9)].index)
+    df = df.drop(df[(df.PAY_3 > 9)].index)
+    df = df.drop(df[(df.PAY_4 > 9)].index)
+    df = df.drop(df[(df.PAY_5 > 9)].index)
+    df = df.drop(df[(df.PAY_6 > 9)].index)
+
+    
+    
 
     # Features and targets
     features = df.loc[:, (df.columns != 'defaultPaymentNextMonth') & (df.columns != "ID")].values # Features # & (df.columns != "ID")
