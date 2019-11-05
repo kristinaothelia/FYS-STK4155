@@ -10,44 +10,13 @@ from sklearn.model_selection import train_test_split
 # -----------------------------------------------------------------------------
 
 # Inputs : X, y, eta, lamb, minibatch_size, epochs, n_boots, nodes
-# hidden_layers = len(nodes)..?
+# hidden_layers = len(nodes)
 # n_boots for bootstrap
 
 #def weights_biases():
 #    pass
 
-
-# One hidden layer. Only a few nodes. Compare with sklearn
-
 def create_biases_and_weights(n_features, n_hidden_neurons, n_categories):
-
-    '''
-    weights = []
-    biases  = []
-
-    for n in range(hidden_layers):
-        if n == 0:
-            input_to_node = n_features
-        else:
-            input_to_node = w.shape[1]
-
-        # w = np.random.randn(input_to_node,self.nodes[n]) * np.sqrt(1./input_to_node)
-        w = (2/np.sqrt(input_to_node)) * np.random.random_sample((input_to_node, nodes[n])) - (1/np.sqrt(input_to_node))
-        # w = np.random.randn(input_to_node,self.nodes[n]) * np.sqrt(2/(input_to_node+self.nodes[n]))
-        weights.append(np.array(w))
-
-        b = np.zeros(nodes[n]) #+ 0.01
-        biases.append(b[:,np.newaxis])
-    '''
-
-    # define output weights and biases
-    w_out = np.random.rand(w.shape[1],self.y.shape[1])
-    self.weights.append(np.array(w_out))
-
-    b_out = np.zeros(w_out.shape[1]) #+ 0.01
-    self.biases.append(b_out[:,np.newaxis])
-
-
     hidden_weights = np.random.randn(n_features, n_hidden_neurons)
     hidden_bias = np.zeros(n_hidden_neurons) + 0.01
 
@@ -79,9 +48,6 @@ def feed_forward_train(X):
 	return a_h, probabilities
 
 def feed_forward_out(X):
-
-    hidden_weights, hidden_bias, output_weights, output_bias = (n_features, n_hidden_neurons, n_categories)
-
     # feed-forward for output
     z_h = np.matmul(X, hidden_weights) + hidden_bias
     a_h = sigmoid(z_h)

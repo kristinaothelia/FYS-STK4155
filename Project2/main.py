@@ -24,33 +24,16 @@ seed = 0
 np.random.seed(seed)
 # -----------------------------------------------------------------------------
 
-<<<<<<< HEAD
-features, target = CD.CreditCard(plot_hist=False)
-=======
 # Setting the eta and gamma parameters
 #eta = 0.001
 #gamma = 0.0001  # learning rate? 
->>>>>>> 6322bffd17bdf9c1c7ee797da95bc23e0307af6a
 
 eta = 0.01
 gamma = 0.1  # learning rate? 
 
-<<<<<<< HEAD
-CD.Make_histograms(X)
-
-#sc = StandardScaler()
-#robust_scaler = RobustScaler() transform
-"""
-eta = 0.001
-gamma = 0.0001
-betas = func.next_beta(X, y, eta, gamma)
-#print("betas")
-#print(betas)
-=======
 eta_range = [0.1, 0.01, 0.001, 0.0001, 1e-5, 1e-6, 1e-7]
 gamma_range = [0.1, 0.01, 0.001, 0.0001, 1e-5, 1e-6, 1e-7]
 
->>>>>>> 6322bffd17bdf9c1c7ee797da95bc23e0307af6a
 
 
 CreditCard = True
@@ -149,10 +132,6 @@ print(CM_DataFrame)
 cost = func.cost(X_test, y_train, betas_train)   # ytilde or model??
 print(cost)
 plt.plot(cost)
-<<<<<<< HEAD
-plot.show()
-"""
-=======
 plt.show()
 '''
 
@@ -231,7 +210,6 @@ for e in range(len(eta_range)):
 #sc = StandardScaler()
 #robust_scaler = RobustScaler() transform
 
->>>>>>> 6322bffd17bdf9c1c7ee797da95bc23e0307af6a
 
 # Should we use Regressor or Classifier ??
 
