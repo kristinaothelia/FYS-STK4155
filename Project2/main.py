@@ -22,13 +22,15 @@ seed = 0
 np.random.seed(seed)
 # -----------------------------------------------------------------------------
 
-features, target = CD.CreditCard()
+features, target = CD.CreditCard(plot_hist=False)
 
 X, y = CD.DesignMatrix(features, target)
 
+CD.Make_histograms(X)
+
 #sc = StandardScaler()
 #robust_scaler = RobustScaler() transform
-
+"""
 eta = 0.001
 gamma = 0.0001
 betas = func.next_beta(X, y, eta, gamma)
@@ -63,6 +65,7 @@ cost = func.cost(y_train, model)   # ytilde or model??
 print(cost)
 plt.plot(cost)
 plot.show()
+"""
 
 # Should we use Regressor or Classifier ??
 

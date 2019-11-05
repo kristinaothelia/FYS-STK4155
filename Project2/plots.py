@@ -17,13 +17,12 @@ def Histogram(category, name, x_label):
     #plt.savefig("Hist/"+name+".png")
     plt.show()
 
-def Multi_hist(list_, name, label, title_):
+def Multi_hist(list_, name, label, title_, diff=False):
 
     ncols = 3; nrows = 2
 
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols)
-
-    counter = 0
+    counter   = 0
 
     for i in range(nrows):
         for j in range(ncols):
@@ -31,28 +30,27 @@ def Multi_hist(list_, name, label, title_):
             ax = axes[i][j]
             if counter < 7:
 
-                #ax.hist(list_[counter], bins='auto', color='purple')
-                #ax.set_xlabel("Repayment status %s" %name[counter], fontsize=15)
-                #ax.set_ylabel("Observations count", fontsize=15)
-                #ax.set_title(name[counter], fontsize=15)
-
-                if list_ == "list_PAY":
+                if diff:
                     ax.hist(list_[counter], bins='auto', color='purple')
                     ax.set_xlabel("Repayment status %s" %name[counter], fontsize=15)
                     ax.set_ylabel("Observations count", fontsize=15)
                     ax.set_title(name[counter], fontsize=15)
                 else:
                     ax.hist(list_[counter], bins='auto', color='purple')
-                    ax.set_xlabel(label+"%s" %(counter), fontsize=15)
+                    ax.set_xlabel(label, fontsize=15)
                     ax.set_ylabel("Observations count", fontsize=15)
-                    ax.set_title(title_+"%s" %(counter), fontsize=15)
+                    ax.set_title(title_+"%g" %(counter+1), fontsize=15)
 
+                    for ax in fig.axes:
+                        plt.sca(ax)
+                        plt.xticks(rotation=20, ha='center')
 
             # Remove axis when we no longer have data
             else:
                 ax.set_axis_off()
 
             counter += 1
+
     plt.tight_layout(w_pad=-5, h_pad=-1)
     plt.show()
 
@@ -86,6 +84,6 @@ def Hist_Sex_Marriage_Education(category, name):
     plt.title("Histogram for " + name)
     plt.xlabel(name)
     plt.ylabel("Observations count")
-    plt.savefig("Hist/"+name+".png")
+    #plt.savefig("Hist/"+name+".png")
 
 ###
