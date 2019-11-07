@@ -89,7 +89,7 @@ def back_propagation(X, y, eta, lamb, n_features, n_hidden_neurons, n_categories
 	hidden_weights_gradient = np.matmul(X.T, error_hidden)
 	hidden_bias_gradient = np.sum(error_hidden, axis=0)
 
-	'''
+	
 	if lamb > 0.0:
 		output_weights_gradient += lamb * output_weights
 		hidden_weights_gradient += lamb * hidden_weights
@@ -98,7 +98,7 @@ def back_propagation(X, y, eta, lamb, n_features, n_hidden_neurons, n_categories
 	output_bias -= eta * output_bias_gradient
 	hidden_weights -= eta * hidden_weights_gradient
 	hidden_bias -= eta * hidden_bias_gradient
-	'''
+	
 
 	return output_weights_gradient, output_bias_gradient, hidden_weights_gradient, hidden_bias_gradient
 

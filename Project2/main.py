@@ -142,16 +142,16 @@ if arg == "Log":
 elif arg == "NN":
 	#################### NEURAL NETWORK ####################
 
-	eta = 0.01 #1e-4
-	gamma = 0   #0.01
+	eta = 0.01        #1e-4
+	gamma = 0.0   #0.01
 
 	n_features 		 = len(X[0])
-	n_hidden_neurons = 50 # one layer?
-	n_categories 	 = 1 # ? 
+	n_hidden_neurons = 29 # one layer?
+	n_categories 	 = 29 # ? 
 	n_inputs         = 80 # ?
 	epochs           = 1000
 	iterations       = 1000
-	batch_size       = 100
+	batch_size       = 80
 
 
 	a_h, probabilities = NN.feed_forward_train(X, n_features, n_hidden_neurons, n_categories)
@@ -165,7 +165,13 @@ elif arg == "NN":
 	print(acc_feed_forwrd_train, 'acc')
 
 	prob, output_weights_grad, output_bias_grad, hidden_weights_grad, hidden_bias_gradi = NN.train(X, y, eta, gamma, n_inputs, epochs, iterations, batch_size, n_features, n_hidden_neurons, n_categories)
+	print(prob)
 
+	prob = np.array(prob)
+	print(prob.shape)   # why this shape??
+	acc_train = func.accuracy(prob[1,1,1], y)
+	print(acc_train)
+	
 	predict = NN.predict(X, y, eta, gamma, n_features, n_hidden_neurons, n_categories) 
 	predict_probability = NN.predict_probabilities(X, y, eta, gamma, n_features, n_hidden_neurons, n_categories)
 
