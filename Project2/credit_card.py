@@ -25,7 +25,7 @@ random.seed(0)
 seed  = 1
 '''
 # -----------------------------------------------------------------------------
-def CreditCard(plot=False):
+def CreditCard(plot_hist=False):
     # Reading file into data frame
     cwd      = os.getcwd()
     filename = cwd + '/default of credit card clients.xls'

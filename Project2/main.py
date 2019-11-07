@@ -1,6 +1,7 @@
 """
 Main program for prohect 2 in FYS-STK4155
 """
+import sys
 import os
 import random
 import xlsxwriter
@@ -27,6 +28,8 @@ seed = 0
 np.random.seed(seed)
 # -----------------------------------------------------------------------------
 
+arg = sys.argv[1]
+
 # Setting the eta and gamma parameters
 #eta = 0.001
 #gamma = 0.0001  # learning rate? 
@@ -45,21 +48,21 @@ if CreditCard == True:
 	features, target = CD.CreditCard()
 	X, y = CD.DesignMatrix(features, target)
 	# Calculating the beta values
-	betas = func.next_beta(X, y, eta, gamma)
+	#betas = func.next_beta(X, y, eta, gamma)
 
 	# Splitting X and y in a train and test set
-	X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=0)
+	X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=seed)
 
 else: 
 	cancer = load_breast_cancer()
 	X = cancer.data
 	y = cancer.target
 
-	X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=0)
+	X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=seed)
 	scaler = StandardScaler()
 	X_train = scaler.fit_transform(X_train)
 	X_test = scaler.transform(X_test)
-	
+		
 	#logReg = LogisticRegression()
 	#logReg.fit(X_train, y_train)
 
@@ -69,99 +72,102 @@ print('The shape of y is:', y.shape)
 '-------------------------------------------'
 print('')
 
-# Calculating the beta values based og the training set
-betas_train = func.next_beta(X_train, y_train, eta, gamma)
-#betas_train = func.steepest(X_train, y_train, gamma)
+if arg == "Log":
+	# Calculating the beta values based og the training set
+	betas_train = func.next_beta(X_train, y_train, eta, gamma)
+	#betas_train = func.steepest(X_train, y_train, gamma)
 
-# Calculating ytilde and the model of logistic regression 
-z 		    = X_test @ betas_train   # choosing best beta here? 
-model       = func.logistic_function(z)
+	# Calculating ytilde and the model of logistic regression 
+	z 		    = X_test @ betas_train   # choosing best beta here? 
+	model       = func.logistic_function(z)
 
-# Calculating the accuracy with our own function
-accuracy_test =  func.accuracy(model, y_test)
-exp_term = X_test
-Probabilities = func.probabilities(exp_term)   # ??? 
+	# Calculating the accuracy with our own function
+	accuracy_test =  func.accuracy(model, y_test)
+	exp_term = X_test
+	Probabilities = func.probabilities(exp_term)   # ??? 
 
-# Creating a logistic regression model with scikit-learn 
-# Calculating the corresponding accuracy
-logReg = LogisticRegression(random_state=0, solver='sag', max_iter=1000, fit_intercept=False) # solver='lbfgs'
-logReg.fit(X_train, np.ravel(y_train))
+	# Creating a logistic regression model with scikit-learn 
+	# Calculating the corresponding accuracy
+	logReg = LogisticRegression(random_state=seed, solver='sag', max_iter=1000, fit_intercept=False) # solver='lbfgs'
+	logReg.fit(X_train, np.ravel(y_train))
 
-ypredict_scikit  		     = logReg.predict(X_test)
-predict_probabilities_scikit = logReg.predict_proba(X_test)  # Probability estimates
-score_scikit				 = logReg.score(X_test, y_test)  # ?? same as accuracy ?? 
+	ypredict_scikit  		     = logReg.predict(X_test)
+	predict_probabilities_scikit = logReg.predict_proba(X_test)  # Probability estimates
+	score_scikit				 = logReg.score(X_test, y_test)  # ?? same as accuracy ?? 
 
-accuracy_scikit  = accuracy_score(y_pred=ypredict_scikit, y_true=y_test)
+	accuracy_scikit  = accuracy_score(y_pred=ypredict_scikit, y_true=y_test)
 
-# Comparing our own accuracy with scikit-learn
-print('')
-'-------------------------------------------'
-print('The accuracy with our function is  :', accuracy_test)
-print('The accuracy of scikit-learn is    :', accuracy_scikit)
-'-------------------------------------------'
+	# Comparing our own accuracy with scikit-learn
+	print('')
+	'-------------------------------------------'
+	print('The accuracy with our function is  :', accuracy_test)
+	print('The accuracy of scikit-learn is    :', accuracy_scikit)
+	'-------------------------------------------'
 
-fpr, tpr, thresholds = roc_curve(y_test, predict_probabilities_scikit[:,1], pos_label=None)
-AUC_scikit 			 = auc(fpr, tpr)
+	fpr, tpr, thresholds = roc_curve(y_test, predict_probabilities_scikit[:,1], pos_label=None)
+	AUC_scikit 			 = auc(fpr, tpr)
 
-# The AUC scikit
-print('')
-'-------------------------------------------'
-print('The AUC is:', AUC_scikit)
-'-------------------------------------------'
+	# The AUC scikit
+	print('')
+	'-------------------------------------------'
+	print('The AUC is:', AUC_scikit)
+	'-------------------------------------------'
 
-#p = model
-p = predict_probabilities_scikit[:,0]
-#p = func.probabilities(model)
-notP = 1 - np.ravel(p)
-y_p = np.zeros((len(notP), 2))
-y_p[:,0] = np.ravel(p)
-y_p[:,1] = np.ravel(notP)
+	#p = predict_probabilities_scikit[:,0]
+	p = func.probabilities(model)
+	notP = 1 - np.ravel(p)
+	y_p = np.zeros((len(notP), 2))
+	y_p[:,0] = np.ravel(p)
+	y_p[:,1] = np.ravel(notP)
 
-skplt.metrics.plot_cumulative_gain(y_test, y_p)
-plt.show()
+	x_plot, y_plot = func.bestCurve(y_test)
 
-
-# Creating a Confusion matrix using pandas and pandas dataframe
-CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=False)
-CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
-
-print('')
-'-------------------------------------------'
-print('The Confusion Matrix')
-print('')
-print(CM_DataFrame)
-'-------------------------------------------'
+	skplt.metrics.plot_cumulative_gain(y_test, y_p)
+	plt.plot(x_plot, y_plot, label='best curve', linewidth=4)
+	plt.legend()
+	plt.show()
 
 
-#################### NEURAL NETWORK ####################
+	# Creating a Confusion matrix using pandas and pandas dataframe
+	CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=False)
+	CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
 
-eta = 1e-4
-gamma = 0.01
+	print('')
+	'-------------------------------------------'
+	print('The Confusion Matrix')
+	print('')
+	print(CM_DataFrame)
+	'-------------------------------------------'
 
-n_features 		 = len(X[0])
-n_hidden_neurons = 29 # one layer?
-n_categories 	 = 29 # ? 
-n_inputs         = 80 # ?
-epochs           = 10
-iterations       = 1000
-batch_size       = 80 
+elif arg == "NN":
+	#################### NEURAL NETWORK ####################
 
+	eta = 0.01 #1e-4
+	gamma = 0   #0.01
 
-a_h, probabilities = NN.feed_forward_train(X, n_features, n_hidden_neurons, n_categories)
-
-print(a_h)
-print(probabilities)
-
-acc_feed_forwrd_train = func.accuracy(a_h, y)
-
-print(acc_feed_forwrd_train)
-
-prob, output_weights_grad, output_bias_grad, hidden_weights_grad, hidden_bias_gradi = NN.train(X, y, eta, gamma, n_inputs, epochs, iterations, batch_size, n_features, n_hidden_neurons, n_categories)
-print(prob)
+	n_features 		 = len(X[0])
+	n_hidden_neurons = 50 # one layer?
+	n_categories 	 = 1 # ? 
+	n_inputs         = 80 # ?
+	epochs           = 1000
+	iterations       = 1000
+	batch_size       = 100
 
 
-predict = NN.predict(X, y, eta, gamma, n_features, n_hidden_neurons, n_categories) 
-predict_probability = NN.predict_probabilities(X, y, eta, gamma, n_features, n_hidden_neurons, n_categories)
+	a_h, probabilities = NN.feed_forward_train(X, n_features, n_hidden_neurons, n_categories)
+
+	print(a_h)
+	print(probabilities)
+	print(np.min(probabilities))
+
+	acc_feed_forwrd_train = func.accuracy(probabilities[:,0], y)
+
+	print(acc_feed_forwrd_train, 'acc')
+
+	prob, output_weights_grad, output_bias_grad, hidden_weights_grad, hidden_bias_gradi = NN.train(X, y, eta, gamma, n_inputs, epochs, iterations, batch_size, n_features, n_hidden_neurons, n_categories)
+
+	predict = NN.predict(X, y, eta, gamma, n_features, n_hidden_neurons, n_categories) 
+	predict_probability = NN.predict_probabilities(X, y, eta, gamma, n_features, n_hidden_neurons, n_categories)
 
 
 

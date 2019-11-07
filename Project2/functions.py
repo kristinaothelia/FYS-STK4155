@@ -136,16 +136,16 @@ def next_beta(X, y, eta, gamma):
 	# Stochastic Gradient Descent, shuffle?
 	beta = np.random.randn(len(X[0]), 1)
 	n = len(X)
-	M = 80 #0.05*n  	             # Size of each minibatch, should be smaller than n
-	m = int(n/M)   	    		 # Number of minibatches
+	M = 80 #0.05*n  	         # Size of each minibatch, should be smaller than n
+	m = int(n/M)   	         # Number of minibatches
 	n_epochs = 100      		 # Nmber of epochs
 
 	acc = np.zeros(n_epochs+1)
 	epoch_list = np.zeros(n_epochs+1)
 
-	z_i = np.zeros(m)
-	model_i = np.zeros(m)
-	y_i = np.zeros(m)
+	#z_i = np.zeros(m)
+	#model_i = np.zeros(m)
+	#y_i = np.zeros(m)
 
 	for epoch in range(1,n_epochs+1):
 		for i in range(m):
@@ -210,6 +210,7 @@ def bestCurve(y):
 
 	defaults = sum(y == 1)
 	total = len(y)
+
 	x = np.linspace(0, 1, total)
 	y1 = np.linspace(0, 1, defaults)
 	y2 = np.ones(total-defaults)
