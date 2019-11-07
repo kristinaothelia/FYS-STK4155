@@ -25,7 +25,7 @@ random.seed(0)
 seed  = 1
 '''
 # -----------------------------------------------------------------------------
-def CreditCard():
+def CreditCard(plot=False):
     # Reading file into data frame
     cwd      = os.getcwd()
     filename = cwd + '/default of credit card clients.xls'
@@ -35,7 +35,6 @@ def CreditCard():
     # Renames the target column
     df.rename(index=str, columns={"default payment next month": "defaultPaymentNextMonth"}, inplace=True)
 
-
     # Reducing the data
     df = df.drop(df[(df.MARRIAGE  < 1)].index)
     df = df.drop(df[(df.MARRIAGE  > 3)].index)
@@ -43,7 +42,6 @@ def CreditCard():
     df = df.drop(df[(df.EDUCATION > 4)].index)
     df = df.drop(df[(df.EDUCATION < 1)].index)
 
-    
     '''
     df = df.drop(df[(df.BILL_AMT1 == 0) &
                     (df.BILL_AMT2 == 0) &
@@ -60,15 +58,12 @@ def CreditCard():
                     (df.PAY_AMT6 == 0)].index)
     '''
 
-
-    
     df = df.drop(df[(df.PAY_0 == 0)].index)
     df = df.drop(df[(df.PAY_2 == 0)].index)
     df = df.drop(df[(df.PAY_3 == 0)].index)
     df = df.drop(df[(df.PAY_4 == 0)].index)
     df = df.drop(df[(df.PAY_5 == 0)].index)
     df = df.drop(df[(df.PAY_6 == 0)].index)
-    
 
     df = df.drop(df[(df.PAY_0 < -1)].index)
     df = df.drop(df[(df.PAY_2 < -1)].index)
@@ -77,15 +72,25 @@ def CreditCard():
     df = df.drop(df[(df.PAY_5 < -1)].index)
     df = df.drop(df[(df.PAY_6 < -1)].index)
 
-    df = df.drop(df[(df.PAY_0 > 9)].index)
-    df = df.drop(df[(df.PAY_2 > 9)].index)
-    df = df.drop(df[(df.PAY_3 > 9)].index)
-    df = df.drop(df[(df.PAY_4 > 9)].index)
-    df = df.drop(df[(df.PAY_5 > 9)].index)
-    df = df.drop(df[(df.PAY_6 > 9)].index)
+    if plot_hist:
 
-    
-    
+        #P.Hist_Sex_Marriage_Education(df.SEX, "SEX")
+        #P.Hist_Sex_Marriage_Education(df.MARRIAGE, "Marriage")
+        #plt.show()
+        """
+        P.Hist_Sex_Marriage_Education(df.EDUCATION, "Education")
+        plt.show()
+        P.Histogram(df.AGE, "AGE", "Age [yr]")
+        P.Histogram(df.LIMIT_BAL, "LIMIT_BAL", "Amount of given credit in NT dollars")
+        """
+        list_BILL_AMT = [df.BILL_AMT1, df.BILL_AMT2, df.BILL_AMT3, df.BILL_AMT4, df.BILL_AMT5, df.BILL_AMT6]
+        list_PAY_AMT  = [df.PAY_AMT1, df.PAY_AMT2, df.PAY_AMT3, df.PAY_AMT4, df.PAY_AMT5, df.PAY_AMT6]
+        list_PAY      = [df.PAY_0, df.PAY_2, df.PAY_3, df.PAY_4, df.PAY_5, df.PAY_6]
+        list_PAY_name = ["PAY_0", "PAY_2", "PAY_3", "PAY_4", "PAY_5", "PAY_6"]
+
+        P.Multi_hist(list_=list_BILL_AMT, name="", label="Bill statement (NT dollar)",  title_="BILL_AMT")
+        #P.Multi_hist(list_=list_PAY_AMT, name="", label="Previous payment (NT dollar)", title_="PAY_AMT")
+        #P.Multi_hist(list_=list_PAY, name=list_PAY_name, label="Repayment status PAY_", title_=list_PAY_name, diff=True)
 
     # Features and targets
     features = df.loc[:, (df.columns != 'defaultPaymentNextMonth') & (df.columns != "ID")].values # Features # & (df.columns != "ID")
@@ -113,38 +118,13 @@ def DesignMatrix(features, target):
     return X, y
 
 
+def Make_histograms(X):
 
-
-
-""" Funker ikke etter at programmet ble endret...
-def Make_ALL_histograms():
-
-    #P.Hist_Sex_Marriage_Education(df.SEX, "SEX")
-    #P.Hist_Sex_Marriage_Education(df.MARRIAGE, "Marriage")
-    #P.Hist_Sex_Marriage_Education(df.EDUCATION, "Education")
-    #plt.show()
-    #P.Histogram(df.AGE, "AGE", "Age [yr]")
-    #P.Histogram(df.LIMIT_BAL, "LIMIT_BAL", "Amount of given credit in NT dollars")
-
-    list_BILL_AMT = [df.BILL_AMT1, df.BILL_AMT2, df.BILL_AMT3, df.BILL_AMT4, df.BILL_AMT5, df.BILL_AMT6]
-    list_PAY_AMT  = [df.PAY_AMT1, df.PAY_AMT2, df.PAY_AMT3, df.PAY_AMT4, df.PAY_AMT5, df.PAY_AMT6]
-    list_PAY      = [df.PAY_0, df.PAY_2, df.PAY_3, df.PAY_4, df.PAY_5, df.PAY_6]
+    list_BILL_AMT = [X[:,17], X[:,18], X[:,19], X[:,20], X[:,21], X[:,22]]
+    list_PAY_AMT  = [X[:,23], X[:,24], X[:,25], X[:,26], X[:,27], X[:,28]]
+    list_PAY      = [X[:,11], X[:,12], X[:,13], X[:,14], X[:,15], X[:,16]]
     list_PAY_name = ["PAY_0", "PAY_2", "PAY_3", "PAY_4", "PAY_5", "PAY_6"]
-    '''
-    for i in range(len(list_BILL_AMT)):
-        name = str(i+1)
-        print(np.min(list_BILL_AMT[i]))
-        P.Histogram(list_BILL_AMT[i], "BILL_AMT%s" %name, x_label="Amount of bill statement (NT dollar) BILL_AMT%s" %name)
-        P.Histogram(list_PAY_AMT[i],  "PAY_AMT%s" %name,  x_label="Amount of previous payment (NT dollar) PAY_AMT%s" %name)
-        P.Histogram(list_PAY[i],      list_PAY_name[i],   x_label="Repayment status %s" %list_PAY_name[i])
-    '''
 
-    P.Multi_hist(list_=list_BILL_AMT, name="", label="Amount of bill statement (NT dollar) BILL_AMT", title_="BILL_AMT")
-    P.Multi_hist(list_=list_PAY_AMT, name="", label="Amount of previous payment (NT dollar) PAY_AMT", title_="PAY_AMT")
-    P.Multi_hist(list_=list_PAY, name=list_PAY_name, label="Repayment status PAY_", title_=list_PAY_name)
-
-
-#Make_ALL_histograms()
-
-P.Histogram(category=df.PAY_AMT2, name="", x_label="PAY")
-"""
+    P.Multi_hist(list_=list_BILL_AMT, name="", label="Bill statement (NT dollar)",  title_="BILL_AMT")
+    P.Multi_hist(list_=list_PAY_AMT, name="", label="Previous payment (NT dollar)", title_="PAY_AMT")
+    P.Multi_hist(list_=list_PAY, name=list_PAY_name, label="Repayment status PAY_", title_=list_PAY_name, diff=True)
