@@ -2,6 +2,7 @@
 Neural Network code for project 2 in FYS-STK4155
 """
 import numpy as np
+import functions as func
 
 from sklearn.model_selection import train_test_split
 # -----------------------------------------------------------------------------
@@ -17,24 +18,29 @@ from sklearn.model_selection import train_test_split
 #    pass
 
 def create_biases_and_weights(n_features, n_hidden_neurons, n_categories):
-    hidden_weights = np.random.randn(n_features, n_hidden_neurons)
-    hidden_bias = np.zeros(n_hidden_neurons) + 0.01
+	"""
 
-    output_weights = np.random.randn(n_hidden_neurons, n_categories)
-    output_bias = np.zeros(n_categories) + 0.01
+	"""
+
+	hidden_weights = np.random.randn(n_features, n_hidden_neurons)
+	hidden_bias    = np.zeros(n_hidden_neurons) + 0.01
+
+	output_weights = np.random.randn(n_hidden_neurons, n_categories)
+	output_bias    = np.zeros(n_categories) + 0.01
 
 	return hidden_weights, hidden_bias, output_weights, output_bias
 
-def feed_forward_train(X):
+
+def feed_forward_train(X, n_features, n_hidden_neurons, n_categories):
 	"""
 	From lecture PP on neural networks, from Morten
     X : features
 	"""
-	hidden_weights, hidden_bias, output_weights, output_bias = (n_features, n_hidden_neurons, n_categories)
+	hidden_weights, hidden_bias, output_weights, output_bias = create_biases_and_weights(n_features, n_hidden_neurons, n_categories)
 	#Make  z_h and a_h lists??
 
-	z_h = np.matmul(X, hidden_weights) + hidden_bias	# Weighted sum of inputs to the hidden layer
-	a_h = logistic_function(z_h)						# Activation in the hidden layer
+	z_h = np.matmul(X, hidden_weights) + hidden_bias	    # Weighted sum of inputs to the hidden layer
+	a_h = func.logistic_function(z_h)						# Activation in the hidden layer
 
 	# Weighted sum of inputs to the output layer
 	z_o = np.matmul(a_h, output_weights) + output_bias
@@ -42,30 +48,32 @@ def feed_forward_train(X):
 	# Softmax output ??
 	# Axis 0 holds each input and axis 1 the probabilities of each category
 	exp_term = np.exp(z_o)
-	probabilities = probabilities(exp_term)
+	probabilities = exp_term / np.sum(exp_term, axis=1, keepdims=True)
 
 	# For backpropagation need activations in hidden and output layers
 	return a_h, probabilities
 
-def feed_forward_out(X):
-    # feed-forward for output
-    z_h = np.matmul(X, hidden_weights) + hidden_bias
-    a_h = sigmoid(z_h)
+def feed_forward_out(X, y, eta, lamb, n_features, n_hidden_neurons, n_categories):
+	output_weights, output_bias, hidden_weights, hidden_bias = back_propagation(X, y, eta, lamb, n_features, n_hidden_neurons, n_categories)
+	#create_biases_and_weights(n_features, n_hidden_neurons, n_categories)
+	# feed-forward for output
+	z_h = np.matmul(X, hidden_weights) + hidden_bias
+	a_h = func.logistic_function(z_h)
 
-    z_o = np.matmul(a_h, output_weights) + output_bias
+	z_o = np.matmul(a_h, output_weights) + output_bias
 
-    exp_term = np.exp(z_o)
-    probabilities = exp_term / np.sum(exp_term, axis=1, keepdims=True)
-    return probabilities
+	exp_term = np.exp(z_o)
+	probabilities = exp_term / np.sum(exp_term, axis=1, keepdims=True)
+	return probabilities
 
-def back_propagation(lamb):
+def back_propagation(X, y, eta, lamb, n_features, n_hidden_neurons, n_categories):
 	"""
 	Back propagation code for a multilayer perceptron model, from Morten
 	"""
 
-	output_weights, output_bias, hidden_weights, hidden_bias = weights_bias(eta, lamb)
+	output_weights, output_bias, hidden_weights, hidden_bias = create_biases_and_weights(n_features, n_hidden_neurons, n_categories)
 
-	a_h, p = feed_forward_train(X)
+	a_h, p = feed_forward_train(X, n_features, n_hidden_neurons, n_categories)
 
 	# Error in the output layer
 	error_output = p - y
@@ -81,43 +89,55 @@ def back_propagation(lamb):
 	hidden_weights_gradient = np.matmul(X.T, error_hidden)
 	hidden_bias_gradient = np.sum(error_hidden, axis=0)
 
+	'''
+	if lamb > 0.0:
+		output_weights_gradient += lamb * output_weights
+		hidden_weights_gradient += lamb * hidden_weights
+
+	output_weights -= eta * output_weights_gradient
+	output_bias -= eta * output_bias_gradient
+	hidden_weights -= eta * hidden_weights_gradient
+	hidden_bias -= eta * hidden_bias_gradient
+	'''
+
 	return output_weights_gradient, output_bias_gradient, hidden_weights_gradient, hidden_bias_gradient
 
-def predict(X):
-        probabilities = feed_forward_out(X)
+def predict(X, y, eta, lamb, n_features, n_hidden_neurons, n_categories):
+        probabilities = feed_forward_out(X, y, eta, lamb, n_features, n_hidden_neurons, n_categories)
         return np.argmax(probabilities, axis=1)
 
-def predict_probabilities(X):
-    probabilities = feed_forward_out(X)
+def predict_probabilities(X, y, eta, lamb, n_features, n_hidden_neurons, n_categories):
+    probabilities = feed_forward_out(X, y, eta, lamb, n_features, n_hidden_neurons, n_categories)
     return probabilities
 
-def train(n_inputs, epochs, iterations, batch_size):
-    data_indices = np.arange(n_inputs)
+def train(X, y, eta, lamb, n_inputs, epochs, iterations, batch_size, n_features, n_hidden_neurons, n_categories):
+	data_indices = np.arange(n_inputs)
+	X_data_full = X
+	Y_data_full = y
+	for i in range(epochs):
+		for j in range(iterations):
+			# pick datapoints with replacement
+			chosen_datapoints = np.random.choice(data_indices, size=batch_size, replace=False)
 
-    for i in range(epochs):
-        for j in range(iterations):
-            # pick datapoints with replacement
-            chosen_datapoints = np.random.choice(data_indices, size=batch_size, replace=False)
-
-            # minibatch training data
-            X_data = X_data_full[chosen_datapoints]
-            Y_data = Y_data_full[chosen_datapoints]
+			# minibatch training data
+			X_data = X_data_full[chosen_datapoints]
+			Y_data = Y_data_full[chosen_datapoints]
 
 			# Tror dette blir helt feil...
-            probabilities = feed_forward()
-            output_weights_gradient, output_bias_gradient, hidden_weights_gradient, hidden_bias_gradient = backpropagation()
+			probabilities = feed_forward_train(X_data, n_features, n_hidden_neurons, n_categories)
+			output_weights_gradient, output_bias_gradient, hidden_weights_gradient, hidden_bias_gradient = back_propagation(X_data, Y_data, eta, lamb, n_features, n_hidden_neurons, n_categories)
 
 			return probabilities, output_weights_gradient, output_bias_gradient, hidden_weights_gradient, hidden_bias_gradient
 
 
 	def cost_derivative(self, output_activations, labels):
-        return output_activations-labels
+		return output_activations-labels
 
-    def sigmoid(self, z):
-        return np.exp(z)/(1-np.exp(z))
+	def sigmoid(self, z):
+		return np.exp(z)/(1-np.exp(z))
 
-    def sigmoid_derivative(self, z):
-        return self.sigmoid(z)*(1-self.sigmoid(z))
+	def sigmoid_derivative(self, z):
+		return self.sigmoid(z)*(1-self.sigmoid(z))
 
 
 

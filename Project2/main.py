@@ -10,6 +10,9 @@ import functions         as func
 import credit_card       as CD
 import matplotlib.pyplot as plt
 import scikitplot        as skplt
+import neural_network    as NN
+
+from NN_morten import NeuralNetwork
 
 from sklearn.model_selection     import train_test_split
 from sklearn.preprocessing 		 import OneHotEncoder, Normalizer
@@ -117,6 +120,7 @@ y_p[:,1] = np.ravel(notP)
 skplt.metrics.plot_cumulative_gain(y_test, y_p)
 plt.show()
 
+
 # Creating a Confusion matrix using pandas and pandas dataframe
 CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=False)
 CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
@@ -127,6 +131,53 @@ print('The Confusion Matrix')
 print('')
 print(CM_DataFrame)
 '-------------------------------------------'
+
+
+#################### NEURAL NETWORK ####################
+
+eta = 1e-4
+gamma = 0.01
+
+n_features 		 = len(X[0])
+n_hidden_neurons = 29 # one layer?
+n_categories 	 = 29 # ? 
+n_inputs         = 80 # ?
+epochs           = 10
+iterations       = 1000
+batch_size       = 80 
+
+
+a_h, probabilities = NN.feed_forward_train(X, n_features, n_hidden_neurons, n_categories)
+
+print(a_h)
+print(probabilities)
+
+acc_feed_forwrd_train = func.accuracy(a_h, y)
+
+print(acc_feed_forwrd_train)
+
+prob, output_weights_grad, output_bias_grad, hidden_weights_grad, hidden_bias_gradi = NN.train(X, y, eta, gamma, n_inputs, epochs, iterations, batch_size, n_features, n_hidden_neurons, n_categories)
+print(prob)
+
+
+predict = NN.predict(X, y, eta, gamma, n_features, n_hidden_neurons, n_categories) 
+predict_probability = NN.predict_probabilities(X, y, eta, gamma, n_features, n_hidden_neurons, n_categories)
+
+
+
+'''
+nn = NeuralNetwork(X, y)
+
+a_h, probabilities = nn.feed_forward()
+acc_feed_forwrd_train = func.accuracy(a_h, y)
+print(acc_feed_forwrd_train)
+
+pp = nn.predict_probabilities(nn.X)
+print(pp)
+
+acc_predict = func.accuracy(pp, y)
+print(acc_predict)
+'''
 
 '''
 cost = func.cost(X_test, y_train, betas_train)   # ytilde or model??

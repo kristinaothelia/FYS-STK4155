@@ -107,6 +107,9 @@ def beta_gradients(X, y, beta):
 	sigmoid = logistic_function(z)
 	grad_beta_C = -(np.transpose(X)@(sigmoid-y))
 
+	#der_sig = logistic_function(z)*(1-logistic_function(z))
+	#grad_beta_C = 2*(y-sigmoid) *der_sig*X.T
+
 	return grad_beta_C
 
 def steepest(X, y, gamma, iterations=1000):   # DONT WORK 
