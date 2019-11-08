@@ -32,7 +32,7 @@ np.random.seed(seed)
 arg = sys.argv[1]
 
 # Setting the eta and gamma parameters
-#eta = 0.001
+#eta = 0.01
 #gamma = 0.0001  # learning rate? 
 
 eta = 0.01
@@ -114,8 +114,8 @@ if arg == "Log":
 	print('The AUC is:', AUC_scikit)
 	'-------------------------------------------'
 
-	#p = predict_probabilities_scikit[:,0]
-	p = func.probabilities(model)
+	p = predict_probabilities_scikit[:,0]
+	#p = func.probabilities(model)
 	notP = 1 - np.ravel(p)
 	y_p = np.zeros((len(notP), 2))
 	y_p[:,0] = np.ravel(p)

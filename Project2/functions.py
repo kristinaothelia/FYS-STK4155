@@ -137,7 +137,7 @@ def next_beta(X, y, eta, gamma):
 	beta = np.random.randn(len(X[0]), 1)
 	n = len(X)
 	M = 80 #0.05*n  	         # Size of each minibatch, should be smaller than n
-	m = int(n/M)   	         # Number of minibatches
+	m = int(n/M)   	             # Number of minibatches
 	n_epochs = 100      		 # Nmber of epochs
 
 	acc = np.zeros(n_epochs+1)
