@@ -1,12 +1,16 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import scikitplot as skplt
-from sklearn.model_selection import  train_test_split 
-from sklearn.datasets import load_breast_cancer
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import StandardScaler, RobustScaler
-from sklearn.metrics import accuracy_score
-from scipy.special import expit
+"""
+Neural Network class for project 2 in FYS-STK4155
+"""
+import matplotlib.pyplot     as plt
+import numpy                 as np
+import scikitplot            as skplt
+
+from sklearn.model_selection import train_test_split
+from sklearn.datasets        import load_breast_cancer
+from sklearn.linear_model    import LogisticRegression
+from sklearn.preprocessing   import StandardScaler, RobustScaler
+from sklearn.metrics         import accuracy_score
+from scipy.special           import expit
 
 
 class NN:
@@ -64,7 +68,7 @@ class NN:
         a_h = self.sigmoid(z_h)
 
         z_o = np.matmul(a_h, self.output_weights) + self.output_bias
-        
+
         exp_term = np.exp(z_o)
         probabilities = exp_term / np.sum(exp_term, axis=1, keepdims=True)
         return probabilities
@@ -104,8 +108,7 @@ class NN:
             for j in range(self.iterations):
                 # pick datapoints with replacement
                 chosen_datapoints = np.random.choice(
-                    data_indices, size=self.batch_size, replace=False
-                )
+                    data_indices, size=self.batch_size, replace=False)
 
                 # minibatch training data
                 self.X_data = self.X_data_full[chosen_datapoints]
@@ -115,15 +118,10 @@ class NN:
                 self.backpropagation()
 
 
-
-
-
+""" Slette?
 
 def safe():
 
-    """
-    Neural Network code for project 2 in FYS-STK4155
-    """
     import numpy as np
     import functions as func
 
@@ -155,10 +153,7 @@ def safe():
 
 
     def feed_forward_train(X, n_features, n_hidden_neurons, n_categories):
-	    """
-	    From lecture PP on neural networks, from Morten
-        X : features
-	    """
+
 	    hidden_weights, hidden_bias, output_weights, output_bias = create_biases_and_weights(n_features, n_hidden_neurons, n_categories)
 	    #Make  z_h and a_h lists??
 
@@ -190,9 +185,6 @@ def safe():
 	    return probabilities
 
     def back_propagation(X, y, eta, lamb, n_features, n_hidden_neurons, n_categories):
-	    """
-	    Back propagation code for a multilayer perceptron model, from Morten
-	    """
 
 	    output_weights, output_bias, hidden_weights, hidden_bias = create_biases_and_weights(n_features, n_hidden_neurons, n_categories)
 
@@ -212,7 +204,7 @@ def safe():
 	    hidden_weights_gradient = np.matmul(X.T, error_hidden)
 	    hidden_bias_gradient = np.sum(error_hidden, axis=0)
 
-	    
+
 	    if lamb > 0.0:
 		    output_weights_gradient += lamb * output_weights
 		    hidden_weights_gradient += lamb * hidden_weights
@@ -221,7 +213,7 @@ def safe():
 	    output_bias -= eta * output_bias_gradient
 	    hidden_weights -= eta * hidden_weights_gradient
 	    hidden_bias -= eta * hidden_bias_gradient
-	    
+
 
 	    return output_weights_gradient, output_bias_gradient, hidden_weights_gradient, hidden_bias_gradient
 
@@ -261,26 +253,4 @@ def safe():
 
 	    def sigmoid_derivative(self, z):
 		    return self.sigmoid(z)*(1-self.sigmoid(z))
-
-
-
-    """
-    def __init__(self, X_data, Y_data, n_hidden_neurons=50, n_categories=10,
-                 epochs=10, batch_size=100, eta=0.1, lmbd=0.0):
-
-            self.X_data_full = X_data
-            self.Y_data_full = Y_data
-
-            self.n_inputs = X_data.shape[0]
-            self.n_features = X_data.shape[1]
-            self.n_hidden_neurons = n_hidden_neurons
-            self.n_categories = n_categories
-
-            self.epochs = epochs
-            self.batch_size = batch_size
-            self.iterations = self.n_inputs // self.batch_size
-            self.eta = eta
-            self.lmbd = lmbd
-
-            self.create_biases_and_weights()
-    """
+"""

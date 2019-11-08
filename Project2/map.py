@@ -16,8 +16,6 @@ for i in range(Ni):
     for j in range(Nj):
         new_arr[i][j] = arr[i][j]
 
-
-
 ax = sns.heatmap(new_arr, xticklabels=lambdas, yticklabels=etas, annot=True, linewidths=.3)
 plt.title('Accuracy')
 plt.ylabel('eta')

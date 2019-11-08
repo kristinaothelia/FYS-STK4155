@@ -1,18 +1,15 @@
 """
 Functions used for project 2 in FYS-STK4155
 """
+import sys
+import numpy 				 as np
+import pandas 		 		 as pd
+import scikitplot    		 as skplt
+import matplotlib.pyplot 	 as plt
 
-import sys 
-
-import numpy 		 as np
-import pandas 		 as pd
-import scikitplot    as skplt
-
-import matplotlib.pyplot as plt
-
-from sklearn.preprocessing       import StandardScaler, OneHotEncoder, RobustScaler
-from sklearn.metrics 			 import confusion_matrix, accuracy_score, roc_auc_score
-from sklearn.model_selection     import train_test_split
+from sklearn.preprocessing   import StandardScaler, OneHotEncoder, RobustScaler
+from sklearn.metrics 		 import confusion_matrix, accuracy_score, roc_auc_score
+from sklearn.model_selection import train_test_split
 # -----------------------------------------------------------------------------
 seed = 0
 np.random.seed(seed)
@@ -41,16 +38,14 @@ def accuracy(model, y):
 	and use them as targets in the Indicator function
 
 	Accuracy: The proportion of the total number of predictions that are correct
-
 	"""
-
 	#model[model < 0.5] = 0
-	#model[model >= 0.5] = 1 
+	#model[model >= 0.5] = 1
 
 	model = np.ravel(model)
 	y = np.ravel(y)
 
-	
+
 	for i in range(len(model)):
 		if model[i] < 0.5:
 			model[i] = 0
@@ -112,7 +107,7 @@ def beta_gradients(X, y, beta):
 
 	return grad_beta_C
 
-def steepest(X, y, gamma, iterations=1000):   # DONT WORK 
+def steepest(X, y, gamma, iterations=1000):   # DONT WORK
 	# Steepest ??
 	n = len(X[0])
 	#epsilon = 1e-8
@@ -167,7 +162,6 @@ def next_beta(X, y, eta, gamma):
 
 	return beta
 
-
 def cost_minimized():  ## same as above??
 	pass
 
@@ -193,7 +187,6 @@ def ConfusionMatrix_DataFrame(CM, labels=['pay', 'default']):
 	df['Total']     = df.sum(axis=1)
 
 	return df
-
 
 def metrics():
 	"""
@@ -234,11 +227,31 @@ def splitting(X, y, TrainingShare=0.5, seed=0):
 	X_train, X_test, y_train, y_test=train_test_split(X, y, train_size=TrainingShare, test_size = 1-TrainingShare, random_state=seed)
 	return X_train, X_test, y_train, y_test
 
+def MeanSquaredError(y_data, y_model):
+	"""
+	Function to calculate the mean squared error (MSE) for our model
+	Input y_data	| Function array
+	Input y_model	| Predicted function array
+	"""
+	n   = np.size(y_model)
+	MSE = (1/n)*np.sum((y_data-y_model)**2)
 
+	return MSE
+
+def R2_ScoreFunction(y_data, y_model):
+	"""
+	Function to calculate the R2 score for our model
+	Input y_data	| Function array
+	Input y_model	| Predicted function array
+	"""
+	counter     = np.sum((y_data-y_model)**2)
+	denominator = np.sum((y_data-np.mean(y_data))**2)
+	R_2          = 1 - (counter/denominator)
+
+	return R_2
+
+""" Slette herfra?
 def feed_forward_train(X):
-	"""
-	From lecture PP on neural networks, from Morten
-	"""
 
 	# Weighted sum of inputs to the hidden layer
 	z_h = np.matmul(X, hidden_weights) + hidden_bias
@@ -257,11 +270,7 @@ def feed_forward_train(X):
 	# For backpropagation need activations in hidden and output layers
 	return a_h, probabilities
 
-
 def BackPropagation(lamb):
-	"""
-	Back propagation code for a multilayer perceptron model, from Morten
-	"""
 
 	output_weights, output_bias, hidden_weights, hidden_bias = weights_bias(eta, lamb)
 
@@ -282,8 +291,6 @@ def BackPropagation(lamb):
 	hidden_bias_gradient = np.sum(error_hidden, axis=0)
 
 	return output_weights_gradient, output_bias_gradient, hidden_weights_gradient, hidden_bias_gradient
-
-
 
 def weights_bias(eta, lamb):
 
@@ -308,7 +315,7 @@ def weights_bias(eta, lamb):
 
 	#print("New accuracy on training data: " + str(accuracy_score(predict(X_train), Y_train)))
 	return output_weights, output_bias, hidden_weights, hidden_bias
-
+"""
 
 def activation_function(X):
 	"""
@@ -317,4 +324,3 @@ def activation_function(X):
 	"""
 	z = np.sum(w*x+b)
 	return z
-

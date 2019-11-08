@@ -4,9 +4,9 @@ Program to handle the credit card data for project 2 in FYS-STK4155
 import os
 import random
 import xlsxwriter
-import numpy             as np
-import pandas            as pd
-import matplotlib.pyplot as plt
+import numpy                 as np
+import pandas                as pd
+import matplotlib.pyplot     as plt
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing 	 import OneHotEncoder, Normalizer, normalize
@@ -74,12 +74,9 @@ def CreditCard(plot_hist=False):
 
     if plot_hist:
 
-        #P.Hist_Sex_Marriage_Education(df.SEX, "SEX")
-        #P.Hist_Sex_Marriage_Education(df.MARRIAGE, "Marriage")
-        #plt.show()
-        """
+        P.Hist_Sex_Marriage_Education(df.SEX, "SEX")
+        P.Hist_Sex_Marriage_Education(df.MARRIAGE, "Marriage")
         P.Hist_Sex_Marriage_Education(df.EDUCATION, "Education")
-        plt.show()
         P.Histogram(df.AGE, "AGE", "Age [yr]")
         P.Histogram(df.LIMIT_BAL, "LIMIT_BAL", "Amount of given credit in NT dollars")
         """
@@ -89,8 +86,9 @@ def CreditCard(plot_hist=False):
         list_PAY_name = ["PAY_0", "PAY_2", "PAY_3", "PAY_4", "PAY_5", "PAY_6"]
 
         P.Multi_hist(list_=list_BILL_AMT, name="", label="Bill statement (NT dollar)",  title_="BILL_AMT")
-        #P.Multi_hist(list_=list_PAY_AMT, name="", label="Previous payment (NT dollar)", title_="PAY_AMT")
-        #P.Multi_hist(list_=list_PAY, name=list_PAY_name, label="Repayment status PAY_", title_=list_PAY_name, diff=True)
+        P.Multi_hist(list_=list_PAY_AMT, name="", label="Previous payment (NT dollar)", title_="PAY_AMT")
+        P.Multi_hist(list_=list_PAY, name=list_PAY_name, label="Repayment status PAY_", title_=list_PAY_name, diff=True)
+        """
 
     # Features and targets
     features = df.loc[:, (df.columns != 'defaultPaymentNextMonth') & (df.columns != "ID")].values # Features # & (df.columns != "ID")
