@@ -11,9 +11,10 @@ import functions         as func
 import credit_card       as CD
 import matplotlib.pyplot as plt
 import scikitplot        as skplt
-import neural_network    as NN
+#import neural_network    as NN
+from neural_network import NN
 
-from NN_morten import NeuralNetwork
+#from NN_morten import NeuralNetwork
 
 from sklearn.model_selection     import train_test_split
 from sklearn.preprocessing 		 import OneHotEncoder, Normalizer
@@ -141,7 +142,65 @@ if arg == "Log":
 
 elif arg == "NN":
 	#################### NEURAL NETWORK ####################
+    ###reading in the data
+    scaler = RobustScaler()
+    """
+    # Scale data
+    scaler.fit(X_train)
+    X_train_sc = scaler.transform(X_train)
+    X_test_sc = scaler.transform(X_test)
+    """
+    X_train_sc = X_train
+    X_test_sc = X_test
 
+    def to_categorical_numpy(integer_vector):
+        n_inputs = len(integer_vector)
+        n_categories = np.max(integer_vector) + 1
+        onehot_vector = np.zeros((n_inputs, n_categories))
+        onehot_vector[range(n_inputs), integer_vector] = 1
+        
+        return onehot_vector
+
+    Y_train_onehot, Y_test_onehot = to_categorical_numpy(y_train), to_categorical_numpy(y_test)
+
+    epochs = 30
+    batch_size = 500
+
+    eta_vals = np.logspace(-7, -4, 7)
+    #eta_vals = np.linspace(0, 3.5, 7)
+    lmbd_vals = np.logspace(-7, -1, 7)
+    
+    # store the models for later use
+    DNN_numpy = np.zeros((len(eta_vals), len(lmbd_vals)), dtype=object)
+    accuracy_array = np.zeros((len(eta_vals), len(lmbd_vals)), dtype=object)
+    n_hidden_neurons = 50 #not sure about number???
+    n_categories = 2
+
+    # grid search
+    for i, eta in enumerate(eta_vals):
+        for j, lmbd in enumerate(lmbd_vals):
+            dnn = NN(X_train_sc, Y_train_onehot, eta=eta, lmbd=lmbd, epochs=epochs, batch_size=batch_size,
+                                n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
+            dnn.train()
+            
+            DNN_numpy[i][j] = dnn
+
+            
+            #print(X_test_sc)
+            test_predict = dnn.predict(X_test_sc)
+
+            #print(test_predict)
+            accuracy_array[i][j] = accuracy_score(y_test, test_predict)
+            
+            print("Learning rate  = ", eta)
+            print("Lambda = ", lmbd)
+            print("Accuracy score on test set: ", accuracy_score(y_test, test_predict))
+            print()
+            
+
+    np.save('acc_score', accuracy_array)
+
+    """
 	eta = 0.01        #1e-4
 	gamma = 0.0   #0.01
 
@@ -174,7 +233,7 @@ elif arg == "NN":
 	
 	predict = NN.predict(X, y, eta, gamma, n_features, n_hidden_neurons, n_categories) 
 	predict_probability = NN.predict_probabilities(X, y, eta, gamma, n_features, n_hidden_neurons, n_categories)
-
+    """
 
 
 '''

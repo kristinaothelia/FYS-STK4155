@@ -110,7 +110,7 @@ def DesignMatrix(features, target):
 
     col_scale = np.concatenate((column_0, column_4_22), axis=1)
 
-    scaled_columns  = RobustScaler().fit_transform(col_scale)
+    scaled_columns  = StandardScaler().fit_transform(col_scale)
 
     X = np.concatenate([encoded_columns, scaled_columns], axis=1)
     y = target
