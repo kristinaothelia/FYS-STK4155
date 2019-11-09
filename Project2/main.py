@@ -46,33 +46,33 @@ print('')
 X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=seed)
 
 eta = 0.01
-gamma = 0.1  # learning rate?
+gamma = 0.1
 
-eta_range   = [0.1, 0.01, 0.001, 0.0001, 1e-5, 1e-6, 1e-7]
 gamma_range = [0.1, 0.01, 0.001, 0.0001, 1e-5, 1e-6, 1e-7]
+thresholds = np.linspace(0.45,0.55,10)
 
 arg = sys.argv[1]
 
 if arg == "Log":
+
 	# Calculating the beta values based og the training set
 	betas_train = func.steepest(X_train, y_train, gamma)
 	#betas_train = func.SGD_beta(X_train, y_train, eta, gamma)
+	
 
 	# Calculating ytilde and the model of logistic regression
 	z 		    = X_test @ betas_train   # choosing best beta here?
 	model       = func.logistic_function(z)
 	model 		= func.IndicatorFunc(model)
 
-	# Calculating the accuracy with our own function
-	accuracy_test =  func.accuracy(model, y_test)
-
 	acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
 	= func.scikit(X_train, X_test, y_train, y_test, model)
 
-	TPR 	  = func.recall(y_test, model)
-	precision = func.precision(y_test, model)
-	F1_score  = func.F1_score(y_test, model)
-
+	# Calculating the different metrics
+	accuracy_test =  func.accuracy(model, y_test)
+	TPR 	      = func.recall(y_test, model)
+	precision     = func.precision(y_test, model)
+	F1_score      = func.F1_score(y_test, model)
 
 	print('\n-------------------------------------------')
 	print('The accuracy is  :', accuracy_test)
@@ -82,8 +82,8 @@ if arg == "Log":
 	print('The AUC is       :', AUC_scikit)
 	print('-------------------------------------------')
 
-	#p = predict_proba_scikit[:,0]
-	p = func.probabilities(model)
+	p = predict_proba_scikit[:,0]
+	#p = func.probabilities(model)
 	notP = 1 - np.ravel(p)
 	y_p = np.zeros((len(notP), 2))
 	y_p[:,0] = np.ravel(p)
@@ -91,9 +91,10 @@ if arg == "Log":
 
 	x_plot, y_plot = func.bestCurve(y_test)
 
-	skplt.metrics.plot_cumulative_gain(y_test, y_p)
-	plt.plot(x_plot, y_plot, label='best curve', linewidth=4)
-	plt.legend()
+	skplt.metrics.plot_cumulative_gain(y_test, y_p, text_fontsize='medium')
+	plt.plot(x_plot, y_plot, linewidth=4)
+	plt.legend(["Pay", "Default", "Baseline", "Best curve"])
+	#plt.legend()
 	plt.show()
 
 	skplt.metrics.plot_roc(y_test, predict_proba_scikit)
@@ -109,7 +110,7 @@ if arg == "Log":
 	print('')
 	print(CM_DataFrame)
 	'-------------------------------------------'
-
+	
 elif arg == "NN":
     X_train_sc = X_train
     X_test_sc  = X_test
@@ -127,10 +128,9 @@ elif arg == "NN":
 
     # 78 accuracy
     epochs     = 100 #60 #30
-    batch_size = 80 #60 #500
+    batch_size = 80  #60 #500
 
     eta_vals = np.logspace(-7, -4, 7)
-    #eta_vals = np.linspace(0, 3.5, 7)
     lmbd_vals = np.logspace(-7, -1, 7)
 
     # store the models for later use
@@ -152,12 +152,8 @@ elif arg == "NN":
                 dnn.train()
                 
                 DNN_numpy[i][j] = dnn
-                
-                #print(X_test_sc)
-                test_predict = dnn.predict(X_test_sc)
-                #print(test_predict)
-                
-                #print(test_predict)
+                test_predict    = dnn.predict(X_test_sc)
+              
                 accuracy_array[i][j] = accuracy_score(y_test, test_predict)
                 
                 print("Learning rate  = ", eta)
@@ -170,4 +166,22 @@ elif arg == "NN":
         np.save('eta_values', eta_vals)
         np.save('lambda_values', lmbd_vals)
 
-        P.map()
+    P.map()
+
+'''
+p = func.probabilities(model)
+notP = 1 - np.ravel(p)
+y_p = np.zeros((len(notP), 2))
+y_p[:,0] = np.ravel(p)
+y_p[:,1] = np.ravel(notP)
+
+x_plot, y_plot = func.bestCurve(y_test)
+
+skplt.metrics.plot_cumulative_gain(y_test, y_p)
+plt.plot(x_plot, y_plot, label='best curve', linewidth=4)
+plt.legend()
+plt.show()
+
+skplt.metrics.plot_roc(y_test, predict_proba_scikit)
+plt.show()
+'''
