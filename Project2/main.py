@@ -16,7 +16,7 @@ from sklearn.model_selection     import train_test_split
 from sklearn.preprocessing 		 import OneHotEncoder, Normalizer
 from sklearn.compose 			 import ColumnTransformer
 from sklearn.preprocessing       import StandardScaler, OneHotEncoder, RobustScaler
-from sklearn.metrics 			 import confusion_matrix, accuracy_score, roc_auc_score, auc, roc_curve
+from sklearn.metrics 			 import confusion_matrix, accuracy_score, roc_auc_score, auc, roc_curve, recall_score, precision_score
 from sklearn.linear_model 		 import LogisticRegression
 from sklearn.linear_model 		 import SGDRegressor, SGDClassifier  # better than logistic ??
 from sklearn.datasets 		     import load_breast_cancer
@@ -48,8 +48,6 @@ CreditCard = True
 if CreditCard == True:
 	features, target = CD.CreditCard()
 	X, y = CD.DesignMatrix(features, target)
-	# Calculating the beta values
-	#betas = func.next_beta(X, y, eta, gamma)
 
 	# Splitting X and y in a train and test set
 	X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=seed)
@@ -108,12 +106,23 @@ if arg == "Log":
 	fpr, tpr, thresholds = roc_curve(y_test, predict_probabilities_scikit[:,1], pos_label=None)
 	AUC_scikit 			 = auc(fpr, tpr)
 	AUC_scikit2 		 = roc_auc_score(y_test, predict_probabilities_scikit[:,1])
-	
+	AUC_own  			 = func.AUC_ROC(model, y, tpr, fpr)
+	TPR_scikit 			 = recall_score(y_test, model)
+	TPR 				 = func.recall(y_test, model)
+	precision 			 = func.precision(y_test, model)
+	precision_scikit 	 = precision_score(y_test, model)
+
+	print(precision)
+	print(precision_scikit)
+	print(TPR_scikit)
+	print(TPR)
+
 	# The AUC scikit
 	print('')
 	'-------------------------------------------'
-	print('The AUC is:', AUC_scikit)
-	print('The AUC is:', AUC_scikit2)
+	print('The AUC is      :', AUC_scikit)
+	print('The AUC is      :', AUC_scikit2)
+	print('The AUC (own) is:', AUC_own)
 	'-------------------------------------------'
 
 	p = predict_probabilities_scikit[:,0]
@@ -132,6 +141,9 @@ if arg == "Log":
 
 	skplt.metrics.plot_roc_curve(y_test, predict_probabilities_scikit)
 	plt.show()
+
+	#plt.plot(AUC_own)
+	#plt.show()
 
 	# Creating a Confusion matrix using pandas and pandas dataframe
 	CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=False)
@@ -210,56 +222,3 @@ elif arg == "NN":
 		np.save('lambda_values', lmbd_vals)
 
 	P.map()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-#design_matrix = pd.DataFrame(X)
-#design_matrix.to_excel(excel_writer = "DesignMatrix.xlsx", header=False, index=False)
-
-#target = pd.DataFrame(X)
-#design_matrix.to_excel(excel_writer = "DesignMatrix.xlsx")
-
-#design_matrix_file = pd.read_excel("DesignMatrix.xlsx", header=None, skiprows=None, index_col=None)
-#print(design_matrix_file)
-
-
-'''
-
-# Create an instance of the estimator
-logReg = LogisticRegression() #n_jobs=-1, random_state=15
-
-# Using the training data to train the estimator
-logReg.fit(X_train, y_train)
-betas = logReg.coef_
-
-# Evaluating the model
-y_pred_test = logReg.predict(X_test)
-
-#accuracy = accuracy_score(y_pred=y_pred_test, y_true=y_test) # metrics.loc['accuracy', 'LogisticReg']
-
-
-# Confusion matrix
-#CM = confusion_matrix(y_pred=y_pred_test, y_true=y_test)
-#CMatrix(CM)
-'''
