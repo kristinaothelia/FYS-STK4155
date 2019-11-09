@@ -75,8 +75,8 @@ print('')
 
 if arg == "Log":
 	# Calculating the beta values based og the training set
-	betas_train = func.next_beta(X_train, y_train, eta, gamma)
-	#betas_train = func.steepest(X_train, y_train, gamma)
+	#betas_train = func.next_beta(X_train, y_train, eta, gamma)
+	betas_train = func.steepest(X_train, y_train, gamma)
 
 	# Calculating ytilde and the model of logistic regression
 	z 		    = X_test @ betas_train   # choosing best beta here?
