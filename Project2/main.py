@@ -22,8 +22,8 @@ from sklearn.linear_model 		 import SGDRegressor, SGDClassifier  # better than l
 from sklearn.datasets 		     import load_breast_cancer
 
 from neural_network import NN
-#import plots        as P
-#import functions    as func
+import plots        as P
+import functions    as func
 # -----------------------------------------------------------------------------
 seed = 0
 np.random.seed(seed)
@@ -160,7 +160,7 @@ elif arg == "NN":
 
 		return onehot_vector
 
-    Y_train_onehot, Y_test_onehot = to_categorical_numpy(y_train), to_categorical_numpy(y_test)
+	Y_train_onehot, Y_test_onehot = to_categorical_numpy(y_train), to_categorical_numpy(y_test)
 
 	# 78 accuracy
 	epochs     = 100 #60 #30
@@ -176,32 +176,35 @@ elif arg == "NN":
 	n_hidden_neurons = 50 #not sure about number???
 	n_categories 	 = 2
 
-	# grid search
-	for i, eta in enumerate(eta_vals):
-		for j, lmbd in enumerate(lmbd_vals):
-			dnn = NN(X_train_sc, Y_train_onehot, eta=eta, lmbd=lmbd, epochs=epochs, batch_size=batch_size,
-                     n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
-			dnn.train()
 
-			DNN_numpy[i][j] = dnn
+	make_files = False
+	if make_files:
+		# grid search
+		for i, eta in enumerate(eta_vals):
+			for j, lmbd in enumerate(lmbd_vals):
+				dnn = NN(X_train_sc, Y_train_onehot, eta=eta, lmbd=lmbd, epochs=epochs, batch_size=batch_size,
+	                     n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
+				dnn.train()
 
-			#print(X_test_sc)
-			test_predict = dnn.predict(X_test_sc)
+				DNN_numpy[i][j] = dnn
 
-			#print(test_predict)
-			accuracy_array[i][j] = accuracy_score(y_test, test_predict)
+				#print(X_test_sc)
+				test_predict = dnn.predict(X_test_sc)
 
-			print("Learning rate  = ", eta)
-			print("Lambda = ", lmbd)
-			print("Accuracy score on test set: ", accuracy_score(y_test, test_predict))
-			print()
+				#print(test_predict)
+				accuracy_array[i][j] = accuracy_score(y_test, test_predict)
+
+				print("Learning rate  = ", eta)
+				print("Lambda = ", lmbd)
+				print("Accuracy score on test set: ", accuracy_score(y_test, test_predict))
+				print()
 
 
-	np.save('acc_score', accuracy_array)
-	np.save('eta_values', eta_vals)
-	np.save('lambda_values', lmbd_vals)
+		np.save('acc_score', accuracy_array)
+		np.save('eta_values', eta_vals)
+		np.save('lambda_values', lmbd_vals)
 
-	#P.map()
+	P.map()
 
 
 

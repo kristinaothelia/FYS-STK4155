@@ -118,7 +118,8 @@ class NN:
                 self.backpropagation()
 
 
-""" Slette?
+'''
+ Slette?
 
 def safe():
 
@@ -141,7 +142,7 @@ def safe():
     def create_biases_and_weights(n_features, n_hidden_neurons, n_categories):
 	    """
 
-	    """
+        """
 
 	    hidden_weights = np.random.randn(n_features, n_hidden_neurons)
 	    hidden_bias    = np.zeros(n_hidden_neurons) + 0.01
@@ -253,4 +254,4 @@ def safe():
 
 	    def sigmoid_derivative(self, z):
 		    return self.sigmoid(z)*(1-self.sigmoid(z))
-"""
+'''
