@@ -6,6 +6,7 @@ import numpy 				 as np
 import pandas 		 		 as pd
 import scikitplot    		 as skplt
 import matplotlib.pyplot 	 as plt
+from scipy.special import expit
 
 from sklearn.preprocessing   import StandardScaler, OneHotEncoder, RobustScaler
 from sklearn.metrics 		 import confusion_matrix, accuracy_score, roc_auc_score
@@ -107,17 +108,34 @@ def beta_gradients(X, y, beta):
 
 	return grad_beta_C
 
-def steepest(X, y, gamma, iterations=1000):   # DONT WORK
-	# Steepest ??
-	n = len(X[0])
-	#epsilon = 1e-8
+def steepest(Xf, yf, gamma=0.001, iterations=1000):   # DONT WORK, be happy
+    """	
+    # Steepest ??
+    n = len(X[0])
+    #epsilon = 1e-8
 
-	beta = np.random.randn(len(X[0]), 1)
+    beta = np.random.randn(len(X[0]), 1)
 
-	for i in range(iterations):
-		grad_beta_C = beta_gradients(X, y, beta)
-		beta -= beta - gamma * grad_beta_C
-	return beta
+    for i in range(iterations):
+	    grad_beta_C = beta_gradients(X, y, beta)
+	    beta -= beta - gamma * grad_beta_C
+    """
+    K = len(Xf[0,:])
+    beta = np.random.randn(K, 1)
+    for i in range(iterations):
+        t = Xf@beta
+        sigmoid = expit(t)
+        #print(sigmoid)
+        #siggy = 1./(1 + np.exp(t))
+        #loss = yf - sigmoid
+        #print("iteration %g, cost: %f" % (i, loss))
+        grad = 2/K*Xf.T@(sigmoid - yf)
+        beta = beta - gamma*grad
+        #cost = -np.sum(np.transpose(yf)@np.log(1 + siggy) - np.transpose(1-yf)@np.log(siggy))
+        #print(cost)
+        #print(i)
+        #break    
+    return beta
 
 def learning_schedule(t, t0=5, t1=50):
 	ls = t0/(t+t1)
