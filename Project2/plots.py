@@ -13,6 +13,8 @@ def map():
     etas    = np.load('eta_values.npy', allow_pickle=True)
     lambdas = np.load('lambda_values.npy', allow_pickle=True)
 
+    etas = ["{:0.2e}".format(i) for i in etas]
+
     new_arr = np.zeros(shape=arr.shape)
 
     Ni = len(arr[:,0])
@@ -22,19 +24,13 @@ def map():
         for j in range(Nj):
             new_arr[i][j] = arr[i][j]
 
-    ax = sns.heatmap(new_arr, xticklabels=lambdas, yticklabels=etas, annot=True, linewidths=.3)
+    ax = sns.heatmap(new_arr, xticklabels=lambdas, yticklabels=etas, annot=True, linewidths=.3, linecolor="white")
     plt.title('Accuracy')
-    plt.ylabel('eta')
-    plt.xlabel('lambda')
+    plt.ylabel('$\\eta$')
+    plt.xlabel('$\\lambda$')
+    plt.tight_layout()
     plt.show()
 
-
-    #plt.style.use('dark_background')
-    #plt.imshow(new_arr, origin="lower")
-    #plt.colorbar()
-    #plt.ylabel('eta')
-    #plt.xlabel('lambda')
-    #plt.show()
 
 def Histogram(category, name, x_label):
 

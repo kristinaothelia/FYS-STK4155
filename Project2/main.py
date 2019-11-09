@@ -141,7 +141,7 @@ if arg == "Log":
 
 elif arg == "NN":
 
-	scaler = RobustScaler()
+	#scaler = RobustScaler()
 	'''
 	# Scale data
 	scaler.fit(X_train)
