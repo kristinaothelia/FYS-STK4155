@@ -57,17 +57,72 @@ def accuracy(model, y):
 	#accuracy = np.sum(y == model)/len(y)
 	return accuracy
 
-def precision():
+import itertools
+import operator
+
+def AUC_ROC(model, y, tpr, fpr):
+
+	model = np.ravel(model)
+	auc = 0.0
+	height = 0.0
+
+
+	#auc += (p1[0] - p0[0]) * ((p1[1] + p0[1]))/ 2  #if trapezoid else p0[1])
+
+	'''
+	for i in range(len(model)):
+		if model[i] == 1.0:
+			height = height + fpr
+		else:
+			auc = auc + height * tpr
+	'''
+
+	return np.mean(auc)
+
+def TRUE_FALSE_PREDICTIONS(y, model):
+
+	TP = 0  # True  Positive 
+	FP = 0  # False Positive
+	TN = 0  # True  Negative 
+	FN = 0  # False Negative 
+
+	for i in range(len(model)): 
+
+		# Negative: pay
+		if model[i] == 0:         
+			if y[i] == 0:
+				TN += 1
+			else:
+				FN +=1
+
+		# Positive: default
+		elif model[i] == 1:
+			if y[i] == 1:
+				TP +=1
+			else:
+				FP += 1	
+
+	return TP, FP, TN, FN
+
+def precision(y, model):
 	"""
 	The proportion of positive predictions that are actually correct
+	Often used to: limit the number of false positives (FP)
 	"""
-	pass
 
-def recall():
+	TP, FP, TN, FN = TRUE_FALSE_PREDICTIONS(y, model)
+	precision = TP/(TP+FP)
+	return precision
+
+def recall(y, model):
 	"""
 	The proportion of actual defaulters that the model will correctly predict as such
+	TPR: True positive rate (also called recall or sensitivity)
 	"""
-	pass
+
+	TP, FP, TN, FN = TRUE_FALSE_PREDICTIONS(y, model)
+	TPR = TP/(TP+FN)
+	return TPR
 
 def probabilities(ytilde):
 	"""
@@ -109,7 +164,7 @@ def beta_gradients(X, y, beta):
 	return grad_beta_C
 
 def steepest(Xf, yf, gamma=0.001, iterations=1000):   # DONT WORK, be happy
-    """	
+    """
     # Steepest ??
     n = len(X[0])
     #epsilon = 1e-8
@@ -134,7 +189,7 @@ def steepest(Xf, yf, gamma=0.001, iterations=1000):   # DONT WORK, be happy
         #cost = -np.sum(np.transpose(yf)@np.log(1 + siggy) - np.transpose(1-yf)@np.log(siggy))
         #print(cost)
         #print(i)
-        #break    
+        #break
     return beta
 
 def learning_schedule(t, t0=5, t1=50):
