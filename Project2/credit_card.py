@@ -57,6 +57,7 @@ def CreditCard(plot_hist=False):
                     (df.PAY_AMT5 == 0) &
                     (df.PAY_AMT6 == 0)].index)
     '''
+    
 
     df = df.drop(df[(df.PAY_0 == 0)].index)
     df = df.drop(df[(df.PAY_2 == 0)].index)
@@ -71,6 +72,7 @@ def CreditCard(plot_hist=False):
     df = df.drop(df[(df.PAY_4 < -1)].index)
     df = df.drop(df[(df.PAY_5 < -1)].index)
     df = df.drop(df[(df.PAY_6 < -1)].index)
+    
 
     if plot_hist:
 

@@ -6,11 +6,13 @@ import numpy 				 as np
 import pandas 		 		 as pd
 import scikitplot    		 as skplt
 import matplotlib.pyplot 	 as plt
-from scipy.special import expit
 
 from sklearn.preprocessing   import StandardScaler, OneHotEncoder, RobustScaler
 from sklearn.metrics 		 import confusion_matrix, accuracy_score, roc_auc_score
 from sklearn.model_selection import train_test_split
+from scipy.special 			 import expit
+from sklearn.metrics 	     import confusion_matrix, accuracy_score, roc_auc_score, auc, roc_curve, recall_score, precision_score, f1_score
+from sklearn.linear_model    import LogisticRegression
 # -----------------------------------------------------------------------------
 seed = 0
 np.random.seed(seed)
@@ -29,43 +31,32 @@ def logistic_function(z):
 	return g
 
 
-def IndicatorFunc():
-	pass
+def IndicatorFunc(model, threshold=0.5):
+	model[model < threshold] = 0
+	model[model >= threshold] = 1
+	return np.ravel(model)
 
 
-def accuracy(model, y):
+def accuracy(model, t):
 	"""
-	Takes in the output of the Logistic Regression code (y),
-	and use them as targets in the Indicator function
-
 	Accuracy: The proportion of the total number of predictions that are correct
+	Takes in the output of the Logistic Regression code (t), and the predicted values (model)
 	"""
-	#model[model < 0.5] = 0
-	#model[model >= 0.5] = 1
+	t        = np.ravel(t) # target
 
-	model = np.ravel(model)
-	y = np.ravel(y)
-
-
-	for i in range(len(model)):
-		if model[i] < 0.5:
-			model[i] = 0
-		else:
-			model[i] = 1
-
-	accuracy = np.mean(y == model)
-	#accuracy = np.sum(y == model)/len(y)
+	accuracy = np.mean(t == model)
+	#TP, FP, TN, FN = TRUE_FALSE_PREDICTIONS(t, model)
+	#accuracy = (TP+TN)/(TP+TN+FP+FN)
 	return accuracy
 
-import itertools
-import operator
-
 def AUC_ROC(model, y, tpr, fpr):
+	"""
+	Not working
+	"""
 
 	model = np.ravel(model)
 	auc = 0.0
 	height = 0.0
-
 
 	#auc += (p1[0] - p0[0]) * ((p1[1] + p0[1]))/ 2  #if trapezoid else p0[1])
 
@@ -76,10 +67,12 @@ def AUC_ROC(model, y, tpr, fpr):
 		else:
 			auc = auc + height * tpr
 	'''
-
 	return np.mean(auc)
 
 def TRUE_FALSE_PREDICTIONS(y, model):
+	"""
+	Calculates the proportion of the predictions that are true and false
+	"""
 
 	TP = 0  # True  Positive 
 	FP = 0  # False Positive
@@ -102,6 +95,7 @@ def TRUE_FALSE_PREDICTIONS(y, model):
 			else:
 				FP += 1	
 
+	#print(TP, FP, TN, FN)
 	return TP, FP, TN, FN
 
 def precision(y, model):
@@ -123,6 +117,16 @@ def recall(y, model):
 	TP, FP, TN, FN = TRUE_FALSE_PREDICTIONS(y, model)
 	TPR = TP/(TP+FN)
 	return TPR
+
+def F1_score(y, model):
+	"""
+	Calculates the F1_score using the precision and recall
+	"""
+	p = precision(y, model)
+	r = recall(y, model)
+	f = 2*((p*r)/(p+r))
+	return f
+
 
 def probabilities(ytilde):
 	"""
@@ -196,7 +200,7 @@ def learning_schedule(t, t0=5, t1=50):
 	ls = t0/(t+t1)
 	return ls
 
-def next_beta(X, y, eta, gamma):
+def SGD_beta(X, y, eta, gamma):
 	"""
 	Calculating the beta values
 	"""
@@ -322,6 +326,25 @@ def R2_ScoreFunction(y_data, y_model):
 	R_2          = 1 - (counter/denominator)
 
 	return R_2
+
+
+def scikit(X_train, X_test, y_train, y_test, model):
+	# A logistic regression model with scikit-learn
+	logReg = LogisticRegression(random_state=seed, solver='sag', max_iter=1000, fit_intercept=False) # solver='lbfgs'
+	logReg.fit(X_train, np.ravel(y_train))
+
+	ypredict_scikit      = logReg.predict(X_test)
+	predict_proba_scikit = logReg.predict_proba(X_test)  # Probability estimates
+	acc_score_scikit	 = logReg.score(X_test, y_test)  # Accuracy
+	acc_scikit 			 = accuracy_score(y_pred=ypredict_scikit, y_true=y_test)
+	fpr, tpr, thresholds = roc_curve(y_test, predict_proba_scikit[:,1], pos_label=None)
+	AUC_scikit 			 = auc(fpr, tpr)
+	#AUC_scikit2 		 = roc_auc_score(y_test, predict_probabilities_scikit[:,1])
+	TPR_scikit 			 = recall_score(y_test, model)
+	precision_scikit     = precision_score(y_test, model)
+	f1_score_scikit      = f1_score(y_test, np.ravel(model).astype(np.int64))
+
+	return acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit
 
 """ Slette herfra?
 def feed_forward_train(X):

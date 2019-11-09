@@ -14,118 +14,76 @@ from sklearn.model_selection     import train_test_split
 from sklearn.preprocessing 		 import OneHotEncoder, Normalizer
 from sklearn.compose 			 import ColumnTransformer
 from sklearn.preprocessing       import StandardScaler, OneHotEncoder, RobustScaler
-from sklearn.metrics 			 import confusion_matrix, accuracy_score, roc_auc_score, auc, roc_curve, recall_score, precision_score
+from sklearn.metrics 			 import confusion_matrix, accuracy_score, roc_auc_score, auc, roc_curve, recall_score, precision_score, f1_score
 from sklearn.linear_model 		 import LogisticRegression
 from sklearn.linear_model 		 import SGDRegressor, SGDClassifier  # better than logistic ??
 from sklearn.datasets 		     import load_breast_cancer
 
-import credit_card    as CD
-import plots          as P
-import functions      as func
-from   neural_network import NN
+import credit_card     as CD
+import plots           as P
+import functions       as func
+from   neural_network  import NN
+
 # -----------------------------------------------------------------------------
 seed = 0
 np.random.seed(seed)
 # -----------------------------------------------------------------------------
 
-arg = sys.argv[1]
+features, target = CD.CreditCard()
+X, y 			 = CD.DesignMatrix(features, target)
 
-# Setting the eta and gamma parameters
-#eta = 0.01
-#gamma = 0.0001  # learning rate?
+print('')
+print('The shape of X is:', X.shape)
+print('The shape of y is:', y.shape)
+print('')
+
+# Checking how many 1s and 0s we have
+print('Number of defaulters:',     np.sum(y == 1))
+print('Number of not defaulters:', np.sum(y == 0))
+print('')
+
+# Splitting X and y in a train and test set
+X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=seed)
 
 eta = 0.01
 gamma = 0.1  # learning rate?
 
-eta_range = [0.1, 0.01, 0.001, 0.0001, 1e-5, 1e-6, 1e-7]
+eta_range   = [0.1, 0.01, 0.001, 0.0001, 1e-5, 1e-6, 1e-7]
 gamma_range = [0.1, 0.01, 0.001, 0.0001, 1e-5, 1e-6, 1e-7]
 
-
-
-CreditCard = True
-
-if CreditCard == True:
-	features, target = CD.CreditCard()
-	X, y = CD.DesignMatrix(features, target)
-
-	# Splitting X and y in a train and test set
-	X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=seed)
-
-else:
-	cancer = load_breast_cancer()
-	X = cancer.data
-	y = cancer.target
-
-	X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=seed)
-	scaler = StandardScaler()
-	X_train = scaler.fit_transform(X_train)
-	X_test = scaler.transform(X_test)
-
-	#logReg = LogisticRegression()
-	#logReg.fit(X_train, y_train)
-
-'-------------------------------------------'
-print('The shape of X is:', X.shape)
-print('The shape of y is:', y.shape)
-'-------------------------------------------'
-print('')
+arg = sys.argv[1]
 
 if arg == "Log":
 	# Calculating the beta values based og the training set
-	#betas_train = func.next_beta(X_train, y_train, eta, gamma)
 	betas_train = func.steepest(X_train, y_train, gamma)
+	#betas_train = func.SGD_beta(X_train, y_train, eta, gamma)
 
 	# Calculating ytilde and the model of logistic regression
 	z 		    = X_test @ betas_train   # choosing best beta here?
 	model       = func.logistic_function(z)
+	model 		= func.IndicatorFunc(model)
 
 	# Calculating the accuracy with our own function
 	accuracy_test =  func.accuracy(model, y_test)
-	exp_term = X_test
-	Probabilities = func.probabilities(exp_term)   # ???
 
-	# Creating a logistic regression model with scikit-learn
-	# Calculating the corresponding accuracy
-	logReg = LogisticRegression(random_state=seed, solver='sag', max_iter=1000, fit_intercept=False) # solver='lbfgs'
-	logReg.fit(X_train, np.ravel(y_train))
+	acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
+	= func.scikit(X_train, X_test, y_train, y_test, model)
 
-	ypredict_scikit  		     = logReg.predict(X_test)
-	predict_probabilities_scikit = logReg.predict_proba(X_test)  # Probability estimates
-	score_scikit				 = logReg.score(X_test, y_test)  # ?? same as accuracy ??
+	TPR 	  = func.recall(y_test, model)
+	precision = func.precision(y_test, model)
+	F1_score  = func.F1_score(y_test, model)
 
-	accuracy_scikit  = accuracy_score(y_pred=ypredict_scikit, y_true=y_test)
 
-	# Comparing our own accuracy with scikit-learn
-	print('')
-	'-------------------------------------------'
-	print('The accuracy with our function is  :', accuracy_test)
-	print('The accuracy of scikit-learn is    :', accuracy_scikit)
-	'-------------------------------------------'
+	print('\n-------------------------------------------')
+	print('The accuracy is  :', accuracy_test)
+	print('The F1 score is  :', F1_score)
+	print('The precision is :', precision)
+	print('The recall is    :', TPR)
+	print('The AUC is       :', AUC_scikit)
+	print('-------------------------------------------')
 
-	fpr, tpr, thresholds = roc_curve(y_test, predict_probabilities_scikit[:,1], pos_label=None)
-	AUC_scikit 			 = auc(fpr, tpr)
-	AUC_scikit2 		 = roc_auc_score(y_test, predict_probabilities_scikit[:,1])
-	AUC_own  			 = func.AUC_ROC(model, y, tpr, fpr)
-	TPR_scikit 			 = recall_score(y_test, model)
-	TPR 				 = func.recall(y_test, model)
-	precision 			 = func.precision(y_test, model)
-	precision_scikit 	 = precision_score(y_test, model)
-
-	print(precision)
-	print(precision_scikit)
-	print(TPR_scikit)
-	print(TPR)
-
-	# The AUC scikit
-	print('')
-	'-------------------------------------------'
-	print('The AUC is      :', AUC_scikit)
-	print('The AUC is      :', AUC_scikit2)
-	print('The AUC (own) is:', AUC_own)
-	'-------------------------------------------'
-
-	p = predict_probabilities_scikit[:,0]
-	#p = func.probabilities(model)
+	#p = predict_proba_scikit[:,0]
+	p = func.probabilities(model)
 	notP = 1 - np.ravel(p)
 	y_p = np.zeros((len(notP), 2))
 	y_p[:,0] = np.ravel(p)
@@ -138,14 +96,11 @@ if arg == "Log":
 	plt.legend()
 	plt.show()
 
-	skplt.metrics.plot_roc_curve(y_test, predict_probabilities_scikit)
+	skplt.metrics.plot_roc(y_test, predict_proba_scikit)
 	plt.show()
 
-	#plt.plot(AUC_own)
-	#plt.show()
-
 	# Creating a Confusion matrix using pandas and pandas dataframe
-	CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=False)
+	CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=True)
 	CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
 
 	print('')
@@ -176,6 +131,7 @@ elif arg == "NN":
 
 		return onehot_vector
 
+	# Create this into a function?? 
 	Y_train_onehot, Y_test_onehot = to_categorical_numpy(y_train), to_categorical_numpy(y_test)
 
 	# 78 accuracy
@@ -221,3 +177,7 @@ elif arg == "NN":
 		np.save('lambda_values', lmbd_vals)
 
 	P.map()
+
+
+elif arg == 'NN_Reg':
+	pass
