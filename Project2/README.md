@@ -5,6 +5,8 @@
 ## Running the code:
 ...
 
+## Running the pytest:
+run: pytest -W ignore::DeprecationWarning
 
 ### Participants:
 - Anna Eliassen

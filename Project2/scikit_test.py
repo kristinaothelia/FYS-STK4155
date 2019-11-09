@@ -24,9 +24,6 @@ z         = X_test @ betas_train   # choosing best beta here?
 model     = func.logistic_function(z)
 model     = func.IndicatorFunc(model)
 
-
-
-
 acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit = func.scikit(X_train, X_test, y_train, y_test, model)
 
 Acc         = func.accuracy(model, y_test)
