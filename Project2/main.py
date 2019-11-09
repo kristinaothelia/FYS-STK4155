@@ -107,11 +107,13 @@ if arg == "Log":
 
 	fpr, tpr, thresholds = roc_curve(y_test, predict_probabilities_scikit[:,1], pos_label=None)
 	AUC_scikit 			 = auc(fpr, tpr)
-
+	AUC_scikit2 		 = roc_auc_score(y_test, predict_probabilities_scikit[:,1])
+	
 	# The AUC scikit
 	print('')
 	'-------------------------------------------'
 	print('The AUC is:', AUC_scikit)
+	print('The AUC is:', AUC_scikit2)
 	'-------------------------------------------'
 
 	p = predict_probabilities_scikit[:,0]
@@ -126,6 +128,9 @@ if arg == "Log":
 	skplt.metrics.plot_cumulative_gain(y_test, y_p)
 	plt.plot(x_plot, y_plot, label='best curve', linewidth=4)
 	plt.legend()
+	plt.show()
+
+	skplt.metrics.plot_roc_curve(y_test, predict_probabilities_scikit)
 	plt.show()
 
 	# Creating a Confusion matrix using pandas and pandas dataframe
