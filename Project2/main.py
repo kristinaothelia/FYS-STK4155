@@ -112,6 +112,128 @@ if arg == "Log":
 
 elif arg == "NN":
 
+<<<<<<< HEAD
+    #scaler = RobustScaler()
+    '''
+    # Scale data
+    scaler.fit(X_train)
+    X_train_sc = scaler.transform(X_train)
+    X_test_sc = scaler.transform(X_test)
+    '''
+    X_train_sc = X_train
+    X_test_sc  = X_test
+
+    def to_categorical_numpy(integer_vector):
+
+	    n_inputs 	  = len(integer_vector)
+	    n_categories  = np.max(integer_vector) + 1
+	    onehot_vector = np.zeros((n_inputs, n_categories))
+	    onehot_vector[range(n_inputs), integer_vector] = 1
+
+	    return onehot_vector
+
+    Y_train_onehot, Y_test_onehot = to_categorical_numpy(y_train), to_categorical_numpy(y_test)
+
+    # 78 accuracy
+    epochs     = 100 #60 #30
+    batch_size = 80 #60 #500
+
+    eta_vals = np.logspace(-7, -4, 7)
+    #eta_vals = np.linspace(0, 3.5, 7)
+    lmbd_vals = np.logspace(-7, -1, 7)
+
+    # store the models for later use
+    DNN_numpy 		 = np.zeros((len(eta_vals), len(lmbd_vals)), dtype=object)
+    accuracy_array 	 = np.zeros((len(eta_vals), len(lmbd_vals)), dtype=object)
+    n_hidden_neurons = 50 #not sure about number???
+    n_categories 	 = 2
+
+    print(X_train.shape)
+    print(Y_train_onehot.shape)
+
+
+    make_files = True
+    if make_files:
+        # grid search
+        for i, eta in enumerate(eta_vals):
+            for j, lmbd in enumerate(lmbd_vals):
+                dnn = NN(X_train_sc, Y_train_onehot, eta=eta, lmbd=lmbd, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
+                dnn.train()
+                
+                DNN_numpy[i][j] = dnn
+                
+                #print(X_test_sc)
+                test_predict = dnn.predict(X_test_sc)
+                #print(test_predict)
+                
+                #print(test_predict)
+                accuracy_array[i][j] = accuracy_score(y_test, test_predict)
+                
+                print("Learning rate  = ", eta)
+                print("Lambda = ", lmbd)
+                print("Accuracy score on test set: ", accuracy_score(y_test, test_predict))
+                print()
+
+
+        np.save('acc_score', accuracy_array)
+        np.save('eta_values', eta_vals)
+        np.save('lambda_values', lmbd_vals)
+
+        P.map()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+#design_matrix = pd.DataFrame(X)
+#design_matrix.to_excel(excel_writer = "DesignMatrix.xlsx", header=False, index=False)
+
+#target = pd.DataFrame(X)
+#design_matrix.to_excel(excel_writer = "DesignMatrix.xlsx")
+
+#design_matrix_file = pd.read_excel("DesignMatrix.xlsx", header=None, skiprows=None, index_col=None)
+#print(design_matrix_file)
+
+
+'''
+
+# Create an instance of the estimator
+logReg = LogisticRegression() #n_jobs=-1, random_state=15
+
+# Using the training data to train the estimator
+logReg.fit(X_train, y_train)
+betas = logReg.coef_
+
+# Evaluating the model
+y_pred_test = logReg.predict(X_test)
+
+#accuracy = accuracy_score(y_pred=y_pred_test, y_true=y_test) # metrics.loc['accuracy', 'LogisticReg']
+
+
+# Confusion matrix
+#CM = confusion_matrix(y_pred=y_pred_test, y_true=y_test)
+#CMatrix(CM)
+'''
+=======
 	#scaler = RobustScaler()
 	'''
 	# Scale data
@@ -177,7 +299,11 @@ elif arg == "NN":
 		np.save('lambda_values', lmbd_vals)
 
 	P.map()
+<<<<<<< HEAD
 
 
 elif arg == 'NN_Reg':
 	pass
+=======
+>>>>>>> 88bfc48548c5ca0d8afbff469402ae220aa63876
+>>>>>>> 0f61763f9d3103a2b65e6095c5ee98671cc83411
