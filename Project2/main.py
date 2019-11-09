@@ -7,8 +7,6 @@ import random
 import xlsxwriter
 import pandas            		 as pd
 import numpy 	         		 as np
-import functions         		 as func
-import credit_card       		 as CD
 import matplotlib.pyplot 		 as plt
 import scikitplot       		 as skplt
 
@@ -21,9 +19,10 @@ from sklearn.linear_model 		 import LogisticRegression
 from sklearn.linear_model 		 import SGDRegressor, SGDClassifier  # better than logistic ??
 from sklearn.datasets 		     import load_breast_cancer
 
-from neural_network import NN
-import plots        as P
-import functions    as func
+import credit_card    as CD
+import plots          as P
+import functions      as func
+from   neural_network import NN
 # -----------------------------------------------------------------------------
 seed = 0
 np.random.seed(seed)

@@ -164,7 +164,7 @@ def beta_gradients(X, y, beta):
 	return grad_beta_C
 
 def steepest(Xf, yf, gamma=0.001, iterations=1000):   # DONT WORK, be happy
-    """	
+    """
     # Steepest ??
     n = len(X[0])
     #epsilon = 1e-8
@@ -189,7 +189,7 @@ def steepest(Xf, yf, gamma=0.001, iterations=1000):   # DONT WORK, be happy
         #cost = -np.sum(np.transpose(yf)@np.log(1 + siggy) - np.transpose(1-yf)@np.log(siggy))
         #print(cost)
         #print(i)
-        #break    
+        #break
     return beta
 
 def learning_schedule(t, t0=5, t1=50):
