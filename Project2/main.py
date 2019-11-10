@@ -63,7 +63,7 @@ print('The shape of y is:', y.shape)
 print('')
 
 # Checking how many 1s and 0s we have
-print('Actual number of defaulters    :',     np.sum(y == 1))
+print('Actual number of defaulters    :', np.sum(y == 1))
 print('Actual number of not defaulters:', np.sum(y == 0))
 print('')
 
