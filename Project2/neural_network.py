@@ -76,9 +76,9 @@ class NN:
 
     def backpropagation(self):
         #self.Y_data = self.Y_data[:,np.newaxis] #???
-        print('prob', self.probabilities.shape)
-        print('a_h', self.a_h.shape)
-        print('y_data', self.Y_data.shape)
+        #print('prob', self.probabilities.shape)
+        #print('a_h', self.a_h.shape)
+        #print('y_data', self.Y_data.shape)
         error_output = self.probabilities - self.Y_data
         error_hidden = np.matmul(error_output, self.output_weights.T) * self.a_h * (1 - self.a_h)
 

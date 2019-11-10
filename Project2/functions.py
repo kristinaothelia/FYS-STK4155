@@ -6,11 +6,13 @@ import numpy 				 as np
 import pandas 		 		 as pd
 import scikitplot    		 as skplt
 import matplotlib.pyplot 	 as plt
-from scipy.special import expit
 
 from sklearn.preprocessing   import StandardScaler, OneHotEncoder, RobustScaler
 from sklearn.metrics 		 import confusion_matrix, accuracy_score, roc_auc_score
 from sklearn.model_selection import train_test_split
+from scipy.special 			 import expit
+from sklearn.metrics 	     import confusion_matrix, accuracy_score, roc_auc_score, auc, roc_curve, recall_score, precision_score, f1_score
+from sklearn.linear_model    import LogisticRegression
 # -----------------------------------------------------------------------------
 seed = 0
 np.random.seed(seed)
@@ -29,43 +31,32 @@ def logistic_function(z):
 	return g
 
 
-def IndicatorFunc():
-	pass
+def IndicatorFunc(model, threshold=0.5):
+	model[model < threshold] = 0
+	model[model >= threshold] = 1
+	return np.ravel(model)
 
 
-def accuracy(model, y):
+def accuracy(model, t):
 	"""
-	Takes in the output of the Logistic Regression code (y),
-	and use them as targets in the Indicator function
-
 	Accuracy: The proportion of the total number of predictions that are correct
+	Takes in the output of the Logistic Regression code (t), and the predicted values (model)
 	"""
-	#model[model < 0.5] = 0
-	#model[model >= 0.5] = 1
+	t        = np.ravel(t) # target
 
-	model = np.ravel(model)
-	y = np.ravel(y)
-
-
-	for i in range(len(model)):
-		if model[i] < 0.5:
-			model[i] = 0
-		else:
-			model[i] = 1
-
-	accuracy = np.mean(y == model)
-	#accuracy = np.sum(y == model)/len(y)
+	accuracy = np.mean(t == model)
+	#TP, FP, TN, FN = TRUE_FALSE_PREDICTIONS(t, model)
+	#accuracy = (TP+TN)/(TP+TN+FP+FN)
 	return accuracy
 
-import itertools
-import operator
-
 def AUC_ROC(model, y, tpr, fpr):
+	"""
+	Not working
+	"""
 
 	model = np.ravel(model)
 	auc = 0.0
 	height = 0.0
-
 
 	#auc += (p1[0] - p0[0]) * ((p1[1] + p0[1]))/ 2  #if trapezoid else p0[1])
 
@@ -76,10 +67,12 @@ def AUC_ROC(model, y, tpr, fpr):
 		else:
 			auc = auc + height * tpr
 	'''
-
 	return np.mean(auc)
 
 def TRUE_FALSE_PREDICTIONS(y, model):
+	"""
+	Calculates the proportion of the predictions that are true and false
+	"""
 
 	TP = 0  # True  Positive 
 	FP = 0  # False Positive
@@ -102,6 +95,7 @@ def TRUE_FALSE_PREDICTIONS(y, model):
 			else:
 				FP += 1	
 
+	#print(TP, FP, TN, FN)
 	return TP, FP, TN, FN
 
 def precision(y, model):
@@ -123,6 +117,16 @@ def recall(y, model):
 	TP, FP, TN, FN = TRUE_FALSE_PREDICTIONS(y, model)
 	TPR = TP/(TP+FN)
 	return TPR
+
+def F1_score(y, model):
+	"""
+	Calculates the F1_score using the precision and recall
+	"""
+	p = precision(y, model)
+	r = recall(y, model)
+	f = 2*((p*r)/(p+r))
+	return f
+
 
 def probabilities(ytilde):
 	"""
@@ -196,7 +200,7 @@ def learning_schedule(t, t0=5, t1=50):
 	ls = t0/(t+t1)
 	return ls
 
-def next_beta(X, y, eta, gamma):
+def SGD_beta(X, y, eta, gamma):
 	"""
 	Calculating the beta values
 	"""
@@ -323,72 +327,25 @@ def R2_ScoreFunction(y_data, y_model):
 
 	return R_2
 
-""" Slette herfra?
-def feed_forward_train(X):
 
-	# Weighted sum of inputs to the hidden layer
-	z_h = np.matmul(X, hidden_weights) + hidden_bias
+def scikit(X_train, X_test, y_train, y_test, model):
+	# A logistic regression model with scikit-learn
+	logReg = LogisticRegression(random_state=seed, solver='sag', max_iter=1000, fit_intercept=False) # solver='lbfgs'
+	logReg.fit(X_train, np.ravel(y_train))
 
-	# Activation in the hidden layer
-	a_h = logistic_function(z_h)
+	ypredict_scikit      = logReg.predict(X_test)
+	predict_proba_scikit = logReg.predict_proba(X_test)  # Probability estimates
+	acc_score_scikit	 = logReg.score(X_test, y_test)  # Accuracy
+	acc_scikit 			 = accuracy_score(y_pred=ypredict_scikit, y_true=y_test)
+	fpr, tpr, thresholds = roc_curve(y_test, predict_proba_scikit[:,1], pos_label=None)
+	AUC_scikit 			 = auc(fpr, tpr)
+	#AUC_scikit2 		 = roc_auc_score(y_test, predict_probabilities_scikit[:,1])
+	TPR_scikit 			 = recall_score(y_test, model)
+	precision_scikit     = precision_score(y_test, model)
+	f1_score_scikit      = f1_score(y_test, np.ravel(model).astype(np.int64))
 
-	# Weighted sum of inputs to the output layer
-	z_o = np.matmul(a_h, output_weights) + output_bias
+	return acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit
 
-	# Softmax output ??
-	# Axis 0 holds each input and axis 1 the probabilities of each category
-	exp_term = np.exp(z_o)
-	probabilities = probabilities(exp_term)
-
-	# For backpropagation need activations in hidden and output layers
-	return a_h, probabilities
-
-def BackPropagation(lamb):
-
-	output_weights, output_bias, hidden_weights, hidden_bias = weights_bias(eta, lamb)
-
-	a_h, p = feed_forward_train(X)
-
-	# Error in the output layer
-	error_output = p - y
-
-	# Error in the hidden layer
-	error_hidden = np.matmul(error_output, output_weights.T)*a_h*(1-a_h)
-
-	# Gradients for the output layer
-	output_weights_gradient = np.matmul(X.T, error_hidden)
-	output_bias_gradient = np.sum(error_hidden, axis=0)
-
-	# Gradients for the hidden layer
-	hidden_weights_gradient = np.matmul(X.T, error_hidden)
-	hidden_bias_gradient = np.sum(error_hidden, axis=0)
-
-	return output_weights_gradient, output_bias_gradient, hidden_weights_gradient, hidden_bias_gradient
-
-def weights_bias(eta, lamb):
-
-	#eta = 0.01
-	#lmbd = 0.01
-
-	for i in range(1000):
-
-		# Calculating the gradients
-		dWo, dBo, dWh, dBh = BackPropagation(X_train, Y_train_onehot)
-
-		# Calculating regularization term gradients
-		dWo += lmbd * output_weights
-		dWh += lmbd * hidden_weights
-
-
-		# Update weights and biases
-		output_weights -= eta * dWo
-		output_bias -= eta * dBo
-		hidden_weights -= eta * dWh
-		hidden_bias -= eta * dBh
-
-	#print("New accuracy on training data: " + str(accuracy_score(predict(X_train), Y_train)))
-	return output_weights, output_bias, hidden_weights, hidden_bias
-"""
 
 def activation_function(X):
 	"""
@@ -397,3 +354,44 @@ def activation_function(X):
 	"""
 	z = np.sum(w*x+b)
 	return z
+
+'''
+def threshold_plot(gamma, threshold):
+
+	accuracy_test = np.zeros(len(threshold))
+	F1_score 	  = np.zeros(len(threshold))
+	precision 	  = np.zeros(len(threshold))
+	TPR 		  = np.zeros(len(threshold))
+	AUC_scikit    = np.zeros(len(threshold))
+
+	for i in range(len(threshold)):
+
+		# Calculating the beta values based og the training set
+		betas_train = func.steepest(X_train, y_train, gamma=gamma)
+		#betas_train = func.SGD_beta(X_train, y_train, eta, gamma)
+		
+
+		# Calculating ytilde and the model of logistic regression
+		z 		    = X_test @ betas_train   # choosing best beta here?
+		model       = func.logistic_function(z)
+		model 		= func.IndicatorFunc(model, threshold=0.5)
+
+		acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
+		= func.scikit(X_train, X_test, y_train, y_test, model)
+
+		# Calculating the different metrics
+		accuracy_test =  func.accuracy(model, y_test)
+		TPR 	      = func.recall(y_test, model)
+		precision     = func.precision(y_test, model)
+		F1_score      = func.F1_score(y_test, model)
+
+
+	print('\n-------------------------------------------')
+	print('The accuracy is  :', accuracy_test)
+	print('The F1 score is  :', F1_score)
+	print('The precision is :', precision)
+	print('The recall is    :', TPR)
+	print('The AUC is       :', AUC_scikit)
+	print('-------------------------------------------')
+'''
+
