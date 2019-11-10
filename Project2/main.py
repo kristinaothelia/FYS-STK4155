@@ -106,25 +106,12 @@ if arg == "Log":
 
 	accuracy_scikit  = accuracy_score(y_pred=ypredict_scikit, y_true=y_test)
 
-	# Comparing our own accuracy with scikit-learn
-	print('')
-	'-------------------------------------------'
-	print('The accuracy with our function is  :', accuracy_test)
-	print('The accuracy of scikit-learn is    :', accuracy_scikit)
-	'-------------------------------------------'
 
 	fpr, tpr, thresholds = roc_curve(y_test, predict_probabilities_scikit[:,1], pos_label=None)
 	AUC_scikit 			 = auc(fpr, tpr)
 
-	# The AUC scikit
-	print('')
-	'-------------------------------------------'
-	print('The AUC is:', AUC_scikit)
-	'-------------------------------------------'
-
 	acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
 	= func.scikit(X_train, X_test, y_train, y_test, model)
-
 
 	# Calculating the different metrics
 	accuracy_test =  func.accuracy(model, y_test)
@@ -154,7 +141,6 @@ if arg == "Log":
 	plt.legend(["Pay", "Default", "Baseline", "Best curve"])
 	plt.ylim(0, 1.05)
 	plt.show()
-
 
 	# Area Ratio?
 	x_data, y_data = skplt.helpers.cumulative_gain_curve(y_test, predict_proba_scikit[:,0])
@@ -245,7 +231,6 @@ elif arg == "NN":
 
     model = y_predict  #send to AUC stuff
 
-    '''
     p = func.probabilities(model)
     notP = 1 - np.ravel(p)
     y_p = np.zeros((len(notP), 2))
@@ -260,19 +245,25 @@ elif arg == "NN":
     plt.ylim(0, 1.05)
     plt.show()
 
-    # Area Ratio?
-    x_data, y_data = skplt.helpers.cumulative_gain_curve(y_test, predict_proba_scikit[:,0])
-    plt.plot(x_data, y_data)
-    plt.show()
-
-    skplt.metrics.plot_roc(y_test, predict_proba_scikit)
-    plt.show()
-
     # Creating a Confusion matrix using pandas and pandas dataframe
     CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=True)
     CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
-    '''
 
 
+	acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
+	= func.scikit(X_train, X_test, y_train, y_test, model)
 
 
+	# Calculating the different metrics
+	accuracy_test =  func.accuracy(model, y_test)
+	TPR 	      = func.recall(y_test, model)
+	precision     = func.precision(y_test, model)
+	F1_score      = func.F1_score(y_test, model)
+
+	print('\n-------------------------------------------')
+	print('The accuracy is  :', accuracy_test)
+	print('The F1 score is  :', F1_score)
+	print('The precision is :', precision)
+	print('The recall is    :', TPR)
+	print('The AUC is       :', AUC_scikit)
+	print('-------------------------------------------')
