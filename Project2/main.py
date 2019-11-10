@@ -84,7 +84,7 @@ if arg == "Log":
 	#betas_train = func.SGD_beta(X_train, y_train, eta=1e-4, gamma=0.01)
 
 	#threshold_plot = func.threshold_plot(X_train, X_test, y_train, y_test, gamma, thresholds)
-	
+
 	# Calculating ytilde and the model of logistic regression
 	z 		    = X_test @ betas_train   # choosing best beta here?
 	model       = func.logistic_function(z)
@@ -174,16 +174,9 @@ if arg == "Log":
 	print('')
 	print(CM_DataFrame)
 	'-------------------------------------------'
-	
+
 elif arg == "NN":
 
-    #scaler = RobustScaler()
-    '''
-    # Scale data
-    scaler.fit(X_train)
-    X_train_sc = scaler.transform(X_train)
-    X_test_sc = scaler.transform(X_test)
-    '''
 
     X_train_sc = X_train
     X_test_sc  = X_test
@@ -215,7 +208,6 @@ elif arg == "NN":
     print(X_train.shape)
     print(Y_train_onehot.shape)
 
-
     make_files = True
     if make_files:
         # grid search
@@ -223,12 +215,12 @@ elif arg == "NN":
             for j, lmbd in enumerate(lmbd_vals):
                 dnn = NN(X_train_sc, Y_train_onehot, eta=eta, lmbd=lmbd, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
                 dnn.train()
-                
+
                 DNN_numpy[i][j] = dnn
                 test_predict    = dnn.predict(X_test_sc)
-              
+
                 accuracy_array[i][j] = accuracy_score(y_test, test_predict)
-                
+
                 print("Learning rate  = ", eta)
                 print("Lambda = ", lmbd)
                 print("Accuracy score on test set: ", accuracy_score(y_test, test_predict))
@@ -241,20 +233,36 @@ elif arg == "NN":
 
     P.map()
 
-'''
-p = func.probabilities(model)
-notP = 1 - np.ravel(p)
-y_p = np.zeros((len(notP), 2))
-y_p[:,0] = np.ravel(p)
-y_p[:,1] = np.ravel(notP)
+	#eta_final  =
+	#lamb_final =
+	#dnn = NN(X_train_sc, Y_train_onehot, eta=eta, lmbd=lmbd, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
 
-x_plot, y_plot = func.bestCurve(y_test)
+	# Use best values
+	
+	'''
+	p = func.probabilities(model)
+	notP = 1 - np.ravel(p)
+	y_p = np.zeros((len(notP), 2))
+	y_p[:,0] = np.ravel(p)
+	y_p[:,1] = np.ravel(notP)
 
-skplt.metrics.plot_cumulative_gain(y_test, y_p)
-plt.plot(x_plot, y_plot, label='best curve', linewidth=4)
-plt.legend()
-plt.show()
+	x_plot, y_plot = func.bestCurve(y_test)
 
-skplt.metrics.plot_roc(y_test, predict_proba_scikit)
-plt.show()
-'''
+	skplt.metrics.plot_cumulative_gain(y_test, y_p, text_fontsize='medium')
+	plt.plot(x_plot, y_plot, linewidth=4)
+	plt.legend(["Pay", "Default", "Baseline", "Best curve"])
+	plt.ylim(0, 1.05)
+	plt.show()
+
+	# Area Ratio?
+	x_data, y_data = skplt.helpers.cumulative_gain_curve(y_test, predict_proba_scikit[:,0])
+	plt.plot(x_data, y_data)
+	plt.show()
+
+	skplt.metrics.plot_roc(y_test, predict_proba_scikit)
+	plt.show()
+
+	# Creating a Confusion matrix using pandas and pandas dataframe
+	CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=True)
+	CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
+	'''
