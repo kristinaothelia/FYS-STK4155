@@ -36,11 +36,11 @@ X      = func.create_X(XX, YY, n)
 
 X_train, X_test, y_train, y_test = train_test_split(X, z, test_size=1.0/k) # Ikke splitte?
 
-epochs     = 1000
+epochs     = 500 #1000
 batch_size = 50  #60 #500
 
-eta_vals   = np.logspace(-6.5, -3, 5)
-lmbd_vals  = np.logspace(-6.5, -3, 5)
+eta_vals   = np.logspace(-7, -3, 5)
+lmbd_vals  = np.logspace(-7, -3, 5)
 
 MSE        = np.zeros((len(eta_vals), len(lmbd_vals)))
 R2         = np.zeros((len(eta_vals), len(lmbd_vals)))
@@ -87,15 +87,16 @@ def not_now():
 	ax.set_xlabel("$\lambda$")
 	plt.show()
 
-not_now()
+#not_now()
 
 
 # Plot real function and model
 #--------------------------------------------------------------------------
-
-lamb  = 0.0001
+lamb  =
+#lamb  = 0.0001 # Default
 alpha = lamb
-eta   = 0.001
+#eta   = 0.001  # Default
+eta   =
 
 reg = MLPRegressor(	activation="relu", # Eller en annen?
     				solver="sgd",
