@@ -57,15 +57,11 @@ if CreditCard == True:
 	# Calculating the beta values
 	#betas = func.next_beta(X, y, eta, gamma)
 
-print('')
-print('The shape of X is:', X.shape)
-print('The shape of y is:', y.shape)
-print('')
-
 # Checking how many 1s and 0s we have
-print('Actual number of defaulters    :', np.sum(y == 1))
+print('-------------------------------------------')
+print('Actual number of defaulters:    ', np.sum(y == 1))
 print('Actual number of not defaulters:', np.sum(y == 0))
-print('')
+print('-------------------------------------------')
 
 # Splitting X and y in a train and test set
 X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=seed)
@@ -84,7 +80,7 @@ if arg == "Log":
 	#betas_train = func.SGD_beta(X_train, y_train, eta=1e-4, gamma=0.01)
 
 	#threshold_plot = func.threshold_plot(X_train, X_test, y_train, y_test, gamma, thresholds)
-	
+
 	# Calculating ytilde and the model of logistic regression
 	z 		    = X_test @ betas_train   # choosing best beta here?
 	model       = func.logistic_function(z)
@@ -100,11 +96,11 @@ if arg == "Log":
 	F1_score      = func.F1_score(y_test, model)
 
 	print('\n-------------------------------------------')
-	print('The accuracy is  :', accuracy_test)
-	print('The F1 score is  :', F1_score)
-	print('The precision is :', precision)
-	print('The recall is    :', TPR)
-	print('The AUC is       :', AUC_scikit)
+	print('The accuracy is  : %.3f' % accuracy_test)
+	print('The F1 score is  : %.3f' % F1_score)
+	print('The precision is : %.3f' % precision)
+	print('The recall is    : %.3f' % TPR)
+	print('The AUC is       : %.3f' % AUC_scikit)
 	print('-------------------------------------------')
 
 	#p = predict_proba_scikit[:,0]
@@ -134,15 +130,13 @@ if arg == "Log":
 	CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=True)
 	CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
 
-	print('')
-	'-------------------------------------------'
+	print('-------------------------------------------')
 	print('The Confusion Matrix')
-	print('')
 	print(CM_DataFrame)
-	'-------------------------------------------'
+	print('-------------------------------------------')
+
 
 elif arg == "NN":
-
 
     X_train_sc = X_train
     X_test_sc  = X_test
@@ -171,9 +165,6 @@ elif arg == "NN":
     n_hidden_neurons = 50 #not sure about number???
     n_categories 	 = 2
 
-    print(X_train.shape)
-    print(Y_train_onehot.shape)
-
     make_files = False
     if make_files:
         # grid search
@@ -192,22 +183,21 @@ elif arg == "NN":
                 print("Accuracy score on test set: ", accuracy_score(y_test, test_predict))
                 print()
 
-
         np.save('acc_score', accuracy_array)
         np.save('eta_values', eta_vals)
         np.save('lambda_values', lmbd_vals)
 
-        #P.map()
+        P.map()
 
 
-    # Use best values (maybe?
+    # Use best values
     eta_final  = 1e-4
     lmbd_final = 1e-4
     dnn_f = NN(X_train_sc, Y_train_onehot, eta=eta_final, lmbd=lmbd_final, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
 
     dnn_f.train()
     y_predict = dnn_f.predict(X_test_sc)
-    print(accuracy_score(y_test, y_predict))
+    #print(accuracy_score(y_test, y_predict))
 
     model = y_predict  #send to AUC stuff
 
@@ -225,25 +215,27 @@ elif arg == "NN":
     plt.ylim(0, 1.05)
     plt.show()
 
-    # Creating a Confusion matrix using pandas and pandas dataframe
-    CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=True)
-    CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
+	# Creating a Confusion matrix using pandas and pandas dataframe
+    CM 			  = func.Create_ConfusionMatrix(model, y_test, plot=True)
+    CM_DataFrame  = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
 
+    acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit = func.scikit(X_train, X_test, y_train, y_test, model)
 
-	acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
-	= func.scikit(X_train, X_test, y_train, y_test, model)
+    # Calculating the different metrics
+    accuracy_test = func.accuracy(model, y_test)
+    TPR 	      = func.recall(y_test, model)
+    precision     = func.precision(y_test, model)
+    F1_score      = func.F1_score(y_test, model)
 
+    print('\n-------------------------------------------')
+    print('The accuracy is  : %.3f' % accuracy_test)
+    print('The F1 score is  : %.3f' % F1_score)
+    print('The precision is : %.3f' % precision)
+    print('The recall is    : %.3f' % TPR)
+    print('The AUC is       : %.3f' % AUC_scikit)
+    print('The MSE value is : %.3f' % func.MeanSquaredError(y_test, model)) # NOE GALT HER
+    print('The R2 score is  : %.3f' % func.R2_ScoreFunction(y_test, model)) # NOE GALT HER
+    print('-------------------------------------------')
 
-	# Calculating the different metrics
-	accuracy_test =  func.accuracy(model, y_test)
-	TPR 	      = func.recall(y_test, model)
-	precision     = func.precision(y_test, model)
-	F1_score      = func.F1_score(y_test, model)
-
-	print('\n-------------------------------------------')
-	print('The accuracy is  :', accuracy_test)
-	print('The F1 score is  :', F1_score)
-	print('The precision is :', precision)
-	print('The recall is    :', TPR)
-	print('The AUC is       :', AUC_scikit)
-	print('-------------------------------------------')
+else:
+	print('Pass "Log" or "NN" after main.py')
