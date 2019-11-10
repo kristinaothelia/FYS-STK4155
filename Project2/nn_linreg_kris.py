@@ -28,7 +28,7 @@ def FrankeFunction(x, y):
 	term4 = -0.20*np.exp(-(9*x-4)**2        - (9*y-7)**2)
 	return term1 + term2 + term3 + term4
 
-def create_X(x, y, n ):
+def create_X(x, y, z):
 	if len(x.shape) > 1:
 		x = np.ravel(x)
 		y = np.ravel(y)
@@ -43,6 +43,8 @@ def create_X(x, y, n ):
 			X[:,q+k] = (x**(i-k))*(y**k)
 
 	return X
+
+# We have to add noise?
 
 # Making meshgrid of datapoints and compute Franke's function
 n = 5  # Poly deg?
