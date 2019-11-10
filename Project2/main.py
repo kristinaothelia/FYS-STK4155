@@ -90,41 +90,8 @@ if arg == "Log":
 	model       = func.logistic_function(z)
 	model 		= func.IndicatorFunc(model, threshold=0.44)
 
-	# Calculating the accuracy with our own function
-	accuracy_test =  func.accuracy(model, y_test)
-	exp_term = X_test
-	Probabilities = func.probabilities(exp_term)   # ???
-
-	# Creating a logistic regression model with scikit-learn
-	# Calculating the corresponding accuracy
-	logReg = LogisticRegression(random_state=seed, solver='sag', max_iter=1000, fit_intercept=False) # solver='lbfgs'
-	logReg.fit(X_train, np.ravel(y_train))
-
-	ypredict_scikit  		     = logReg.predict(X_test)
-	predict_probabilities_scikit = logReg.predict_proba(X_test)  # Probability estimates
-	score_scikit				 = logReg.score(X_test, y_test)  # ?? same as accuracy ??
-
-	accuracy_scikit  = accuracy_score(y_pred=ypredict_scikit, y_true=y_test)
-
-	# Comparing our own accuracy with scikit-learn
-	print('')
-	'-------------------------------------------'
-	print('The accuracy with our function is  :', accuracy_test)
-	print('The accuracy of scikit-learn is    :', accuracy_scikit)
-	'-------------------------------------------'
-
-	fpr, tpr, thresholds = roc_curve(y_test, predict_probabilities_scikit[:,1], pos_label=None)
-	AUC_scikit 			 = auc(fpr, tpr)
-
-	# The AUC scikit
-	print('')
-	'-------------------------------------------'
-	print('The AUC is:', AUC_scikit)
-	'-------------------------------------------'
-
 	acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
 	= func.scikit(X_train, X_test, y_train, y_test, model)
-
 
 	# Calculating the different metrics
 	accuracy_test =  func.accuracy(model, y_test)
@@ -154,7 +121,6 @@ if arg == "Log":
 	plt.legend(["Pay", "Default", "Baseline", "Best curve"])
 	plt.ylim(0, 1.05)
 	plt.show()
-
 
 	# Area Ratio?
 	x_data, y_data = skplt.helpers.cumulative_gain_curve(y_test, predict_proba_scikit[:,0])
