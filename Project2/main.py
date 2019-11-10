@@ -208,7 +208,7 @@ elif arg == "NN":
     print(X_train.shape)
     print(Y_train_onehot.shape)
 
-    make_files = True
+    make_files = False
     if make_files:
         # grid search
         for i, eta in enumerate(eta_vals):
@@ -231,38 +231,48 @@ elif arg == "NN":
         np.save('eta_values', eta_vals)
         np.save('lambda_values', lmbd_vals)
 
-    P.map()
+        #P.map()
 
-	#eta_final  =
-	#lamb_final =
-	#dnn = NN(X_train_sc, Y_train_onehot, eta=eta, lmbd=lmbd, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
 
-	# Use best values
-	
-	'''
-	p = func.probabilities(model)
-	notP = 1 - np.ravel(p)
-	y_p = np.zeros((len(notP), 2))
-	y_p[:,0] = np.ravel(p)
-	y_p[:,1] = np.ravel(notP)
+    # Use best values (maybe?
+    eta_final  = 1e-4
+    lmbd_final = 1e-4
+    dnn_f = NN(X_train_sc, Y_train_onehot, eta=eta_final, lmbd=lmbd_final, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
 
-	x_plot, y_plot = func.bestCurve(y_test)
+    dnn_f.train()
+    y_predict = dnn_f.predict(X_test_sc)
+    print(accuracy_score(y_test, y_predict))
 
-	skplt.metrics.plot_cumulative_gain(y_test, y_p, text_fontsize='medium')
-	plt.plot(x_plot, y_plot, linewidth=4)
-	plt.legend(["Pay", "Default", "Baseline", "Best curve"])
-	plt.ylim(0, 1.05)
-	plt.show()
+    model = y_predict  #send to AUC stuff
 
-	# Area Ratio?
-	x_data, y_data = skplt.helpers.cumulative_gain_curve(y_test, predict_proba_scikit[:,0])
-	plt.plot(x_data, y_data)
-	plt.show()
+    '''
+    p = func.probabilities(model)
+    notP = 1 - np.ravel(p)
+    y_p = np.zeros((len(notP), 2))
+    y_p[:,0] = np.ravel(p)
+    y_p[:,1] = np.ravel(notP)
 
-	skplt.metrics.plot_roc(y_test, predict_proba_scikit)
-	plt.show()
+    x_plot, y_plot = func.bestCurve(y_test)
 
-	# Creating a Confusion matrix using pandas and pandas dataframe
-	CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=True)
-	CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
-	'''
+    skplt.metrics.plot_cumulative_gain(y_test, y_p, text_fontsize='medium')
+    plt.plot(x_plot, y_plot, linewidth=4)
+    plt.legend(["Pay", "Default", "Baseline", "Best curve"])
+    plt.ylim(0, 1.05)
+    plt.show()
+
+    # Area Ratio?
+    x_data, y_data = skplt.helpers.cumulative_gain_curve(y_test, predict_proba_scikit[:,0])
+    plt.plot(x_data, y_data)
+    plt.show()
+
+    skplt.metrics.plot_roc(y_test, predict_proba_scikit)
+    plt.show()
+
+    # Creating a Confusion matrix using pandas and pandas dataframe
+    CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=True)
+    CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
+    '''
+
+
+
+
