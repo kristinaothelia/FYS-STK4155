@@ -84,12 +84,35 @@ if arg == "Log":
 	#betas_train = func.SGD_beta(X_train, y_train, eta=1e-4, gamma=0.01)
 
 	#threshold_plot = func.threshold_plot(X_train, X_test, y_train, y_test, gamma, thresholds)
-	
+
 	# Calculating ytilde and the model of logistic regression
 	z 		    = X_test @ betas_train   # choosing best beta here?
 	model       = func.logistic_function(z)
 	model 		= func.IndicatorFunc(model, threshold=0.44)
 
+<<<<<<< HEAD
+=======
+	# Calculating the accuracy with our own function
+	accuracy_test =  func.accuracy(model, y_test)
+	exp_term = X_test
+	Probabilities = func.probabilities(exp_term)   # ???
+
+	# Creating a logistic regression model with scikit-learn
+	# Calculating the corresponding accuracy
+	logReg = LogisticRegression(random_state=seed, solver='sag', max_iter=1000, fit_intercept=False) # solver='lbfgs'
+	logReg.fit(X_train, np.ravel(y_train))
+
+	ypredict_scikit  		     = logReg.predict(X_test)
+	predict_probabilities_scikit = logReg.predict_proba(X_test)  # Probability estimates
+	score_scikit				 = logReg.score(X_test, y_test)  # ?? same as accuracy ??
+
+	accuracy_scikit  = accuracy_score(y_pred=ypredict_scikit, y_true=y_test)
+
+
+	fpr, tpr, thresholds = roc_curve(y_test, predict_probabilities_scikit[:,1], pos_label=None)
+	AUC_scikit 			 = auc(fpr, tpr)
+
+>>>>>>> 2a009e7223c8650e4e78e08ae69b32aa200382d2
 	acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
 	= func.scikit(X_train, X_test, y_train, y_test, model)
 
@@ -140,16 +163,9 @@ if arg == "Log":
 	print('')
 	print(CM_DataFrame)
 	'-------------------------------------------'
-	
+
 elif arg == "NN":
 
-    #scaler = RobustScaler()
-    '''
-    # Scale data
-    scaler.fit(X_train)
-    X_train_sc = scaler.transform(X_train)
-    X_test_sc = scaler.transform(X_test)
-    '''
 
     X_train_sc = X_train
     X_test_sc  = X_test
@@ -181,20 +197,19 @@ elif arg == "NN":
     print(X_train.shape)
     print(Y_train_onehot.shape)
 
-
-    make_files = True
+    make_files = False
     if make_files:
         # grid search
         for i, eta in enumerate(eta_vals):
             for j, lmbd in enumerate(lmbd_vals):
                 dnn = NN(X_train_sc, Y_train_onehot, eta=eta, lmbd=lmbd, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
                 dnn.train()
-                
+
                 DNN_numpy[i][j] = dnn
                 test_predict    = dnn.predict(X_test_sc)
-              
+
                 accuracy_array[i][j] = accuracy_score(y_test, test_predict)
-                
+
                 print("Learning rate  = ", eta)
                 print("Lambda = ", lmbd)
                 print("Accuracy score on test set: ", accuracy_score(y_test, test_predict))
@@ -205,22 +220,53 @@ elif arg == "NN":
         np.save('eta_values', eta_vals)
         np.save('lambda_values', lmbd_vals)
 
-    P.map()
+        #P.map()
 
-'''
-p = func.probabilities(model)
-notP = 1 - np.ravel(p)
-y_p = np.zeros((len(notP), 2))
-y_p[:,0] = np.ravel(p)
-y_p[:,1] = np.ravel(notP)
 
-x_plot, y_plot = func.bestCurve(y_test)
+    # Use best values (maybe?
+    eta_final  = 1e-4
+    lmbd_final = 1e-4
+    dnn_f = NN(X_train_sc, Y_train_onehot, eta=eta_final, lmbd=lmbd_final, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
 
-skplt.metrics.plot_cumulative_gain(y_test, y_p)
-plt.plot(x_plot, y_plot, label='best curve', linewidth=4)
-plt.legend()
-plt.show()
+    dnn_f.train()
+    y_predict = dnn_f.predict(X_test_sc)
+    print(accuracy_score(y_test, y_predict))
 
-skplt.metrics.plot_roc(y_test, predict_proba_scikit)
-plt.show()
-'''
+    model = y_predict  #send to AUC stuff
+
+    p = func.probabilities(model)
+    notP = 1 - np.ravel(p)
+    y_p = np.zeros((len(notP), 2))
+    y_p[:,0] = np.ravel(p)
+    y_p[:,1] = np.ravel(notP)
+
+    x_plot, y_plot = func.bestCurve(y_test)
+
+    skplt.metrics.plot_cumulative_gain(y_test, y_p, text_fontsize='medium')
+    plt.plot(x_plot, y_plot, linewidth=4)
+    plt.legend(["Pay", "Default", "Baseline", "Best curve"])
+    plt.ylim(0, 1.05)
+    plt.show()
+
+    # Creating a Confusion matrix using pandas and pandas dataframe
+    CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=True)
+    CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
+
+
+	acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
+	= func.scikit(X_train, X_test, y_train, y_test, model)
+
+
+	# Calculating the different metrics
+	accuracy_test =  func.accuracy(model, y_test)
+	TPR 	      = func.recall(y_test, model)
+	precision     = func.precision(y_test, model)
+	F1_score      = func.F1_score(y_test, model)
+
+	print('\n-------------------------------------------')
+	print('The accuracy is  :', accuracy_test)
+	print('The F1 score is  :', F1_score)
+	print('The precision is :', precision)
+	print('The recall is    :', TPR)
+	print('The AUC is       :', AUC_scikit)
+	print('-------------------------------------------')

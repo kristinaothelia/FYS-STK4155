@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from neural_network_lin_TEST import NN
 import plots        as P
+import sys
 
 np.random.seed(42)
 
@@ -105,7 +106,7 @@ def not_now():
             #print(X_test_sc)
             y_pred = dnn.predict(X_test)
             #print(test_predict)
-            print(np.sum(y_pred))
+            #print(np.sum(y_pred))
 
             #print(test_predict)
             #accuracy_array[i][j] = accuracy_score(y_train, test_predict)
@@ -123,16 +124,18 @@ def not_now():
 not_now()
 P.map()
 
-print(np.where(accuracy_array == np.min(accuracy_array)))
+#print(np.where(accuracy_array == np.min(accuracy_array)))
 
 
 dnn = NN(X_train, y_train, eta=1e-6, lmbd=0.1, epochs=epochs, batch_size=batch_size,
          cost_f = 'mse', n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
 dnn.train()
-y_pred = dnn.predict(X_train)
-y_pred2 = dnn.predict(X).reshape(XX.shape)
+y_pred = dnn.predict(X_test)
+#y_pred2 = dnn.predict(X).reshape(XX.shape)
 
 print("MSE score on test set: ", mean_squared_error(y_test, y_pred))
+
+sys.exit()
 
 
 from mpl_toolkits.mplot3d import Axes3D

@@ -100,7 +100,7 @@ eta   = 0.01
 reg = MLPRegressor(	activation="relu", # Eller en annen?
     				solver="sgd",
     				learning_rate='constant',
-    				alpha=lmbd,
+    				alpha=alpha,
 					learning_rate_init=eta,
     				max_iter=1000,
     				tol=1e-5 ) # hidden_layer_sizes=(100,20) Bruke 1?
