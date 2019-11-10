@@ -46,7 +46,7 @@ N = 10
 x = np.sort(np.random.uniform(0, 1, N))
 y = np.sort(np.random.uniform(0, 1, N))
 #z = FrankeFunction(x, y)
-X = create_X(x, y, n=n)    
+X = create_X(x, y, n=n)
 
 XX, YY = np.meshgrid(x,y)
 ZZ = FrankeFunction(XX, YY)
@@ -101,16 +101,16 @@ def not_now():
             dnn = NN(X_train, y_train, eta=eta, lmbd=lmbd, epochs=epochs, batch_size=batch_size,
                     cost_f = 'mse', n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
             dnn.train()
-           
+
             #print(X_test_sc)
             y_pred = dnn.predict(X_test)
             #print(test_predict)
             print(np.sum(y_pred))
-            
+
             #print(test_predict)
             #accuracy_array[i][j] = accuracy_score(y_train, test_predict)
             accuracy_array[i][j] = mean_squared_error(y_test, y_pred)
-           
+
             print("Learning rate  = ", eta)
             print("Lambda = ", lmbd)
             print("MSE score on test set: ", mean_squared_error(y_test, y_pred))
