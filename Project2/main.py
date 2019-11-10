@@ -46,7 +46,7 @@ print('')
 X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=seed)
 
 eta = 0.01
-gamma = 0.1
+gamma = 0.001
 
 gamma_range = [0.1, 0.01, 0.001, 0.0001, 1e-5, 1e-6, 1e-7]
 thresholds = np.linspace(0.45,0.55,10)
@@ -56,14 +56,14 @@ arg = sys.argv[1]
 if arg == "Log":
 
 	# Calculating the beta values based og the training set
-	betas_train = func.steepest(X_train, y_train, gamma)
+	betas_train = func.steepest(X_train, y_train, gamma=gamma, iterations=1000)
 	#betas_train = func.SGD_beta(X_train, y_train, eta, gamma)
 	
 
 	# Calculating ytilde and the model of logistic regression
 	z 		    = X_test @ betas_train   # choosing best beta here?
 	model       = func.logistic_function(z)
-	model 		= func.IndicatorFunc(model)
+	model 		= func.IndicatorFunc(model, threshold=0.45)
 
 	acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
 	= func.scikit(X_train, X_test, y_train, y_test, model)
@@ -94,7 +94,7 @@ if arg == "Log":
 	skplt.metrics.plot_cumulative_gain(y_test, y_p, text_fontsize='medium')
 	plt.plot(x_plot, y_plot, linewidth=4)
 	plt.legend(["Pay", "Default", "Baseline", "Best curve"])
-	#plt.legend()
+	plt.ylim(0, 1.05)
 	plt.show()
 
 	skplt.metrics.plot_roc(y_test, predict_proba_scikit)

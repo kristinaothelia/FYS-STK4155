@@ -354,3 +354,44 @@ def activation_function(X):
 	"""
 	z = np.sum(w*x+b)
 	return z
+
+'''
+def threshold_plot(gamma, threshold):
+
+	accuracy_test = np.zeros(len(threshold))
+	F1_score 	  = np.zeros(len(threshold))
+	precision 	  = np.zeros(len(threshold))
+	TPR 		  = np.zeros(len(threshold))
+	AUC_scikit    = np.zeros(len(threshold))
+
+	for i in range(len(threshold)):
+
+		# Calculating the beta values based og the training set
+		betas_train = func.steepest(X_train, y_train, gamma=gamma)
+		#betas_train = func.SGD_beta(X_train, y_train, eta, gamma)
+		
+
+		# Calculating ytilde and the model of logistic regression
+		z 		    = X_test @ betas_train   # choosing best beta here?
+		model       = func.logistic_function(z)
+		model 		= func.IndicatorFunc(model, threshold=0.5)
+
+		acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
+		= func.scikit(X_train, X_test, y_train, y_test, model)
+
+		# Calculating the different metrics
+		accuracy_test =  func.accuracy(model, y_test)
+		TPR 	      = func.recall(y_test, model)
+		precision     = func.precision(y_test, model)
+		F1_score      = func.F1_score(y_test, model)
+
+
+	print('\n-------------------------------------------')
+	print('The accuracy is  :', accuracy_test)
+	print('The F1 score is  :', F1_score)
+	print('The precision is :', precision)
+	print('The recall is    :', TPR)
+	print('The AUC is       :', AUC_scikit)
+	print('-------------------------------------------')
+'''
+
