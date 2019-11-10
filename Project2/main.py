@@ -7,6 +7,8 @@ import random
 import xlsxwriter
 import pandas            		 as pd
 import numpy 	         		 as np
+import functions         		 as func
+import credit_card       		 as CD
 import matplotlib.pyplot 		 as plt
 import scikitplot       		 as skplt
 
@@ -14,15 +16,14 @@ from sklearn.model_selection     import train_test_split
 from sklearn.preprocessing 		 import OneHotEncoder, Normalizer
 from sklearn.compose 			 import ColumnTransformer
 from sklearn.preprocessing       import StandardScaler, OneHotEncoder, RobustScaler
-from sklearn.metrics 			 import confusion_matrix, accuracy_score, roc_auc_score, auc, roc_curve, recall_score, precision_score
+from sklearn.metrics 			 import confusion_matrix, accuracy_score, roc_auc_score, auc, roc_curve
 from sklearn.linear_model 		 import LogisticRegression
 from sklearn.linear_model 		 import SGDRegressor, SGDClassifier  # better than logistic ??
 from sklearn.datasets 		     import load_breast_cancer
 
-import credit_card    as CD
-import plots          as P
-import functions      as func
-from   neural_network import NN
+from neural_network import NN
+import plots        as P
+import functions    as func
 # -----------------------------------------------------------------------------
 seed = 0
 np.random.seed(seed)
@@ -47,6 +48,8 @@ CreditCard = True
 if CreditCard == True:
 	features, target = CD.CreditCard()
 	X, y = CD.DesignMatrix(features, target)
+	# Calculating the beta values
+	#betas = func.next_beta(X, y, eta, gamma)
 
 	# Splitting X and y in a train and test set
 	X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=seed)
@@ -104,24 +107,11 @@ if arg == "Log":
 
 	fpr, tpr, thresholds = roc_curve(y_test, predict_probabilities_scikit[:,1], pos_label=None)
 	AUC_scikit 			 = auc(fpr, tpr)
-	AUC_scikit2 		 = roc_auc_score(y_test, predict_probabilities_scikit[:,1])
-	AUC_own  			 = func.AUC_ROC(model, y, tpr, fpr)
-	TPR_scikit 			 = recall_score(y_test, model)
-	TPR 				 = func.recall(y_test, model)
-	precision 			 = func.precision(y_test, model)
-	precision_scikit 	 = precision_score(y_test, model)
-
-	print(precision)
-	print(precision_scikit)
-	print(TPR_scikit)
-	print(TPR)
 
 	# The AUC scikit
 	print('')
 	'-------------------------------------------'
-	print('The AUC is      :', AUC_scikit)
-	print('The AUC is      :', AUC_scikit2)
-	print('The AUC (own) is:', AUC_own)
+	print('The AUC is:', AUC_scikit)
 	'-------------------------------------------'
 
 	p = predict_probabilities_scikit[:,0]
@@ -138,12 +128,6 @@ if arg == "Log":
 	plt.legend()
 	plt.show()
 
-	skplt.metrics.plot_roc_curve(y_test, predict_probabilities_scikit)
-	plt.show()
-
-	#plt.plot(AUC_own)
-	#plt.show()
-
 	# Creating a Confusion matrix using pandas and pandas dataframe
 	CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=False)
 	CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
@@ -157,7 +141,6 @@ if arg == "Log":
 
 elif arg == "NN":
 
-<<<<<<< HEAD
     #scaler = RobustScaler()
     '''
     # Scale data
@@ -278,69 +261,3 @@ y_pred_test = logReg.predict(X_test)
 #CM = confusion_matrix(y_pred=y_pred_test, y_true=y_test)
 #CMatrix(CM)
 '''
-=======
-	#scaler = RobustScaler()
-	'''
-	# Scale data
-	scaler.fit(X_train)
-	X_train_sc = scaler.transform(X_train)
-	X_test_sc = scaler.transform(X_test)
-	'''
-	X_train_sc = X_train
-	X_test_sc  = X_test
-
-	def to_categorical_numpy(integer_vector):
-
-		n_inputs 	  = len(integer_vector)
-		n_categories  = np.max(integer_vector) + 1
-		onehot_vector = np.zeros((n_inputs, n_categories))
-		onehot_vector[range(n_inputs), integer_vector] = 1
-
-		return onehot_vector
-
-	Y_train_onehot, Y_test_onehot = to_categorical_numpy(y_train), to_categorical_numpy(y_test)
-
-	# 78 accuracy
-	epochs     = 100 #60 #30
-	batch_size = 80 #60 #500
-
-	eta_vals = np.logspace(-7, -4, 7)
-	#eta_vals = np.linspace(0, 3.5, 7)
-	lmbd_vals = np.logspace(-7, -1, 7)
-
-	# store the models for later use
-	DNN_numpy 		 = np.zeros((len(eta_vals), len(lmbd_vals)), dtype=object)
-	accuracy_array 	 = np.zeros((len(eta_vals), len(lmbd_vals)), dtype=object)
-	n_hidden_neurons = 50 #not sure about number???
-	n_categories 	 = 2
-
-
-	make_files = False
-	if make_files:
-		# grid search
-		for i, eta in enumerate(eta_vals):
-			for j, lmbd in enumerate(lmbd_vals):
-				dnn = NN(X_train_sc, Y_train_onehot, eta=eta, lmbd=lmbd, epochs=epochs, batch_size=batch_size,
-	                     n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
-				dnn.train()
-
-				DNN_numpy[i][j] = dnn
-
-				#print(X_test_sc)
-				test_predict = dnn.predict(X_test_sc)
-
-				#print(test_predict)
-				accuracy_array[i][j] = accuracy_score(y_test, test_predict)
-
-				print("Learning rate  = ", eta)
-				print("Lambda = ", lmbd)
-				print("Accuracy score on test set: ", accuracy_score(y_test, test_predict))
-				print()
-
-
-		np.save('acc_score', accuracy_array)
-		np.save('eta_values', eta_vals)
-		np.save('lambda_values', lmbd_vals)
-
-	P.map()
->>>>>>> 88bfc48548c5ca0d8afbff469402ae220aa63876
