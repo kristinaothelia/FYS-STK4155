@@ -193,13 +193,14 @@ elif arg == "NN":
     # Use best values
     eta_final  = 1e-4
     lmbd_final = 1e-4
-    dnn_f = NN(X_train_sc, Y_train_onehot, eta=eta_final, lmbd=lmbd_final, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
 
+	dnn_f = NN(X_train_sc, Y_train_onehot, eta=eta_final, lmbd=lmbd_final, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
     dnn_f.train()
+
     y_predict = dnn_f.predict(X_test_sc)
     #print(accuracy_score(y_test, y_predict))
 
-    model = y_predict  #send to AUC stuff
+    model = y_predict
 
     p = func.probabilities(model)
     notP = 1 - np.ravel(p)

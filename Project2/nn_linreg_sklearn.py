@@ -19,7 +19,6 @@ import functions 				as func
 from   neural_network_lin_TEST 	import NN
 
 np.random.seed(5)
-arg = sys.argv[1]
 
 n = 5  	 # Project 1
 N = 200  # Project 1
@@ -125,15 +124,6 @@ ax2.set_title("Model (sklearn)", fontsize=16)
 surf = ax.plot_surface(XX, YY, ZZ, cmap=cm.inferno, #my_cmap_r
                        linewidth=0, antialiased=False)
 
-<<<<<<< HEAD
-	# Add a color bar which maps values to colors.
-	fig.colorbar(surf,   shrink=0.5, aspect=5)
-	fig2.colorbar(surf2, shrink=0.5, aspect=5)
-	plt.show()
-
-else:
-	print("NN_Franke or SK_Franke as arg")
-=======
 surf2 = ax2.plot_surface(XX, YY, pred, cmap=cm.inferno,
                        linewidth=0, antialiased=False)
 
@@ -146,4 +136,3 @@ ax2.set_xlabel('x', fontsize=15); ax2.set_ylabel('y', fontsize=15); ax2.set_zlab
 fig.colorbar(surf,   shrink=0.5, aspect=5)
 fig2.colorbar(surf2, shrink=0.5, aspect=5)
 plt.show()
->>>>>>> 06af4191d34163e7b88754144928c61740e5b97d
