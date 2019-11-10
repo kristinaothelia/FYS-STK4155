@@ -28,7 +28,26 @@ def FrankeFunction(x, y):
 	term4 = -0.20*np.exp(-(9*x-4)**2        - (9*y-7)**2)
 	return term1 + term2 + term3 + term4
 
-def create_X(x, y, z):
+def Create_data(x, y, z, noise=False):
+	"""
+	z-input is from FrankeFunction
+	Function that adds noise to data if wanted, and returns data (z)
+	as np.ravel(z)
+	"""
+	if len(x.shape) > 1:
+		x = np.ravel(x)
+		y = np.ravel(y)
+
+	if noise==True:
+		n          = (len(x))
+		noise_norm = np.random.normal(0,1,size=n)  # mean 'center' of distribution
+		data       = np.ravel(z) + noise_norm
+	else:
+		data       = np.ravel(z)
+
+	return data
+
+def create_X(x, y, n):
 	if len(x.shape) > 1:
 		x = np.ravel(x)
 		y = np.ravel(y)
@@ -44,29 +63,29 @@ def create_X(x, y, z):
 
 	return X
 
-# We have to add noise?
 
 # Making meshgrid of datapoints and compute Franke's function
-n = 5  # Poly deg?
-N = 50
+n = 5  	 # Project 1
+N = 200  # Project 1
+#N = 50
 
 x = np.sort(np.random.uniform(0, 1, N))
 y = np.sort(np.random.uniform(0, 1, N))
-X = create_X(x, y, n=n)
+X = create_X(x, y, n)
 
 XX, YY = np.meshgrid(x,y)
-ZZ = FrankeFunction(XX, YY)
-z=np.ravel(ZZ)
-
-X = create_X(XX, YY, n=n)
+ZZ     = FrankeFunction(XX, YY)
+z      = Create_data(XX, YY, ZZ, noise=True)
+#z      = Create_data(XX, YY, ZZ, noise=False)
+X      = create_X(XX, YY, n)
 
 
 #Morten used no train-test split, so default is split = False
-split = True
+split = True   # Funker ikke med False.
 if split:
     #train_size = 0.5
     #test_size = 1.0 - train_size
-    X_train, X_test, y_train, y_test = train_test_split(X, z, test_size=0.3)
+    X_train, X_test, y_train, y_test = train_test_split(X, z, test_size=0.2)
     #print("X_train.shape = " + str(X_train.shape))
     #print("X_test.shape  = " + str(X_test.shape))
 else:
