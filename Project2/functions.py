@@ -74,15 +74,15 @@ def TRUE_FALSE_PREDICTIONS(y, model):
 	Calculates the proportion of the predictions that are true and false
 	"""
 
-	TP = 0  # True  Positive 
+	TP = 0  # True  Positive
 	FP = 0  # False Positive
-	TN = 0  # True  Negative 
-	FN = 0  # False Negative 
+	TN = 0  # True  Negative
+	FN = 0  # False Negative
 
-	for i in range(len(model)): 
+	for i in range(len(model)):
 
 		# Negative: pay
-		if model[i] == 0:         
+		if model[i] == 0:
 			if y[i] == 0:
 				TN += 1
 			else:
@@ -93,7 +93,7 @@ def TRUE_FALSE_PREDICTIONS(y, model):
 			if y[i] == 1:
 				TP +=1
 			else:
-				FP += 1	
+				FP += 1
 
 	#print(TP, FP, TN, FN)
 	return TP, FP, TN, FN
@@ -368,7 +368,7 @@ def threshold_plot(X_train, X_test, y_train, y_test, gamma, threshold):
 		# Calculating the beta values based og the training set
 		betas_train = steepest(X_train, y_train, gamma=gamma)
 		#betas_train = func.SGD_beta(X_train, y_train, eta, gamma)
-		
+
 
 		# Calculating ytilde and the model of logistic regression
 		z 		    = X_test @ betas_train   # choosing best beta here?
@@ -406,3 +406,45 @@ def threshold_plot(X_train, X_test, y_train, y_test, gamma, threshold):
 	print('-------------------------------------------')
 	'''
 
+
+def FrankeFunction(x, y):
+	term1 =  0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
+	term2 =  0.75*np.exp(-((9*x+1)**2)/49.0 - 0.1*(9*y+1))
+	term3 =  0.50*np.exp(-(9*x-7)**2/4.0    - 0.25*((9*y-3)**2))
+	term4 = -0.20*np.exp(-(9*x-4)**2        - (9*y-7)**2)
+	return term1 + term2 + term3 + term4
+
+def Create_data(x, y, z, noise=False):
+	"""
+	z-input is from FrankeFunction
+	Function that adds noise to data if wanted, and returns data (z)
+	as np.ravel(z)
+	"""
+	if len(x.shape) > 1:
+		x = np.ravel(x)
+		y = np.ravel(y)
+
+	if noise==True:
+		n          = (len(x))
+		noise_norm = np.random.normal(0,1,size=n)
+		data       = np.ravel(z) + noise_norm
+	else:
+		data       = np.ravel(z)
+
+	return data
+
+def create_X(x, y, n):
+	if len(x.shape) > 1:
+		x = np.ravel(x)
+		y = np.ravel(y)
+
+	N = len(x)
+	l = int((n+1)*(n+2)/2)		# Number of elements in beta
+	X = np.ones((N,l))
+
+	for i in range(1,n+1):
+		q = int((i)*(i+1)/2)
+		for k in range(i+1):
+			X[:,q+k] = (x**(i-k))*(y**k)
+
+	return X
