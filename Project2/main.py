@@ -84,35 +84,12 @@ if arg == "Log":
 	#betas_train = func.SGD_beta(X_train, y_train, eta=1e-4, gamma=0.01)
 
 	#threshold_plot = func.threshold_plot(X_train, X_test, y_train, y_test, gamma, thresholds)
-
+	
 	# Calculating ytilde and the model of logistic regression
 	z 		    = X_test @ betas_train   # choosing best beta here?
 	model       = func.logistic_function(z)
 	model 		= func.IndicatorFunc(model, threshold=0.44)
 
-<<<<<<< HEAD
-=======
-	# Calculating the accuracy with our own function
-	accuracy_test =  func.accuracy(model, y_test)
-	exp_term = X_test
-	Probabilities = func.probabilities(exp_term)   # ???
-
-	# Creating a logistic regression model with scikit-learn
-	# Calculating the corresponding accuracy
-	logReg = LogisticRegression(random_state=seed, solver='sag', max_iter=1000, fit_intercept=False) # solver='lbfgs'
-	logReg.fit(X_train, np.ravel(y_train))
-
-	ypredict_scikit  		     = logReg.predict(X_test)
-	predict_probabilities_scikit = logReg.predict_proba(X_test)  # Probability estimates
-	score_scikit				 = logReg.score(X_test, y_test)  # ?? same as accuracy ??
-
-	accuracy_scikit  = accuracy_score(y_pred=ypredict_scikit, y_true=y_test)
-
-
-	fpr, tpr, thresholds = roc_curve(y_test, predict_probabilities_scikit[:,1], pos_label=None)
-	AUC_scikit 			 = auc(fpr, tpr)
-
->>>>>>> 2a009e7223c8650e4e78e08ae69b32aa200382d2
 	acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
 	= func.scikit(X_train, X_test, y_train, y_test, model)
 
