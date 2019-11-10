@@ -32,7 +32,7 @@ def logistic_function(z):
 
 
 def IndicatorFunc(model, threshold=0.5):
-	model[model < threshold] = 0
+	model[model < threshold]  = 0
 	model[model >= threshold] = 1
 	return np.ravel(model)
 
@@ -200,7 +200,7 @@ def learning_schedule(t, t0=5, t1=50):
 	ls = t0/(t+t1)
 	return ls
 
-def SGD_beta(X, y, eta, gamma):
+def SGD_beta(X, y, eta=1e-4, gamma=0.01):
 	"""
 	Calculating the beta values
 	"""
@@ -208,9 +208,9 @@ def SGD_beta(X, y, eta, gamma):
 	# Stochastic Gradient Descent, shuffle?
 	beta = np.random.randn(len(X[0]), 1)
 	n = len(X)
-	M = 80 #0.05*n  	         # Size of each minibatch, should be smaller than n
+	M = 10 #0.05*n  	         # Size of each minibatch, should be smaller than n
 	m = int(n/M)   	             # Number of minibatches
-	n_epochs = 100      		 # Nmber of epochs
+	n_epochs = 500      		 # Nmber of epochs
 
 	acc = np.zeros(n_epochs+1)
 	epoch_list = np.zeros(n_epochs+1)
@@ -355,35 +355,47 @@ def activation_function(X):
 	z = np.sum(w*x+b)
 	return z
 
-'''
-def threshold_plot(gamma, threshold):
+
+def threshold_plot(X_train, X_test, y_train, y_test, gamma, threshold):
 
 	accuracy_test = np.zeros(len(threshold))
-	F1_score 	  = np.zeros(len(threshold))
-	precision 	  = np.zeros(len(threshold))
+	F1_scores 	  = np.zeros(len(threshold))
+	precisions 	  = np.zeros(len(threshold))
 	TPR 		  = np.zeros(len(threshold))
-	AUC_scikit    = np.zeros(len(threshold))
 
 	for i in range(len(threshold)):
 
 		# Calculating the beta values based og the training set
-		betas_train = func.steepest(X_train, y_train, gamma=gamma)
+		betas_train = steepest(X_train, y_train, gamma=gamma)
 		#betas_train = func.SGD_beta(X_train, y_train, eta, gamma)
 		
 
 		# Calculating ytilde and the model of logistic regression
 		z 		    = X_test @ betas_train   # choosing best beta here?
-		model       = func.logistic_function(z)
-		model 		= func.IndicatorFunc(model, threshold=0.5)
+		model       = logistic_function(z)
+		model 		= IndicatorFunc(model, threshold=threshold[i])
 
-		acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
-		= func.scikit(X_train, X_test, y_train, y_test, model)
 
 		# Calculating the different metrics
-		accuracy_test =  func.accuracy(model, y_test)
-		TPR 	      = func.recall(y_test, model)
-		precision     = func.precision(y_test, model)
-		F1_score      = func.F1_score(y_test, model)
+		accuracy_test[i] = accuracy(model, y_test)
+		TPR[i]	         = recall(y_test, model)
+		precisions[i]    = precision(y_test, model)
+		F1_scores[i]      = F1_score(y_test, model)
+
+	plt.plot(threshold, precisions, label='precision')
+	plt.plot(threshold, TPR, label='recall')
+	plt.plot(threshold, F1_scores, label='F1 score')
+	plt.title('Logistic Regression Classifier')
+	plt.xlabel('Classification Threshold')
+	plt.ylabel('Precision, Recall, F1 score')
+	plt.legend()
+	plt.show()
+
+	'''
+	accuracy_test = max(accuracy_test)
+	F1_score 	  = max(F1_score)
+	precision 	  = max(precisions)
+	TPR 		  = max(TPR)         # recall
 
 
 	print('\n-------------------------------------------')
@@ -391,7 +403,6 @@ def threshold_plot(gamma, threshold):
 	print('The F1 score is  :', F1_score)
 	print('The precision is :', precision)
 	print('The recall is    :', TPR)
-	print('The AUC is       :', AUC_scikit)
 	print('-------------------------------------------')
-'''
+	'''
 

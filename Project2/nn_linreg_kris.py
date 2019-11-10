@@ -196,12 +196,14 @@ if arg == "NN_Franke":
 elif arg == "SK_Franke":
 
 	reg = MLPRegressor(	activation="relu", # Eller en annen?
-	    				hidden_layer_sizes=(100,20),
+	    				hidden_layer_sizes=(100,),
 	    				solver="sgd",
-	    				learning_rate='constant',
+	    				learning_rate='adaptive',
 	    				learning_rate_init=0.1,
 	    				max_iter=1000,
-	    				tol=1e-5 )
+	    				tol=1e-5,
+	    				shuffle=True,
+	    				alpha=0.0001)
 
 	reg  = reg.fit(X_train, y_train)
 	pred = reg.predict(X_test)
@@ -235,6 +237,6 @@ elif arg == "SK_Franke":
 	fig.colorbar(surf,   shrink=0.5, aspect=5)
 	fig2.colorbar(surf2, shrink=0.5, aspect=5)
 	plt.show()
-
+	
 else:
 	print("NN_Franke or SK_Franke as arg")

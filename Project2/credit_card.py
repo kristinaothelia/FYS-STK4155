@@ -59,6 +59,7 @@ def CreditCard(plot_hist=False):
     '''
     
     
+    
     df = df.drop(df[(df.PAY_0 == 0)].index)
     df = df.drop(df[(df.PAY_2 == 0)].index)
     df = df.drop(df[(df.PAY_3 == 0)].index)
@@ -96,6 +97,10 @@ def CreditCard(plot_hist=False):
     # Features and targets
     features = df.loc[:, (df.columns != 'defaultPaymentNextMonth') & (df.columns != "ID")].values # Features # & (df.columns != "ID")
     target   = df.loc[:, df.columns == 'defaultPaymentNextMonth'].values # Targets
+
+    #import seaborn as sns
+    #sns.heatmap(df.corr())
+    #plt.show()
 
     return features, target
 

@@ -38,18 +38,17 @@ print('The shape of y is:', y.shape)
 print('')
 
 # Checking how many 1s and 0s we have
-print('Number of defaulters:',     np.sum(y == 1))
-print('Number of not defaulters:', np.sum(y == 0))
+print('Actual number of defaulters    :',     np.sum(y == 1))
+print('Actual number of not defaulters:', np.sum(y == 0))
 print('')
 
 # Splitting X and y in a train and test set
 X_train, X_test, y_train, y_test = func.splitting(X, y, TrainingShare=0.75, seed=seed)
 
-eta = 0.01
+eta = 1e-4
 gamma = 0.001
 
-gamma_range = [0.1, 0.01, 0.001, 0.0001, 1e-5, 1e-6, 1e-7]
-thresholds = np.linspace(0.45,0.55,10)
+thresholds = np.linspace(0.1,0.9,100)
 
 arg = sys.argv[1]
 
@@ -57,13 +56,14 @@ if arg == "Log":
 
 	# Calculating the beta values based og the training set
 	betas_train = func.steepest(X_train, y_train, gamma=gamma, iterations=1000)
-	#betas_train = func.SGD_beta(X_train, y_train, eta, gamma)
-	
+	#betas_train = func.SGD_beta(X_train, y_train, eta=1e-4, gamma=0.01)
 
+	#threshold_plot = func.threshold_plot(X_train, X_test, y_train, y_test, gamma, thresholds)
+	
 	# Calculating ytilde and the model of logistic regression
 	z 		    = X_test @ betas_train   # choosing best beta here?
 	model       = func.logistic_function(z)
-	model 		= func.IndicatorFunc(model, threshold=0.45)
+	model 		= func.IndicatorFunc(model, threshold=0.44)
 
 	acc_scikit, TPR_scikit, precision_scikit, f1_score_scikit, AUC_scikit, predict_proba_scikit \
 	= func.scikit(X_train, X_test, y_train, y_test, model)
@@ -82,8 +82,8 @@ if arg == "Log":
 	print('The AUC is       :', AUC_scikit)
 	print('-------------------------------------------')
 
-	p = predict_proba_scikit[:,0]
-	#p = func.probabilities(model)
+	#p = predict_proba_scikit[:,0]
+	p = func.probabilities(model)
 	notP = 1 - np.ravel(p)
 	y_p = np.zeros((len(notP), 2))
 	y_p[:,0] = np.ravel(p)
@@ -95,6 +95,11 @@ if arg == "Log":
 	plt.plot(x_plot, y_plot, linewidth=4)
 	plt.legend(["Pay", "Default", "Baseline", "Best curve"])
 	plt.ylim(0, 1.05)
+	plt.show()
+
+	# Area Ratio?
+	x_data, y_data = skplt.helpers.cumulative_gain_curve(y_test, predict_proba_scikit[:,0])
+	plt.plot(x_data, y_data)
 	plt.show()
 
 	skplt.metrics.plot_roc(y_test, predict_proba_scikit)
