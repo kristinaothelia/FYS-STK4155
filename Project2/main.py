@@ -166,7 +166,6 @@ elif arg == "NN":
     n_categories 	 = 2
 
     def heatmap():
-	    if make_files:
 	        # grid search
 	        for i, eta in enumerate(eta_vals):
 	            for j, lmbd in enumerate(lmbd_vals):
