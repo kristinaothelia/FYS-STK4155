@@ -90,7 +90,7 @@ if arg == "Log":
 	= func.scikit(X_train, X_test, y_train, y_test, model)
 
 	# Calculating the different metrics
-	accuracy_test =  func.accuracy(model, y_test)
+	accuracy_test = func.accuracy(model, y_test)
 	TPR 	      = func.recall(y_test, model)
 	precision     = func.precision(y_test, model)
 	F1_score      = func.F1_score(y_test, model)
@@ -165,42 +165,40 @@ elif arg == "NN":
     n_hidden_neurons = 50 #not sure about number???
     n_categories 	 = 2
 
-    make_files = False
-    if make_files:
-        # grid search
-        for i, eta in enumerate(eta_vals):
-            for j, lmbd in enumerate(lmbd_vals):
-                dnn = NN(X_train_sc, Y_train_onehot, eta=eta, lmbd=lmbd, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
-                dnn.train()
+    def heatmap():
+	    if make_files:
+	        # grid search
+	        for i, eta in enumerate(eta_vals):
+	            for j, lmbd in enumerate(lmbd_vals):
+	                dnn = NN(X_train_sc, Y_train_onehot, eta=eta, lmbd=lmbd, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
+	                dnn.train()
 
-                DNN_numpy[i][j] = dnn
-                test_predict    = dnn.predict(X_test_sc)
+	                DNN_numpy[i][j] = dnn
+	                test_predict    = dnn.predict(X_test_sc)
 
-                accuracy_array[i][j] = accuracy_score(y_test, test_predict)
+	                accuracy_array[i][j] = accuracy_score(y_test, test_predict)
 
-                print("Learning rate  = ", eta)
-                print("Lambda = ", lmbd)
-                print("Accuracy score on test set: ", accuracy_score(y_test, test_predict))
-                print()
+	                print("Learning rate  = ", eta)
+	                print("Lambda = ", lmbd)
+	                print("Accuracy score on test set: ", accuracy_score(y_test, test_predict))
+	                print()
 
-        np.save('acc_score', accuracy_array)
-        np.save('eta_values', eta_vals)
-        np.save('lambda_values', lmbd_vals)
+	        np.save('acc_score', accuracy_array)
+	        np.save('eta_values', eta_vals)
+	        np.save('lambda_values', lmbd_vals)
 
-        P.map()
+	        P.map()
+    heatmap()
 
-
-    # Use best values
+    # Use best values from heatmap
     eta_final  = 1e-4
     lmbd_final = 1e-4
 
-	dnn_f = NN(X_train_sc, Y_train_onehot, eta=eta_final, lmbd=lmbd_final, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
+    dnn_f = NN(X_train_sc, Y_train_onehot, eta=eta_final, lmbd=lmbd_final, epochs=epochs, batch_size=batch_size, n_hidden_neurons=n_hidden_neurons, n_categories=n_categories)
     dnn_f.train()
 
     y_predict = dnn_f.predict(X_test_sc)
-    #print(accuracy_score(y_test, y_predict))
-
-    model = y_predict
+    model     = y_predict
 
     p = func.probabilities(model)
     notP = 1 - np.ravel(p)
@@ -234,8 +232,6 @@ elif arg == "NN":
     print('The precision is : %.3f' % precision)
     print('The recall is    : %.3f' % TPR)
     print('The AUC is       : %.3f' % AUC_scikit)
-    print('The MSE value is : %.3f' % func.MeanSquaredError(y_test, model)) # NOE GALT HER
-    print('The R2 score is  : %.3f' % func.R2_ScoreFunction(y_test, model)) # NOE GALT HER
     print('-------------------------------------------')
 
 else:

@@ -5,6 +5,7 @@ import sys
 import numpy 			 	 	as np
 import seaborn 			 	 	as sns
 import matplotlib.pyplot 	 	as plt
+import scikitplot       		as skplt
 
 from sklearn.neural_network  	import MLPRegressor
 from sklearn.metrics 		 	import mean_squared_error, classification_report, confusion_matrix
@@ -35,11 +36,11 @@ X      = func.create_X(XX, YY, n)
 
 X_train, X_test, y_train, y_test = train_test_split(X, z, test_size=1.0/k) # Ikke splitte?
 
-epochs     = 500 #1000
-batch_size = 50  #60 #500
+epochs     = 1000
+batch_size = 100
 
-eta_vals   = np.logspace(-7, -3, 5)
-lmbd_vals  = np.logspace(-7, -3, 5)
+eta_vals   = np.logspace(-5, -1, 5)
+lmbd_vals  = np.logspace(-5, -1, 5)
 
 MSE        = np.zeros((len(eta_vals), len(lmbd_vals)))
 R2         = np.zeros((len(eta_vals), len(lmbd_vals)))
@@ -58,16 +59,15 @@ def not_now():
 
 			reg.fit(X_train, y_train)
 			y_pred    = reg.predict(X_test)  # data
-			MSE[i][j] = mean_squared_error(y_test, y_pred)
-			R2[i][j]  = reg.score(X_test, y_test) # reg.score(X_test, y_pred)
+			model     = reg.predict(X).reshape(N,N)
 
-			#y_pred = np.reshape(y_pred, (N, N))
+			MSE[i][j] = func.MeanSquaredError(ZZ, model)
+			R2[i][j]  = func.R2_ScoreFunction(ZZ, model)
 
 			print("Learning rate = ", eta)
 			print("Lambda =        ", lmbd)
-			print("MSE score:      ", mean_squared_error(y_test, y_pred) )
-			print("R2 score:       ", reg.score(X_test, y_test) ) #reg.score(X_test, y_pred))
-			#print("R2 score:       ", reg.score(X_test, y_pred))  # Blir alltid 1.0
+			print("MSE score:      ", func.MeanSquaredError(ZZ, model))
+			print("R2 score:       ", func.R2_ScoreFunction(ZZ, model))
 			print()
 
 	etas = ["{:0.2e}".format(i) for i in eta_vals]
@@ -89,29 +89,25 @@ def not_now():
 #not_now()
 
 
-# Plot real function and model
+# Plot real function and model, with best lamb and eta
 #--------------------------------------------------------------------------
-lamb  = 0.0001
-alpha = lamb
-#eta   = 0.001  # Default
-eta   = 0.01
+lamb  = 1e-4
+eta   = 1e-2
 
 reg = MLPRegressor(	activation="relu", # Eller en annen?
     				solver="sgd",
     				learning_rate='constant',
-    				alpha=alpha,
+    				alpha=lamb,
 					learning_rate_init=eta,
     				max_iter=1000,
-    				tol=1e-5 ) # hidden_layer_sizes=(100,20) Bruke 1?
+    				tol=1e-5 )
 
 reg  = reg.fit(X_train, y_train)
 pred = reg.predict(X_test)
-print("MSE score on test set: ", mean_squared_error(y_test, pred))
-print("R2  score on test set: ", reg.score(X_test, y_test))  # Accuracy? Feil? Hva skal sendes inn?
-#MSE score on test set:  0.9901514153804305
-#R2  score on test set:  0.06982857708324741
+pred_ = reg.predict(X).reshape(N,N)
 
-pred = reg.predict(X).reshape(N,N)
+print("MSE score on test set: ", mean_squared_error(ZZ, pred_))
+print("R2  score on test set: ", func.R2_ScoreFunction(ZZ, pred_))
 
 fig  = plt.figure(); fig2 = plt.figure()
 #cmap = cm.PRGn; my_cmap_r = cm.get_cmap('PRGn_r')
@@ -124,7 +120,7 @@ ax2.set_title("Model (sklearn)", fontsize=16)
 surf = ax.plot_surface(XX, YY, ZZ, cmap=cm.inferno, #my_cmap_r
                        linewidth=0, antialiased=False)
 
-surf2 = ax2.plot_surface(XX, YY, pred, cmap=cm.inferno,
+surf2 = ax2.plot_surface(XX, YY, pred_, cmap=cm.inferno,
                        linewidth=0, antialiased=False)
 
 # Customize the z axis.
