@@ -31,7 +31,7 @@ gamma       = 0.001
 thresholds  = np.linspace(0.1, 0.9, 100)
 # -----------------------------------------------------------------------------
 
-features, target = CD.CreditCard(Corr_matrix=False)
+features, target = CD.CreditCard(Corr_matrix=True)
 X, y 			 = CD.DesignMatrix(features, target)
 # Calculating the beta values
 #betas = func.next_beta(X, y, eta, gamma)
