@@ -3,7 +3,12 @@
 ... 
 
 ## Running the code:
-...
+Run the classification models and regression model by main.py, with one of the input arguments listed below. 
+
+- "Log"     : Logistic regression
+- "NN"      : Neural Network
+- "linreg"  : Neural Network Regression, with Franke's function
+
 
 ## Running the pytest:
 run: pytest -W ignore::DeprecationWarning
