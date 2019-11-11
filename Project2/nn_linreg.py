@@ -133,7 +133,7 @@ dnn.train()
 y_pred = dnn.predict(X_test)
 #y_pred2 = dnn.predict(X).reshape(XX.shape)
 
-print("MSE score on test set: ", mean_squared_error(y_test, y_pred))
+print("MSE sco  re on test set: ", mean_squared_error(y_test, y_pred))
 
 sys.exit()
 
