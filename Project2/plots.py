@@ -5,6 +5,9 @@ Various plot functions
 import numpy             as np
 import matplotlib.pyplot as plt
 import seaborn           as sns
+import scikitplot        as skplt
+import functions         as func
+
 
 def map():
     sns.set()
@@ -30,6 +33,37 @@ def map():
     plt.xlabel('$\\lambda$')
     plt.tight_layout()
     plt.show()
+
+
+def Cumulative_gain_plot(y_test, model):
+
+	p = func.probabilities(model)
+	notP = 1 - np.ravel(p)
+	y_p = np.zeros((len(notP), 2))
+	y_p[:,0] = np.ravel(p)
+	y_p[:,1] = np.ravel(notP)
+
+	x_plot, y_plot = func.bestCurve(y_test)
+
+	skplt.metrics.plot_cumulative_gain(y_test, y_p, text_fontsize='medium')
+	plt.plot(x_plot, y_plot, linewidth=4)
+	plt.legend(["Pay", "Default", "Baseline", "Best curve"])
+	plt.ylim(0, 1.05)
+	plt.show()
+
+def ROC_plot(y_test, predict_proba_scikit):
+	skplt.metrics.plot_roc(y_test, predict_proba_scikit)
+	plt.show()
+
+def Confusion_matrix(y_test, model):
+
+	CM 			 = func.Create_ConfusionMatrix(model, y_test, plot=True)
+	CM_DataFrame = func.ConfusionMatrix_DataFrame(CM, labels=['pay', 'default'])
+
+	print('-------------------------------------------')
+	print('The Confusion Matrix')
+	print(CM_DataFrame)
+	print('-------------------------------------------')
 
 
 def Histogram(category, name, x_label):

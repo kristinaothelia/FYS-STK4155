@@ -36,17 +36,18 @@ X      = func.create_X(XX, YY, n)
 
 X_train, X_test, y_train, y_test = train_test_split(X, z, test_size=1.0/k) # Ikke splitte?
 
-epochs     = 1000
+epochs     = 500 # 1000
 batch_size = 100
 
-eta_vals   = np.logspace(-5, -1, 5)
-lmbd_vals  = np.logspace(-5, -1, 5)
+def Heatmap_MSE_R2():
 
-MSE        = np.zeros((len(eta_vals), len(lmbd_vals)))
-R2         = np.zeros((len(eta_vals), len(lmbd_vals)))
-sns.set()
+	eta_vals   = np.logspace(-5, -1, 5)
+	lmbd_vals  = np.logspace(-5, -1, 5)
 
-def not_now():
+	MSE        = np.zeros((len(eta_vals), len(lmbd_vals)))
+	R2         = np.zeros((len(eta_vals), len(lmbd_vals)))
+	sns.set()
+
 	for i, eta in enumerate(eta_vals):
 		for j, lmbd in enumerate(lmbd_vals):
 
@@ -86,49 +87,47 @@ def not_now():
 	ax.set_xlabel("$\lambda$")
 	plt.show()
 
-#not_now()
+def Best_model():
+	""" Plot real function and model, with best lamb and eta """
 
+	lamb  = 1e-4
+	eta   = 1e-2
 
-# Plot real function and model, with best lamb and eta
-#--------------------------------------------------------------------------
-lamb  = 1e-4
-eta   = 1e-2
+	reg = MLPRegressor(	activation="relu", # Eller en annen?
+	    				solver="sgd",
+	    				learning_rate='constant',
+	    				alpha=lamb,
+						learning_rate_init=eta,
+	    				max_iter=1000,
+	    				tol=1e-5 )
 
-reg = MLPRegressor(	activation="relu", # Eller en annen?
-    				solver="sgd",
-    				learning_rate='constant',
-    				alpha=lamb,
-					learning_rate_init=eta,
-    				max_iter=1000,
-    				tol=1e-5 )
+	reg  = reg.fit(X_train, y_train)
+	pred = reg.predict(X_test)
+	pred_ = reg.predict(X).reshape(N,N)
 
-reg  = reg.fit(X_train, y_train)
-pred = reg.predict(X_test)
-pred_ = reg.predict(X).reshape(N,N)
+	print("MSE score on test set: ", mean_squared_error(ZZ, pred_))
+	print("R2  score on test set: ", func.R2_ScoreFunction(ZZ, pred_))
 
-print("MSE score on test set: ", mean_squared_error(ZZ, pred_))
-print("R2  score on test set: ", func.R2_ScoreFunction(ZZ, pred_))
+	fig  = plt.figure(); fig2 = plt.figure()
+	#cmap = cm.PRGn; my_cmap_r = cm.get_cmap('PRGn_r')
+	ax   = fig.gca(projection='3d'); ax2  = fig2.gca(projection='3d')
 
-fig  = plt.figure(); fig2 = plt.figure()
-#cmap = cm.PRGn; my_cmap_r = cm.get_cmap('PRGn_r')
-ax   = fig.gca(projection='3d'); ax2  = fig2.gca(projection='3d')
+	ax.set_title("Franke's function", fontsize=16)
+	ax2.set_title("Model (sklearn)", fontsize=16)
 
-ax.set_title("Franke's function", fontsize=16)
-ax2.set_title("Model (sklearn)", fontsize=16)
+	# Plot the surface.
+	surf = ax.plot_surface(XX, YY, ZZ, cmap=cm.inferno, #my_cmap_r
+	                       linewidth=0, antialiased=False)
 
-# Plot the surface.
-surf = ax.plot_surface(XX, YY, ZZ, cmap=cm.inferno, #my_cmap_r
-                       linewidth=0, antialiased=False)
+	surf2 = ax2.plot_surface(XX, YY, pred_, cmap=cm.inferno,
+	                       linewidth=0, antialiased=False)
 
-surf2 = ax2.plot_surface(XX, YY, pred_, cmap=cm.inferno,
-                       linewidth=0, antialiased=False)
+	# Customize the z axis.
+	ax.view_init(azim=61, elev=15);  ax2.view_init(azim=61, elev=15)
+	ax.set_xlabel('x',  fontsize=15); ax.set_ylabel('y',  fontsize=15); ax.set_zlabel('z',  fontsize=15)
+	ax2.set_xlabel('x', fontsize=15); ax2.set_ylabel('y', fontsize=15); ax2.set_zlabel('z', fontsize=15)
 
-# Customize the z axis.
-ax.view_init(azim=61, elev=15);  ax2.view_init(azim=61, elev=15)
-ax.set_xlabel('x',  fontsize=15); ax.set_ylabel('y',  fontsize=15); ax.set_zlabel('z',  fontsize=15)
-ax2.set_xlabel('x', fontsize=15); ax2.set_ylabel('y', fontsize=15); ax2.set_zlabel('z', fontsize=15)
-
-# Add a color bar which maps values to colors.
-fig.colorbar(surf,   shrink=0.5, aspect=5)
-fig2.colorbar(surf2, shrink=0.5, aspect=5)
-plt.show()
+	# Add a color bar which maps values to colors.
+	fig.colorbar(surf,   shrink=0.5, aspect=5)
+	fig2.colorbar(surf2, shrink=0.5, aspect=5)
+	plt.show()

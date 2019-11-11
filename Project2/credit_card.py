@@ -1,9 +1,7 @@
 """
 Program to handle the credit card data for project 2 in FYS-STK4155
 """
-import os
-import random
-import xlsxwriter
+import os, random, xlsxwriter
 import numpy                 as np
 import pandas                as pd
 import matplotlib.pyplot     as plt
@@ -17,14 +15,8 @@ from sklearn.linear_model 	 import LogisticRegression
 
 import plots     as P
 import functions as func
-# -----------------------------------------------------------------------------
-'''
-# Trying to set the seed
-np.random.seed(0)
-random.seed(0)
-seed  = 1
-'''
-# -----------------------------------------------------------------------------
+
+
 def CreditCard(plot_hist=False):
     # Reading file into data frame
     cwd      = os.getcwd()
@@ -57,9 +49,7 @@ def CreditCard(plot_hist=False):
                     (df.PAY_AMT5 == 0) &
                     (df.PAY_AMT6 == 0)].index)
     '''
-    
-    
-    
+
     df = df.drop(df[(df.PAY_0 == 0)].index)
     df = df.drop(df[(df.PAY_2 == 0)].index)
     df = df.drop(df[(df.PAY_3 == 0)].index)
@@ -73,8 +63,7 @@ def CreditCard(plot_hist=False):
     df = df.drop(df[(df.PAY_4 < -1)].index)
     df = df.drop(df[(df.PAY_5 < -1)].index)
     df = df.drop(df[(df.PAY_6 < -1)].index)
-    
-    
+
 
     if plot_hist:
 
@@ -98,9 +87,6 @@ def CreditCard(plot_hist=False):
     features = df.loc[:, (df.columns != 'defaultPaymentNextMonth') & (df.columns != "ID")].values # Features # & (df.columns != "ID")
     target   = df.loc[:, df.columns == 'defaultPaymentNextMonth'].values # Targets
 
-    #import seaborn as sns
-    #sns.heatmap(df.corr())
-    #plt.show()
 
     return features, target
 

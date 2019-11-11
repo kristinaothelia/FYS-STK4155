@@ -13,6 +13,9 @@ from sklearn.model_selection import train_test_split
 from scipy.special 			 import expit
 from sklearn.metrics 	     import confusion_matrix, accuracy_score, roc_auc_score, auc, roc_curve, recall_score, precision_score, f1_score
 from sklearn.linear_model    import LogisticRegression
+
+import plots                 as P
+from   neural_network        import NN
 # -----------------------------------------------------------------------------
 seed = 0
 np.random.seed(seed)
@@ -448,3 +451,41 @@ def create_X(x, y, n):
 			X[:,q+k] = (x**(i-k))*(y**k)
 
 	return X
+
+def to_categorical_numpy(integer_vector):
+
+	n_inputs 	  = len(integer_vector)
+	n_categories  = np.max(integer_vector) + 1
+	onehot_vector = np.zeros((n_inputs, n_categories))
+	onehot_vector[range(n_inputs), integer_vector] = 1
+
+	return onehot_vector
+
+def heatmap(eta_vals, lmbd_vals, X_test_sc, X_train_sc, Y_train_onehot, y_test, epochs, batch_size, n_hidden_neurons, n_categories):
+
+		accuracy_array 	 = np.zeros((len(eta_vals), len(lmbd_vals)), dtype=object)
+		# grid search
+		for i, eta in enumerate(eta_vals):
+			for j, lmbd in enumerate(lmbd_vals):
+				dnn = NN(X_train_sc,
+						 Y_train_onehot,
+						 eta=eta, lmbd=lmbd,
+						 epochs=epochs,
+						 batch_size=batch_size,
+						 n_hidden_neurons=n_hidden_neurons,
+						 n_categories=n_categories)
+				dnn.train()
+
+				test_predict         = dnn.predict(X_test_sc)
+				accuracy_array[i][j] = accuracy_score(y_test, test_predict)
+
+				print("Learning rate             = ", eta)
+				print("Lambda                    = ", lmbd)
+				print("Accuracy score on test set: ", accuracy_score(y_test, test_predict))
+				print()
+
+		np.save('acc_score', accuracy_array)
+		np.save('eta_values', eta_vals)
+		np.save('lambda_values', lmbd_vals)
+
+		P.map()
