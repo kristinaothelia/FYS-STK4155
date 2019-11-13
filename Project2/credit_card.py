@@ -2,6 +2,7 @@
 Program to handle the credit card data for project 2 in FYS-STK4155
 """
 import os, random, xlsxwriter
+import seaborn               as sns
 import numpy                 as np
 import pandas                as pd
 import matplotlib.pyplot     as plt
@@ -17,7 +18,7 @@ import plots     as P
 import functions as func
 
 
-def CreditCard(plot_hist=False):
+def CreditCard(plot_hist=False, Corr_matrix=False):
     # Reading file into data frame
     cwd      = os.getcwd()
     filename = cwd + '/default of credit card clients.xls'
@@ -87,6 +88,11 @@ def CreditCard(plot_hist=False):
     features = df.loc[:, (df.columns != 'defaultPaymentNextMonth') & (df.columns != "ID")].values # Features # & (df.columns != "ID")
     target   = df.loc[:, df.columns == 'defaultPaymentNextMonth'].values # Targets
 
+    if Corr_matrix:
+        sns.heatmap(df.corr())
+        plt.title("Correlation Matrix")
+        plt.tight_layout()
+        plt.show()
 
     return features, target
 
