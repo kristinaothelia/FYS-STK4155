@@ -16,13 +16,13 @@ import sys
 
 class NN:
     def __init__(self, X_data, Y_data,
-                n_hidden_neurons=50,
-                n_categories=10,
-                epochs=10,
-                batch_size=100,
-                eta=0.1,
-                lmbd=0.0,
-                cost_f = 'sigmoid'):
+            n_hidden_neurons=50,
+            n_categories=10,
+            epochs=10,
+            batch_size=100,
+            eta=0.1,
+            lmbd=0.0,
+            cost_f = 'sigmoid'):
 
         self.X_data_full = X_data
         self.Y_data_full = Y_data
@@ -42,12 +42,6 @@ class NN:
         self.cost_f = cost_f
         print(self.cost_f)
 
-    def sigmoid(self, x):
-        #A = 1./(1. + np.exp(-x))
-        A = expit(x)
-        #print(A)
-        return A
-
     
 
     def create_biases_and_weights(self):
@@ -60,34 +54,22 @@ class NN:
     def feed_forward(self):
         # feed-forward for training
         self.z_h = np.matmul(self.X_data, self.hidden_weights) + self.hidden_bias
-        #self.a_h = self.sigmoid(self.z_h)
         self.a_h = self.f(self.z_h)
 
         self.z_o = np.matmul(self.a_h, self.output_weights) + self.output_bias
-        #self.a_o = self.sigmoid(self.z_o)
-        self.a_o = self.f(self.z_o)
+        #self.a_o = self.f(self.z_o)
+        self.a_o = self.z_o
 
-
-        exp_term = np.exp(self.z_o)
-        #print(exp_term)
-        self.probabilities = exp_term / np.sum(exp_term, axis=1, keepdims=True)
-        #print("probb:", exp_term.shape)
 
     def feed_forward_out(self, X):
         # feed-forward for output
         z_h = np.matmul(X, self.hidden_weights) + self.hidden_bias
-        #a_h = self.sigmoid(z_h)
         a_h = self.f(z_h)
 
         z_o = np.matmul(a_h, self.output_weights) + self.output_bias
-        #a_o = self.sigmoid(z_o)
-        a_o = self.f(z_o)
+        a_o = z_o  #f(x) = x
 
-        exp_term = np.exp(z_o)
-        probabilities = exp_term / np.sum(exp_term, axis=1, keepdims=True)
-        #print(probabilities.shape)
         return(a_o)
-        #return probabilities
 
     def f(self, x):
         return abs(x) * (x > 0)
@@ -97,30 +79,29 @@ class NN:
         return L
 
     def df(self, x):
-        return 1. * (x > 0)
+        return 1.*(x > 0)
 
     def backpropagation(self):
-        #self.Y_data = self.Y_data[:,np.newaxis] #???
-        #print(self.probabilities.shape)
-        #print(self.Y_data.shape)
-        if self.cost_f == 'sigmoid' or self.cost_f == 'softmax':
-            #print('hi')
-            error_output = self.probabilities - self.Y_data
-            error_hidden = np.matmul(error_output, self.output_weights.T) * self.a_h * (1 - self.a_h)
-        elif self.cost_f == 'mse':
-            #print(self.a_h.shape)
-            #print(self.Y_data.shape)
-            #sys.exit()
-            #print('hello')
-            
-            #error_output = 2*(self.a_o.reshape((np.size(self.a_o), 1)) - self.Y_data.reshape((np.size(self.a_o), 1)))
-            error_output = self.df(self.z_o)* -2*(self.a_o.reshape((np.size(self.a_o), 1)) - self.Y_data.reshape((np.size(self.a_o), 1)))
+        
+        #error_output = 2*(self.a_o.reshape((np.size(self.a_o), 1)) - self.Y_data.reshape((np.size(self.a_o), 1)))
+        #error_output = self.df(self.z_o)* -2*(self.a_o.reshape((np.size(self.a_o), 1)) - self.Y_data.reshape((np.size(self.a_o), 1)))
+        #error_output = (self.Y_data.reshape((np.size(self.a_o), 1)) - self.a_o.reshape((np.size(self.a_o), 1))  )
+        #error_hidden = np.matmul(error_output, self.output_weights.T) * self.df(self.z_o)
+
+        Y_data = self.Y_data.reshape(len(self.Y_data), 1)
+        a_o = self.a_o.reshape(len(self.a_o), 1) 
+        #print(Y_data.shape)
+
+        error_output = Y_data - a_o
+        #print(self.output_weights.T.shape)
+        #print(error_output.shape)
+
+        error_hidden = np.matmul(error_output, self.output_weights.T) * self.df(self.z_o)
+
+        #sys.exit()
 
 
-            #print(error_output.shape)
-            #print(self.output_weights.T.shape)
-            #sys.exit()
-            error_hidden = np.matmul(error_output, self.output_weights.T) * self.a_o * (1 - self.a_o)
+
 
         self.output_weights_gradient = np.matmul(self.a_h.T, error_output)
         self.output_bias_gradient = np.sum(error_output, axis=0)
@@ -139,7 +120,6 @@ class NN:
 
     def predict(self, X):
         probabilities = self.feed_forward_out(X)
-        #print(probabilities)
         return(probabilities)
         #return np.argmax(probabilities, axis=1)
 

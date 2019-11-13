@@ -38,11 +38,13 @@ class NN:
 
         self.create_biases_and_weights()
 
+        
     def sigmoid(self, x):
         #A = 1./(1. + np.exp(-x))
         A = expit(x)
         #print(A)
         return A
+    
 
     def create_biases_and_weights(self):
         self.hidden_weights = np.random.randn(self.n_features, self.n_hidden_neurons)
@@ -121,9 +123,8 @@ class NN:
                 self.feed_forward()
                 self.backpropagation()
 
-	    def sigmoid(self, z):
-		    return np.exp(z)/(1-np.exp(z))
+        def sigmoid(self, z):
+            return np.exp(z)/(1-np.exp(z))
 
-	    def sigmoid_derivative(self, z):
-		    return self.sigmoid(z)*(1-self.sigmoid(z))
-'''
+        def sigmoid_derivative(self, z):
+            return self.sigmoid(z)*(1-self.sigmoid(z))

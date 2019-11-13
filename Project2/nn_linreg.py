@@ -93,7 +93,6 @@ def to_categorical_numpy(integer_vector):
 #Y_train_onehot, Y_test_onehot = to_categorical_numpy(y_train), to_categorical_numpy(y_test)
 
 #print(X_train.shape)
-#print(y_train.shape)t)
 #print(X_test)
 
 def not_now():
@@ -123,6 +122,9 @@ def not_now():
     np.save('lambda_values', lmbd_vals)
 not_now()
 P.map()
+
+##plt.imshow(accuracy_array)
+##plt.show()
 
 #print(np.where(accuracy_array == np.min(accuracy_array)))
 
