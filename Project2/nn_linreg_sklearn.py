@@ -131,3 +131,5 @@ def Best_model():
 	fig.colorbar(surf,   shrink=0.5, aspect=5)
 	fig2.colorbar(surf2, shrink=0.5, aspect=5)
 	plt.show()
+	
+	####remembe to comment that the plot is when X_train = X_test = X, no splitting

@@ -60,11 +60,12 @@ class MLP:
         for i in range(self.n_epochs):
             for j in range(n_batches):
                 # prepare minibatch
+                print(i/self.n_epochs)
                 chosen_datapoints = np.random.choice(data_indices, size=self.batch_size, replace=False)
 
                 idx = chosen_datapoints
                 X_batch, Y_batch = X[:,idx], Y[:,idx]
-
+                #print(X_batch.shape)
                 # learning algorithm
                 Y_predict = self.predict(X_batch)
                 self.backpropagation(Y_batch, Y_predict, X_batch)
@@ -75,7 +76,11 @@ class MLP:
 
     def predict(self, X):
         # hidden layer matrix multiplication
+        #print(X.shape)
+        #print(self.hidden_weights.shape, X.shape)
+      
         self.z_h = np.matmul(self.hidden_weights, X) + self.hidden_bias
+        
         """if np.any(self.z_h > 10):
             sys.exit(1)
         else:

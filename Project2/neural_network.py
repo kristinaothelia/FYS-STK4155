@@ -123,16 +123,8 @@ class NN:
                 self.feed_forward()
                 self.backpropagation()
 
-<<<<<<< HEAD
-        def sigmoid(self, z):
-            return np.exp(z)/(1-np.exp(z))
-
-        def sigmoid_derivative(self, z):
-            return self.sigmoid(z)*(1-self.sigmoid(z))
-=======
     def sigmoid(self, z):
         return np.exp(z)/(1-np.exp(z))
 
     def sigmoid_derivative(self, z):
         return self.sigmoid(z)*(1-self.sigmoid(z))
->>>>>>> f14e70b4144550ba1f2f64fa6125f16e186e468c
