@@ -8,5 +8,4 @@
 ### Participants:
 - Anna Eliassen
 - Aron Jansson Nordberg
-- Jon Andre Ottesen ?
 - Kristina Othelia L. Olsen
