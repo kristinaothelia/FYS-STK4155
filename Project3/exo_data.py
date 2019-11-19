@@ -4,7 +4,7 @@ import seaborn               as sns
 import numpy                 as np
 import pandas                as pd
 import matplotlib.pyplot     as plt
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, MaxAbsScaler, RobustScaler
 
 cwd      = os.getcwd()
 filename = cwd + '/cumulative_2019_all.xls'
@@ -18,9 +18,10 @@ df.drop(columns=['koi_longp', 'koi_ingress', 'koi_model_dof', 'koi_model_chisq',
 df.drop(columns=['kepoi_name', 'koi_comment', 'koi_limbdark_mod', 'koi_parm_prov', 'koi_trans_mod'], axis=1, inplace=True)
 df.drop(columns=['koi_datalink_dvr', 'koi_datalink_dvs', 'koi_pdisposition', 'kepler_name', 'koi_score'], axis=1, inplace=True)
 df.drop(columns=['koi_time0bk', 'koi_tce_delivname', 'koi_sparprov', 'koi_vet_stat', 'koi_vet_date'], axis=1, inplace=True)
-df.drop(columns=['koi_disp_prov', 'koi_ldm_coeff3', 'koi_ldm_coeff4', 'koi_fittype'], axis=1, inplace=True)
+df.drop(columns=['koi_disp_prov', 'koi_ldm_coeff3', 'koi_ldm_coeff4', 'koi_fittype', 'koi_quarters'], axis=1, inplace=True)
 
 df = df.replace(r'^\s*$', np.nan, regex=True)
+df = pd.DataFrame.dropna(df, axis=0, how='any')
 
 #df = df.replace(np.nan, 0, regex=True)
 
@@ -124,8 +125,8 @@ target[target == 'FALSE POSITIVE'] = 0
 #print(target)
 
 print('hi')
-print(features[85,:])
-scaler = StandardScaler()
+print(features[2,:])
+scaler = StandardScaler() #RobustScaler() #MaxAbsScaler() #MinMaxScaler()
 scaler.fit_transform(features)
 print(features)
 
