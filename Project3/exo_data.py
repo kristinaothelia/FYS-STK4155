@@ -11,6 +11,7 @@ filename = cwd + '/cumulative_2019_all.xls'
 nanDict  = {}
 df       = pd.read_excel(filename, header=1, skiprows=85, index_col=0, na_values=nanDict)
 
+
 # Check DONE/ACTIVE, if ACTIVE, drop this
 
 # Removing the same columns as mentioned by the scientific article, do we want to drop more features or not?
@@ -23,7 +24,11 @@ df.drop(columns=['koi_disp_prov', 'koi_ldm_coeff3', 'koi_ldm_coeff4', 'koi_fitty
 df = df.replace(r'^\s*$', np.nan, regex=True)
 df = pd.DataFrame.dropna(df, axis=0, how='any')
 
+
 print(df)
+header_names = list(df)
+print(header_names)
+print(len(header_names))
 
 
 '''
