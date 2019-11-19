@@ -22,7 +22,9 @@ df.drop(columns=['koi_disp_prov', 'koi_ldm_coeff3', 'koi_ldm_coeff4', 'koi_fitty
 
 df = df.replace(r'^\s*$', np.nan, regex=True)
 
-print(df)
+#df = df.replace(np.nan, 0, regex=True)
+
+#print(df)
 
 
 '''
