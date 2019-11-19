@@ -67,6 +67,35 @@ def Histogram(feature_name, x_label):
 	plt.hist(NEGATIVE.loc[:,   NEGATIVE.columns == feature_name].values, alpha=0.8, bins=100, label="False positive")
 	plt.hist(CANDIDATES.loc[:, CANDIDATES.columns == feature_name].values, alpha=0.8, bins=100, label="Candidates")
 
+	g = df.loc[:, (df.columns == 'koi_disposition')].values
+	labels, counts = np.unique(g, return_counts=True)
+	plt.bar(labels, counts, align='center')
+	plt.gca().set_xticks(labels)
+	plt.show()
+
+
+	'''
+	dur1 = CONFIRMED.loc[:, (CONFIRMED.columns == 'koi_duration')].values
+	dur2 = NEGATIVE.loc[:, (NEGATIVE.columns   == 'koi_duration')].values
+	bins = np.linspace(0, 100, 30)
+	#plt.hist([dur1, dur2], bins, label=['CONF', 'FP'])
+	plt.hist(dur1, alpha=0.5, label='CONFIRMED')
+	plt.hist(dur2, alpha=0.5, label='FALSE POSITIVE')
+	plt.legend(loc='upper right')
+	plt.show()
+	'''
+
+	'''
+	rad1 = CONFIRMED.loc[:, (CONFIRMED.columns == 'koi_prad')].values
+	rad2 = NEGATIVE.loc[:, (NEGATIVE.columns   == 'koi_prad')].values
+	plt.hist(rad1, alpha=0.5, label='CONFIRMED')
+	plt.hist(rad2, alpha=0.5, label='FALSE POSITIVE')
+	plt.legend(loc='upper right')
+	plt.xscale('log10')
+	plt.show()
+	'''
+
+
 	plt.title("Histogram for Kepler exoplanet data")
 	plt.xlabel(x_label)
 	plt.ylabel("Observations count")
