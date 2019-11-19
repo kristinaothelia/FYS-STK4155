@@ -13,6 +13,8 @@ y = np.load('targets.npy', allow_pickle=True)
 print(X)
 print(y)
 
+print(sum(np.isnan(X) == True))
+
 
 RF = RandomForestClassifier(n_estimators=100, max_depth=2,random_state=0)
 RF.fit(X,y)

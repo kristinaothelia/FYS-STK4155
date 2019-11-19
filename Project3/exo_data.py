@@ -21,6 +21,7 @@ df.drop(columns=['koi_time0bk', 'koi_tce_delivname', 'koi_sparprov', 'koi_vet_st
 df.drop(columns=['koi_disp_prov', 'koi_ldm_coeff3', 'koi_ldm_coeff4', 'koi_fittype', 'koi_quarters'], axis=1, inplace=True)
 
 df = df.replace(r'^\s*$', np.nan, regex=True)
+df = pd.DataFrame.dropna(df, axis=0, how='any')
 
 print(df)
 
