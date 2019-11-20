@@ -1,4 +1,6 @@
+import pydot
 
+from sklearn.tree import export_graphviz
 
 
 def TRUE_FALSE_PREDICTIONS(y, model):
@@ -13,14 +15,14 @@ def TRUE_FALSE_PREDICTIONS(y, model):
 
 	for i in range(len(model)):
 
-		# Negative: pay
+		# Negative: False positive (not exoplanet)
 		if model[i] == 0:
 			if y[i] == 0:
 				TN += 1
 			else:
 				FN +=1
 
-		# Positive: default
+		# Positive: Exoplanet
 		elif model[i] == 1:
 			if y[i] == 1:
 				TP +=1
@@ -57,3 +59,15 @@ def F1_score(y, model):
 	r = recall(y, model)
 	f = 2*((p*r)/(p+r))
 	return f
+
+
+def PlotOneTree(tree, feature_list):
+
+	# Export the image to a dot file
+	export_graphviz(tree, out_file = 'tree.dot', feature_names = feature_list, rounded = True, precision = 1)
+
+	# Use dot file to create a graph
+	(graph, ) = pydot.graph_from_dot_file('tree.dot')
+
+	# Write graph to a png file
+	graph.write_png('tree.png')

@@ -93,7 +93,7 @@ def Histogram(feature_name, x_label, title=None, logscale=False):
 # Make histogram for planet radius [Earth radii], koi_prad
 #Histogram('koi_prad', "log Planet radius [Earth radii]", title="Histogram for koi_prad", logscale=True)
 #Histogram('koi_duration', "Transit duration [Hours]", title="Histogram for koi_duration")
-
+Histogram2()
 
 neg = NEGATIVE.loc[:,   NEGATIVE.columns == 'koi_prad'].values
 can = CANDIDATES.loc[:,   CANDIDATES.columns == 'koi_prad'].values

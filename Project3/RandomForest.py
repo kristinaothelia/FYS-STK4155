@@ -1,4 +1,3 @@
-import pydot
 import os
 import numpy 			 as np
 import matplotlib.pyplot as plt
@@ -8,14 +7,14 @@ import functions         as func
 from sklearn.impute 		 import SimpleImputer
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble 		 import RandomForestClassifier
-from sklearn.tree 			 import export_graphviz
 
 
 #from sklearn import tree
 #pd.DataFrame(X).fillna()
+# grid search 
 
 TrainingShare = 0.70
-seed = 0
+seed 		  = 0
 
 X = np.load('features.npy', allow_pickle=True)
 y = np.load('targets.npy', allow_pickle=True)
@@ -29,6 +28,9 @@ print(y)
 y = y.astype('int')
 y = np.ravel(y)
 
+print(len(y))
+#print(sum(y == 1))
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TrainingShare, test_size = 1-TrainingShare, random_state=seed)
 
 
@@ -36,29 +38,36 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TrainingSha
 RF = RandomForestClassifier(n_estimators=100, max_depth=None, random_state=seed, criterion='gini')
 RF.fit(X_train,y_train)
 
-predict = RF.predict(X_test)
-acc 	= RF.score(X_test,y_test)
-print(acc)
+predict     = RF.predict(X_test)
+accuracy 	= RF.score(X_test,y_test)
 
-#skplt.metrics.plot_confusion_matrix(y_test, predict)
-#plt.show()
+precision   = func.precision(y_test, predict)
+recall      = func.recall(y_test, predict)
+f1_score    = func.F1_score(y_test, predict)
+
+# Calculate the absolute errors
+errors = abs(predict - y_test)
+
+# Calculating the different metrics:
+print('\n-------------------------------------------')
+print('The accuracy is    : %.3f' % accuracy)
+print('The F1 score is    : %.3f' % f1_score)
+print('The precision is   : %.3f' % precision)
+print('The recall is      : %.3f' % recall)
+print('The absolute error : %.3f' % np.mean(errors))
+print('-------------------------------------------')
+
+
+skplt.metrics.plot_confusion_matrix(y_test, predict)
+plt.show()
 
 
 #print(RF.decision_path(X_test))
 
 # Pull out one tree from the forest
-tree = RF.estimators_[5]
-
-# Export the image to a dot file
-export_graphviz(tree, out_file = 'tree.dot', feature_names = feature_list, rounded = True, precision = 1)
-
-# Use dot file to create a graph
-(graph, ) = pydot.graph_from_dot_file('tree.dot')
-
-# Write graph to a png file
-graph.write_png('tree.png')
-
-
+tree_number = 5
+tree 		= RF.estimators_[tree_number]
+func.PlotOneTree(tree, feature_list)
 
 predict_candidates       = np.array(RF.predict(candidates))
 
@@ -71,7 +80,6 @@ print('The Random Forest Classifier predicted')
 print('--------------------------------------')
 print('%g exoplanets      of %g candidates'  %(predicted_exoplanets, len(predict_candidates)))
 print('%g false positives  of %g candidates'  %(predicted_false_positive, len(predict_candidates)))
-
 
 
 '''
