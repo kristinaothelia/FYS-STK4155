@@ -27,8 +27,7 @@ df = pd.DataFrame.dropna(df, axis=0, how='any')
 
 print(df)
 header_names = list(df)
-print(header_names)
-print(len(header_names))
+np.save('feature_names', header_names)
 
 
 '''
@@ -135,4 +134,5 @@ print(features)
 
 np.save('features', features)
 np.save('targets', target)
+np.save('candidates', CANDIDATES.loc[:, (CANDIDATES.columns != 'koi_disposition')].values)
 
