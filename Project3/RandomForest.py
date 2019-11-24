@@ -1,17 +1,16 @@
 import os
-import numpy 			 as np
-import matplotlib.pyplot as plt
-import scikitplot        as skplt
-import functions         as func
+import numpy 				 as np
+import matplotlib.pyplot	 as plt
+import scikitplot        	 as skplt
+import functions         	 as func
 
 from sklearn.impute 		 import SimpleImputer
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble 		 import RandomForestClassifier
 
-
 #from sklearn import tree
 #pd.DataFrame(X).fillna()
-# grid search 
+# grid search
 
 TrainingShare = 0.70
 seed 		  = 0
@@ -78,7 +77,7 @@ predicted_exoplanets     = (predict_candidates == 1).sum()
 print('')
 print('The Random Forest Classifier predicted')
 print('--------------------------------------')
-print('%g exoplanets      of %g candidates'  %(predicted_exoplanets, len(predict_candidates)))
+print('%g exoplanets       of %g candidates'  %(predicted_exoplanets, len(predict_candidates)))
 print('%g false positives  of %g candidates'  %(predicted_false_positive, len(predict_candidates)))
 
 
@@ -89,7 +88,7 @@ print(len(feature_importance))
 
 
 #for i in range(len(feature_importance)):
-	# Check the i in feature_importance 
+	# Check the i in feature_importance
 	# assign corresponding header name
 
 

@@ -1,4 +1,8 @@
-import pydot
+import seaborn             as sns
+import numpy               as np
+import pandas              as pd
+import matplotlib.pyplot   as plt
+#import pydot
 
 from sklearn.tree import export_graphviz
 
@@ -59,6 +63,20 @@ def F1_score(y, model):
 	r = recall(y, model)
 	f = 2*((p*r)/(p+r))
 	return f
+
+# Plotting functions
+#------------------------------------------------------------------------------
+
+def Histogram2(g):
+
+	labels, counts = np.unique(g, return_counts=True)
+
+	#plt.style.use('dark_background')
+	plt.bar(labels, counts, align='center', color='purple')
+	plt.gca().set_xticks(labels)
+	plt.ylabel("Observations count")
+	plt.title("Kepler's objects of interest")
+	plt.show()
 
 
 def PlotOneTree(tree, feature_list):

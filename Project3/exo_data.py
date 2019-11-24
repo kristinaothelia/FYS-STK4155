@@ -1,9 +1,10 @@
 import os, random, xlsxwriter
+import seaborn             as sns
+import numpy               as np
+import pandas              as pd
+import matplotlib.pyplot   as plt
+import functions           as F
 
-import seaborn               as sns
-import numpy                 as np
-import pandas                as pd
-import matplotlib.pyplot     as plt
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, MaxAbsScaler, RobustScaler
 
 cwd      = os.getcwd()
@@ -51,53 +52,40 @@ def Corr_matrix():
 # Locking the Confirmed, False Positive and Candidates (using this for plotting histogram of distribution?)
 # The Candidates, later used for calculating the probability that a candidate is an exoplanet
 
-
 #df = df.drop(df[(df.koi_prad > 100)].index)
-    
+
 CONFIRMED  = df.loc[df['koi_disposition']  == 'CONFIRMED']       # = 1
 NEGATIVE   = df.loc[df['koi_disposition']  == 'FALSE POSITIVE']  # = 0
 CANDIDATES = df.loc[df['koi_disposition']  == 'CANDIDATE']
 
-#print(CONFIRMED)
-#print(NEGATIVE)
-#print(CANDIDATES)
-
-def Histogram2():
-    g = df.loc[:, (df.columns == 'koi_disposition')].values
-    labels, counts = np.unique(g, return_counts=True)
-    plt.bar(labels, counts, align='center')
-    plt.gca().set_xticks(labels)
-    plt.ylabel("Observations count")
-    plt.show()
-
+# Make histograms
 def Histogram(feature_name, x_label, title=None, logscale=False):
 
-    
     if logscale:
         plt.hist(np.log(NEGATIVE.loc[:,   NEGATIVE.columns == feature_name].values), alpha=0.8, bins=10, label="False positive")
         plt.hist(np.log(CANDIDATES.loc[:, CANDIDATES.columns == feature_name].values), alpha=0.8, bins=10, label="Candidates")
         plt.hist(np.log(CONFIRMED.loc[:,  CONFIRMED.columns == feature_name].values), alpha=0.8, bins=8, label="Confirmed")
         plt.xlim(-2, 15)
-    else:        
+    else:
         plt.hist(NEGATIVE.loc[:,   NEGATIVE.columns == feature_name].values, alpha=0.8, label="False positive")
         plt.hist(CANDIDATES.loc[:, CANDIDATES.columns == feature_name].values, alpha=0.8, label="Candidates")
         plt.hist(CONFIRMED.loc[:,  CONFIRMED.columns == feature_name].values, alpha=0.8, label="Confirmed")
-    
+
     plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel("Observations count")
     plt.legend()
     plt.show()
-    
 
-# Make histogram for planet radius [Earth radii], koi_prad
 #Histogram('koi_prad', "log Planet radius [Earth radii]", title="Histogram for koi_prad", logscale=True)
 #Histogram('koi_duration', "Transit duration [Hours]", title="Histogram for koi_duration")
-Histogram2()
 
-neg = NEGATIVE.loc[:,   NEGATIVE.columns == 'koi_prad'].values
-can = CANDIDATES.loc[:,   CANDIDATES.columns == 'koi_prad'].values
-con = CONFIRMED.loc[:,   CONFIRMED.columns == 'koi_prad'].values
+# Make histogram of candidates, confirmed and false positive objects
+F.Histogram2(g=df.loc[:, (df.columns == 'koi_disposition')].values)
+
+neg = NEGATIVE.loc[:,   NEGATIVE.columns   == 'koi_prad'].values
+can = CANDIDATES.loc[:, CANDIDATES.columns == 'koi_prad'].values
+con = CONFIRMED.loc[:,  CONFIRMED.columns  == 'koi_prad'].values
 
 #print('hi')
 #print(np.max(con))
@@ -108,7 +96,6 @@ plt.plot(can, 'go')
 plt.plot(con, 'bo')
 plt.show()
 """
-
 
 # Creating DataFrame only with the Confirmed/False Positive (dropping the candidates)
 # The features (not including the column koi_disposition or the Kepler ID)
@@ -135,4 +122,3 @@ print(features)
 np.save('features', features)
 np.save('targets', target)
 np.save('candidates', CANDIDATES.loc[:, (CANDIDATES.columns != 'koi_disposition')].values)
-
