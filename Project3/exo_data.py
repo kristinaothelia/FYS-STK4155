@@ -106,7 +106,7 @@ CONFIRMED_NEGATIVE = df.drop(df[(df.koi_disposition == 'CANDIDATE')].index)
 features = CONFIRMED_NEGATIVE.loc[:, (CONFIRMED_NEGATIVE.columns != 'koi_disposition') & (CONFIRMED_NEGATIVE.columns != "kepid")].values
 target   = CONFIRMED_NEGATIVE.loc[:,  CONFIRMED_NEGATIVE.columns == 'koi_disposition'].values
 #print(features)
-#print(target)
+print(target)
 
 
 # Renaming the targets to 0 and 1 instead of Confirmed/False Positives
@@ -122,15 +122,20 @@ scaler.fit_transform(features)
 print(features)
 
 
-# Choosing candidates in the GoldiLock Zone
-GoldiLock = CANDIDATES.loc[CANDIDATES['koi_teq'] < 330]
-GoldiLock = GoldiLock.loc[GoldiLock['koi_teq'] > 260]
-GoldiLock = GoldiLock.loc[GoldiLock['koi_prad'] > 0.05]
-GoldiLock = GoldiLock.loc[GoldiLock['koi_prad'] < 2.5]
-print(GoldiLock)
+def GoldiLock_Candidates(temp_max, temp_min, rad_max, rad_min):
+    # Choosing candidates in the GoldiLock Zone
 
+    GoldiLock = CANDIDATES.loc[CANDIDATES['koi_teq'] < temp_max] 
+    GoldiLock = GoldiLock.loc[GoldiLock['koi_teq']   > temp_min]
+    GoldiLock = GoldiLock.loc[GoldiLock['koi_prad']  > rad_max]
+    GoldiLock = GoldiLock.loc[GoldiLock['koi_prad']  < rad_min]
+    return GoldiLock
+
+GoldiLocks = GoldiLock_Candidates(323, 273, 0.5, 2.5)
 
 np.save('features', features)
 np.save('targets', target)
 np.save('candidates', CANDIDATES.loc[:, (CANDIDATES.columns != 'koi_disposition')].values)
-np.save('GoldiLock', GoldiLock.loc[:, (GoldiLock.columns != 'koi_disposition')].values)
+np.save('GoldiLock', GoldiLocks.loc[:, (GoldiLocks.columns != 'koi_disposition')].values)
+
+GoldiLocks.to_excel('GoldiLock_PandasDataFrame.xlsx')

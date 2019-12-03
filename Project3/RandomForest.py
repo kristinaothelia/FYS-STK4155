@@ -19,6 +19,7 @@ seed 		  = 0
 
 X = np.load('features.npy', allow_pickle=True)
 y = np.load('targets.npy', allow_pickle=True)
+GoldiLock    = np.load('GoldiLock.npy', allow_pickle=True)
 candidates   = np.load('candidates.npy', allow_pickle=True)
 header_names = np.load('feature_names.npy', allow_pickle=True)
 feature_list = header_names[1:]
@@ -88,7 +89,32 @@ if Plot == True:
 	func.Histogram2(predict_candidates)
 
 
+#############################################################################################
+Plot2 = True
 
+predict_goldilocks = np.array(RF.predict(GoldiLock))
+np.save('GoldiLock_predicted', predict_goldilocks)
+
+print(GoldiLock)
+print(predict_goldilocks)
+
+predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
+predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
+
+
+print('')
+print('The Random Forest Classifier predicted')
+print('--------------------------------------')
+print('%g exoplanets       of %g candidates'  %(predicted_exoplanets_goldilocks, len(predict_goldilocks)))
+print('%g false positives   of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
+
+if Plot2 == True:
+	# Plotting a bar plot of candidates predicted as confirmed and false positives
+	# Need to fix input title, labels etc maybe?
+	func.Histogram2(predict_goldilocks)
+
+
+#############################################################################################
 
 '''
 feature_importance = RF.feature_importances_
