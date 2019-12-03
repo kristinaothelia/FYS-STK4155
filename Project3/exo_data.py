@@ -25,16 +25,12 @@ df.drop(columns=['koi_disp_prov', 'koi_ldm_coeff3', 'koi_ldm_coeff4', 'koi_fitty
 df = df.replace(r'^\s*$', np.nan, regex=True)
 df = pd.DataFrame.dropna(df, axis=0, how='any')
 
-<<<<<<< HEAD
 #df = df.replace(np.nan, 0, regex=True)
-
 #print(df)
-=======
 
 print(df)
 header_names = list(df)
 np.save('feature_names', header_names)
->>>>>>> 4568dede99994f491eee0714642c4de0d416ccca
 
 
 '''
@@ -125,6 +121,16 @@ scaler = StandardScaler() #RobustScaler() #MaxAbsScaler() #MinMaxScaler()
 scaler.fit_transform(features)
 print(features)
 
+
+# Choosing candidates in the GoldiLock Zone
+GoldiLock = CANDIDATES.loc[CANDIDATES['koi_teq'] < 330]
+GoldiLock = GoldiLock.loc[GoldiLock['koi_teq'] > 260]
+GoldiLock = GoldiLock.loc[GoldiLock['koi_prad'] > 0.05]
+GoldiLock = GoldiLock.loc[GoldiLock['koi_prad'] < 2.5]
+print(GoldiLock)
+
+
 np.save('features', features)
 np.save('targets', target)
 np.save('candidates', CANDIDATES.loc[:, (CANDIDATES.columns != 'koi_disposition')].values)
+np.save('GoldiLock', GoldiLock.loc[:, (GoldiLock.columns != 'koi_disposition')].values)

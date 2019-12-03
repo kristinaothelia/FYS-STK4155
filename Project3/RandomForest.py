@@ -87,9 +87,7 @@ if Plot == True:
 	# Need to fix input title, labels etc maybe?
 	func.Histogram2(predict_candidates)
 
-print(predict_candidates)
 
-GoldiLock = 
 
 
 '''
