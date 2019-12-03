@@ -12,6 +12,8 @@ from sklearn.ensemble 		 import RandomForestClassifier
 #pd.DataFrame(X).fillna()
 # grid search
 
+Plot = False
+
 TrainingShare = 0.70
 seed 		  = 0
 
@@ -33,7 +35,7 @@ print(len(y))
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TrainingShare, test_size = 1-TrainingShare, random_state=seed)
 
 
-# plot error against number of trees
+# plot error against number of trees?
 RF = RandomForestClassifier(n_estimators=100, max_depth=None, random_state=seed, criterion='gini')
 RF.fit(X_train,y_train)
 
@@ -56,9 +58,9 @@ print('The recall is      : %.3f' % recall)
 print('The absolute error : %.3f' % np.mean(errors))
 print('-------------------------------------------')
 
-
-skplt.metrics.plot_confusion_matrix(y_test, predict)
-plt.show()
+if Plot == True:
+	skplt.metrics.plot_confusion_matrix(y_test, predict)
+	plt.show()
 
 
 #print(RF.decision_path(X_test))
@@ -78,7 +80,16 @@ print('')
 print('The Random Forest Classifier predicted')
 print('--------------------------------------')
 print('%g exoplanets       of %g candidates'  %(predicted_exoplanets, len(predict_candidates)))
-print('%g false positives  of %g candidates'  %(predicted_false_positive, len(predict_candidates)))
+print('%g false positives   of %g candidates'  %(predicted_false_positive, len(predict_candidates)))
+
+if Plot == True:
+	# Plotting a bar plot of candidates predicted as confirmed and false positives
+	# Need to fix input title, labels etc maybe?
+	func.Histogram2(predict_candidates)
+
+print(predict_candidates)
+
+GoldiLock = 
 
 
 '''
@@ -99,7 +110,6 @@ plt.ylabel('--')
 #plt.xlim([lb-width/2, ub-width/2])
 plt.show()
 '''
-
 
 '''
 from matplotlib.ticker import MaxNLocator
