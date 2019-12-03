@@ -25,10 +25,16 @@ df.drop(columns=['koi_disp_prov', 'koi_ldm_coeff3', 'koi_ldm_coeff4', 'koi_fitty
 df = df.replace(r'^\s*$', np.nan, regex=True)
 df = pd.DataFrame.dropna(df, axis=0, how='any')
 
+<<<<<<< HEAD
+#df = df.replace(np.nan, 0, regex=True)
+
+#print(df)
+=======
 
 print(df)
 header_names = list(df)
 np.save('feature_names', header_names)
+>>>>>>> 4568dede99994f491eee0714642c4de0d416ccca
 
 
 '''
