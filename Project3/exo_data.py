@@ -1,3 +1,7 @@
+"""
+FYS-STK4155 - Project 3:
+A program that
+"""
 import os, random, xlsxwriter
 import seaborn             as sns
 import numpy               as np
@@ -42,8 +46,7 @@ df = df.drop(df[(df.koi_dikco_msky == 'NaN')].index)
 '''
 
 def Corr_matrix():
-	#Creating a correlation matrix for the dataframe
-	# Why is this different from the paper? Is this a problem?
+	""" Creating a correlation matrix for the dataframe """
 	sns.heatmap(df.corr())
 	plt.title("Correlation Matrix")
 	plt.tight_layout()
@@ -89,9 +92,6 @@ neg = NEGATIVE.loc[:,   NEGATIVE.columns   == 'koi_prad'].values
 can = CANDIDATES.loc[:, CANDIDATES.columns == 'koi_prad'].values
 con = CONFIRMED.loc[:,  CONFIRMED.columns  == 'koi_prad'].values
 
-#print('hi')
-#print(np.max(con))
-
 """
 plt.plot(neg, 'ro')
 plt.plot(can, 'go')
@@ -105,37 +105,39 @@ plt.show()
 CONFIRMED_NEGATIVE = df.drop(df[(df.koi_disposition == 'CANDIDATE')].index)
 features = CONFIRMED_NEGATIVE.loc[:, (CONFIRMED_NEGATIVE.columns != 'koi_disposition') & (CONFIRMED_NEGATIVE.columns != "kepid")].values
 target   = CONFIRMED_NEGATIVE.loc[:,  CONFIRMED_NEGATIVE.columns == 'koi_disposition'].values
-#print(features)
-print(target)
-
 
 # Renaming the targets to 0 and 1 instead of Confirmed/False Positives
 target[target == 'CONFIRMED']      = 1
 target[target == 'FALSE POSITIVE'] = 0
 
-#print(target)
 
-print('hi')
 print(features[2,:])
 scaler = StandardScaler() #RobustScaler() #MaxAbsScaler() #MinMaxScaler()
 scaler.fit_transform(features)
 print(features)
 
-
-def GoldiLock_Candidates(temp_max, temp_min, rad_max, rad_min):
-    # Choosing candidates in the GoldiLock Zone
-
-    GoldiLock = CANDIDATES.loc[CANDIDATES['koi_teq'] < temp_max] 
+def GoldiLock_Candidates(temp_max=323, temp_min=273, rad_max=2.5, rad_min=0.5):
+	"""
+	Default values for goldielock zone:
+	Exoplanet surface temperature max [K]	| 323
+	Exoplanet surface temparature min [K]	| 273
+	Exoplanet radius max [Earth radii]		| 0.5
+	Exoplanet radius min [Earth radii]		| 2.5
+	"""
+    GoldiLock = CANDIDATES.loc[CANDIDATES['koi_teq'] < temp_max]
     GoldiLock = GoldiLock.loc[GoldiLock['koi_teq']   > temp_min]
     GoldiLock = GoldiLock.loc[GoldiLock['koi_prad']  > rad_max]
     GoldiLock = GoldiLock.loc[GoldiLock['koi_prad']  < rad_min]
     return GoldiLock
 
-GoldiLocks = GoldiLock_Candidates(323, 273, 0.5, 2.5)
+# Find predicted exoplanets in goldilock zone, by temperature and radius.
+GoldiLocks = GoldiLock_Candidates(323, 273, 0.2, 2.0)
 
+# Save files for use in other programs
 np.save('features', features)
 np.save('targets', target)
 np.save('candidates', CANDIDATES.loc[:, (CANDIDATES.columns != 'koi_disposition')].values)
 np.save('GoldiLock', GoldiLocks.loc[:, (GoldiLocks.columns != 'koi_disposition')].values)
 
+# Save pands DataFrame of predicted exoplanets within the goldielock zone
 GoldiLocks.to_excel('GoldiLock_PandasDataFrame.xlsx')
