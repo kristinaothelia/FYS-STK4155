@@ -68,8 +68,9 @@ def F1_score(y, model):
 	f = 2*((p*r)/(p+r))
 	return f
 
-def Print_parameters(accuracy, f1_score, precision, recall, errors):
-	print('\n-------------------------------------------')
+def Print_parameters(accuracy, f1_score, precision, recall, errors, name=''):
+	print('\nMethod: %s' %name)
+	print('-------------------------------------------')
 	print('The accuracy is    : %.3f' % accuracy)
 	print('The F1 score is    : %.3f' % f1_score)
 	print('The precision is   : %.3f' % precision)

@@ -59,7 +59,7 @@ f1_score    = func.F1_score(y_test, predict)
 errors = abs(predict - y_test)
 
 # Printing the different metrics:
-func.Print_parameters(accuracy, f1_score, precision, recall, errors)
+func.Print_parameters(accuracy, f1_score, precision, recall, errors, name='Random Forest')
 
 if Plot == True:
 	skplt.metrics.plot_confusion_matrix(y_test, predict)
