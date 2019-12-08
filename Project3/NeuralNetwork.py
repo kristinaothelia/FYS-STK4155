@@ -16,7 +16,7 @@ from matplotlib 			 	import cm
 from matplotlib.ticker 		 	import LinearLocator, FormatStrFormatter
 
 import functions 				as F
-
+#------------------------------------------------------------------------------
 X = np.load('features.npy', allow_pickle=True)
 y = np.load('targets.npy',  allow_pickle=True)
 
