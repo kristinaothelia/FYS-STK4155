@@ -17,20 +17,21 @@ from matplotlib.ticker 		 	import LinearLocator, FormatStrFormatter
 
 import functions 				as F
 #------------------------------------------------------------------------------
+TrainingShare = 0.70
+seed 		  = 0
+
 X = np.load('features.npy', allow_pickle=True)
 y = np.load('targets.npy',  allow_pickle=True)
 
 candidates   = np.load('candidates.npy',    allow_pickle=True)
 header_names = np.load('feature_names.npy', allow_pickle=True)
+GoldiLock    = np.load('GoldiLock.npy', allow_pickle=True)
 feature_list = header_names[1:]
-
-print(X); print(y)
 
 y = y.astype('int')
 y = np.ravel(y)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TrainingShare, test_size = 1-TrainingShare, random_state=seed)
-
 
 epochs     = 500 # 1000
 batch_size = 100
@@ -91,7 +92,7 @@ def Best_model():
 	lamb  = 1e-4
 	eta   = 1e-2
 
-	reg = MLPRegressor(	activation="relu", # Eller en annen?
+	reg = MLPRegressor(	activation="relu", 				# Eller en annen?
 	    				solver="sgd",
 	    				learning_rate='constant',
 	    				alpha=lamb,
@@ -101,7 +102,9 @@ def Best_model():
 
 	reg  = reg.fit(X_train, y_train)
 	pred = reg.predict(X_test)
-	pred_ = reg.predict(X).reshape(N,N)
+	pred_ = reg.predict(X)#.reshape(N,N)
 
-	print("MSE score: ", mean_squared_error(data, pred_))
-	print("R2  score: ", func.R2_ScoreFunction(data, pred_))
+	print("MSE score: ", mean_squared_error(y, pred_))
+	print("R2  score: ", func.R2_ScoreFunction(y, pred_))
+
+Best_model()
