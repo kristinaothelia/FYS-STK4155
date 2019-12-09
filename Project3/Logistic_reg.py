@@ -9,14 +9,13 @@ from sklearn.metrics 		 	import classification_report, f1_score,		\
 									   precision_score, recall_score,       \
                                        accuracy_score, mean_squared_error,  \
                                        confusion_matrix
-#from sklearn.model_selection 	import train_test_split
-from sklearn.linear_model 		import LogisticRegression #, SGDClassifier
+from sklearn.linear_model 		import LogisticRegression 
 #------------------------------------------------------------------------------
 
-def LogReg(X_train, X_test, y_train, y_test, candidates):
+def LogReg(X_train, X_test, y_train, y_test, candidates, seed):
 
 	# Make Logistic regression analysis
-	logreg = LogisticRegression()
+	logreg = LogisticRegression(solver='lbfgs', max_iter = 1000, random_state=seed)
 	logreg.fit(X_train, y_train)
 	y_pred = logreg.predict(X_test)
 

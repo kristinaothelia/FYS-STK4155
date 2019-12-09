@@ -46,7 +46,7 @@ if __name__ == '__main__':
         print("Logistic regression classification on NASA's KOI data")
         print("--"*55)
 
-        LR.LogReg(X_train, X_test, y_train, y_test, candidates)
+        LR.LogReg(X_train, X_test, y_train, y_test, candidates, seed)
 
     elif arg == "NN":
 
