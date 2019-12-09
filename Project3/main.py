@@ -43,17 +43,27 @@ if __name__ == '__main__':
 
     if arg == "LOG":
 
+        print("Logistic regression classification on NASA's KOI data")
+        print("--"*55)
+
         LR.LogReg(X_train, X_test, y_train, y_test, candidates)
 
     elif arg == "NN":
 
-        print('test NN')
+        print("Neural Network classification on NASA's KOI data")
+        print("--"*55)
 
     elif arg == "RF":
+
+        print("Random Forest classification on NASA's KOI data")
+        print("--"*55)
 
         RF.Random_Forest(X_train, X_test, y_train, y_test, candidates, feature_list, header_names, seed)
 
     elif arg == "XG":
+
+        print("XGBoost classification on NASA's KOI data")
+        print("--"*55)
 
         XG.XG_Boost(X_train, X_test, y_train, y_test, candidates, feature_list, header_names, seed)
 
