@@ -1,0 +1,41 @@
+Denne endrer seg, why?
+
+Method: Neural Network classification
+-------------------------------------------
+The accuracy is    : 0.799
+The F1 score is    : 0.796
+The precision is   : 0.796
+The recall is      : 0.808
+The absolute error : 0.201
+-------------------------------------------
+
+Noe rart med absolute error?
+
+Method: XGBoost
+-------------------------------------------
+The accuracy is    : 0.997
+The F1 score is    : 0.997
+The precision is   : 0.998
+The recall is      : 0.997
+The absolute error : 0.003
+-------------------------------------------
+
+
+Method: Random Forest
+-------------------------------------------
+The accuracy is    : 0.990
+The F1 score is    : 0.988
+The precision is   : 1.000
+The recall is      : 0.976
+The absolute error : 0.010
+-------------------------------------------
+
+
+Method: Logistic regression
+-------------------------------------------
+The accuracy is    : 0.799
+The F1 score is    : 0.794
+The precision is   : 0.791
+The recall is      : 0.800
+The absolute error : 0.201
+-------------------------------------------
