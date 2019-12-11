@@ -12,17 +12,19 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble 		 import RandomForestClassifier
 #------------------------------------------------------------------------------
 
-def Random_Forest(X_train, X_test, y_train, y_test, candidates, feature_list, header_names, seed=0):
+def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
+				  feature_list, header_names, seed=0, 						\
+				  plot_confuse_matrix=False, Goldilock_zone=False):
+
 	#from sklearn import tree
 	#pd.DataFrame(X).fillna()
 	# grid search
 
-	# Ha som input greier
-	Plot = False
-
-
 	# Plot error against number of trees?
-	RF = RandomForestClassifier(n_estimators=100, max_depth=None, random_state=seed, criterion='gini')
+	RF = RandomForestClassifier(n_estimators	= 100,
+								max_depth		= None,
+								random_state	= seed,
+								criterion		= 'gini')
 	RF.fit(X_train,y_train)
 
 	# Calculating different metrics
@@ -38,22 +40,22 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, feature_list, he
 	# Printing the different metrics:
 	func.Print_parameters(accuracy, F1_score, precision, recall, errors, name='Random Forest')
 
-	if Plot == True:
+	if plot_confuse_matrix == True:
 		skplt.metrics.plot_confusion_matrix(y_test, predict)
 		plt.show()
 
 	#print(RF.decision_path(X_test))
 
 	# Pull out one tree from the forest
-	tree_number = 5
-	tree 		= RF.estimators_[tree_number]
-	func.PlotOneTree(tree, feature_list)
+	tree_nr = 5
+	tree 	= RF.estimators_[tree_nr]
+
+	#print(len(feature_list), len(header_names)) # 24 og 56
+	func.PlotOneTree(tree, feature_list) # header_names?
 
 	predict_candidates       = np.array(RF.predict(candidates))
-
 	predicted_false_positive = (predict_candidates == 0).sum()
 	predicted_exoplanets     = (predict_candidates == 1).sum()
-
 
 	# Information print to terminal
 	print('\nThe Random Forest Classifier predicted')
@@ -61,37 +63,34 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, feature_list, he
 	print('%-5g exoplanets      of %g candidates'  %(predicted_exoplanets, len(predict_candidates)))
 	print('%-5g false positives of %g candidates'  %(predicted_false_positive, len(predict_candidates)))
 
-	if Plot == True:
+	if plot_confuse_matrix == True:
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
 		# Need to fix input title, labels etc maybe?
 		func.Histogram2(predict_candidates)
 
 
-	#############################################################################################
-	Plot2 = True
+	if Goldilock_zone:
 
-	predict_goldilocks = np.array(RF.predict(GoldiLock))
-	np.save('GoldiLock_predicted', predict_goldilocks)
+		predict_goldilocks = np.array(RF.predict(GoldiLock))
+		print(predict_goldilocks)
+		np.save('GoldiLock_predicted', predict_goldilocks)
 
-	print(GoldiLock)
-	print(predict_goldilocks)
+		print(GoldiLock)
+		print(predict_goldilocks)
 
-	predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
-	predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
+		predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
+		predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
 
-	# Information print to terminal
-	print('\nThe Random Forest Classifier predicted')
-	print('--------------------------------------')
-	print('%g exoplanets       of %g candidates'  %(predicted_exoplanets_goldilocks, len(predict_goldilocks)))
-	print('%g false positives   of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
+		# Information print to terminal
+		print('\nThe Random Forest Classifier predicted')
+		print('--------------------------------------')
+		print('%g exoplanets       of %g candidates'  %(predicted_exoplanets_goldilocks, len(predict_goldilocks)))
+		print('%g false positives   of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
 
-	if Plot2 == True:
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
 		# Need to fix input title, labels etc maybe?
 		func.Histogram2(predict_goldilocks)
 
-
-	#############################################################################################
 
 	'''
 	feature_importance = RF.feature_importances_

@@ -15,21 +15,21 @@ import Logistic_reg          as LR
 import xgboost_test          as XG
 #------------------------------------------------------------------------------
 
-TrainingShare = 0.70
-seed 		  = 0
+seed 	 = 0
+Training = 0.70
 
 X = np.load('features.npy', allow_pickle=True)
 y = np.load('targets.npy',  allow_pickle=True)
 
 candidates   = np.load('candidates.npy',    allow_pickle=True)
 header_names = np.load('feature_names.npy', allow_pickle=True)
-GoldiLock    = np.load('GoldiLock.npy', allow_pickle=True)
+GoldiLock    = np.load('GoldiLock.npy',     allow_pickle=True)
 feature_list = header_names[1:]
 
 y = y.astype('int')
 y = np.ravel(y)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TrainingShare, test_size = 1-TrainingShare, random_state=seed)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=Training, test_size = 1-Training, random_state=seed)
 
 
 if __name__ == '__main__':
@@ -55,10 +55,15 @@ if __name__ == '__main__':
 
     elif arg == "RF":
 
+        """
+        Goldilock_zone = True   | Creates a npy list of goldilock candidates,
+                                  to be used in goldilock.py
+        """
+
         print("Random Forest classification on NASA's KOI data")
         print("--"*55)
 
-        RF.Random_Forest(X_train, X_test, y_train, y_test, candidates, feature_list, header_names, seed)
+        RF.Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock, feature_list, header_names, seed, plot_confuse_matrix=True, Goldilock_zone=True)
 
     elif arg == "XG":
 
