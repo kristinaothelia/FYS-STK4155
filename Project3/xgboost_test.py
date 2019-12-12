@@ -7,13 +7,13 @@ import functions as func
 
 from sklearn.linear_model    import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
-<<<<<<< HEAD
+
 from sklearn.metrics         import precision_score, recall_score, accuracy_score, mean_squared_error, mean_absolute_error, f1_score
-=======
+
 from sklearn.metrics         import precision_score, recall_score,          \
                                     accuracy_score, confusion_matrix,       \
                                     mean_absolute_error, f1_score
->>>>>>> 600cf5f17b02719b2a94a631d45252a5855dd845
+
 #------------------------------------------------------------------------------
 def XG_Boost(X_train, X_test, y_train, y_test, candidates, feature_list, header_names, seed):
 
