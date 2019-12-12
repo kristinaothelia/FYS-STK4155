@@ -135,15 +135,15 @@ def Heatmap_MSE_R2():
 	fig, ax = plt.subplots()
 	sns.heatmap(MSE, annot=True, xticklabels=lmbd_vals, yticklabels=etas, ax=ax, linewidths=.3, linecolor="black")
 	ax.set_title("MSE scores (sklearn)")
-	ax.set_ylabel("$\eta$")
-	ax.set_xlabel("$\lambda$")
+	ax.set_ylabel("$\\eta$")
+	ax.set_xlabel("$\\lambda$")
 	plt.show()
 
 	fig, ax = plt.subplots()
 	sns.heatmap(R2, annot=True, xticklabels=lmbd_vals, yticklabels=etas, ax=ax, linewidths=.3, linecolor="black")
 	ax.set_title("Accuracy/R2 scores (sklearn)")
-	ax.set_ylabel("$\eta$")
-	ax.set_xlabel("$\lambda$")
+	ax.set_ylabel("$\\eta$")
+	ax.set_xlabel("$\\lambda$")
 	plt.show()
 
 def Best_model():
