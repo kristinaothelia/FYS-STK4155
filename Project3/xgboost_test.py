@@ -6,7 +6,7 @@ import xgboost as xgb
 
 from sklearn.linear_model    import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.metrics         import precision_score, recall_score, accuracy_score, mean_squared error, mean_absolute_error, f1_score
+from sklearn.metrics         import precision_score, recall_score, accuracy_score, mean_squared_error, mean_absolute_error, f1_score
 #------------------------------------------------------------------------------
 
 X = np.load("features.npy", allow_pickle=True)
