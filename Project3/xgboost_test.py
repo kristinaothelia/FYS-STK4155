@@ -7,6 +7,8 @@ import functions as func
 
 from sklearn.linear_model    import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
+from xgboost 				 import plot_importance
+from matplotlib				 import pyplot
 
 from sklearn.metrics         import precision_score, recall_score, accuracy_score, mean_squared_error, mean_absolute_error, f1_score
 
@@ -60,3 +62,6 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, feature_list, header_
     print('--------------------------------------')
     print('%-5g exoplanets      of %g candidates'  %(pred_Conf, len(pred_cand)))
     print('%-5g false positives of %g candidates'  %(pred_FP, len(pred_cand)))
+
+    #plot_importance(y_pred)
+    #pyplot.show()
