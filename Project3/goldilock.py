@@ -24,9 +24,6 @@ def GoldilocksZone():
 	GC       = pd.read_excel(filename, header=0, skiprows=0, index_col=0, na_values=nanDict) # df
 	GP       = np.load('Goldilock_predicted.npy', allow_pickle=True)
 
-	print(GC)
-	print(GP)
-
 	# List to store predicted 'False positives' and 'Confirmed' exoplanets
 	P_FC     = []
 

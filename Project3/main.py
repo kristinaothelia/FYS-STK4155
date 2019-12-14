@@ -2,15 +2,15 @@
 Main program for FYS-STK4155 - Project 3: Exoplanet classification
 """
 import sys, os
+import argparse
 import numpy                 as np
 
 from random 				 import random, seed
 from sklearn.model_selection import train_test_split
 
 # Import python programs
-#import NeuralNetwork         as NN
+import NeuralNetwork         as NN
 import RandomForest          as RF
-import goldilock             as GL
 import Logistic_reg          as LR
 import xgboost_test          as XG
 #------------------------------------------------------------------------------
@@ -34,48 +34,104 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=Training, t
 
 if __name__ == '__main__':
 
-    # check for input arguments
-    if len(sys.argv) == 1:
-	    print("No arguments passed. Please specify method; 'LOG', 'NN', 'RF', 'XG' or 'Hab'")
-	    sys.exit()
+    parser = argparse.ArgumentParser(description="Exoplanet classification")
 
-    arg = sys.argv[1]
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-1', '--LOG', action="store_true", help="Logistic classification")
+    group.add_argument('-2', '--NN',  action="store_true", help="Neural network classification")
+    group.add_argument('-3', '--RF',  action="store_true", help="Random Forest classification")
+    group.add_argument('-4', '--XG',  action="store_true", help="XGBoost classification")
 
-    if arg == "LOG":
+    # Optional argument for habitable zone calculations
+    parser.add_argument('-X', '--hab', action='store_true', help="Habitable zone calculations", required=False)
+
+    if len(sys.argv) <= 1:
+        sys.argv.append('--help')
+
+    args       = parser.parse_args()
+    LOG_method = args.LOG
+    NN_method  = args.NN
+    RF_method  = args.RF
+    XG_method  = args.XG
+    hab_zone   = args.hab
+
+    if LOG_method == True:
 
         print("Logistic regression classification on NASA's KOI data")
         print("--"*55)
 
-        LR.LogReg(X_train, X_test, y_train, y_test, candidates, seed)
+        if hab_zone == True:
+            LR.LogReg(X_train, X_test,
+                      y_train, y_test,
+                      candidates, GoldiLock, seed,
+                      Goldilock_zone=True,
+                      plot_confuse_matrix=True)
 
-    elif arg == "NN":
+        else:
+            LR.LogReg(X_train, X_test,
+                      y_train, y_test,
+                      candidates, GoldiLock, seed,
+                      Goldilock_zone=False,
+                      plot_confuse_matrix=True)
+
+    elif NN_method == True:
 
         print("Neural Network classification on NASA's KOI data")
         print("--"*55)
 
-    elif arg == "RF":
+        if hab_zone == True:
+            NN.NeuralNetwork(X_train, X_test,
+                             y_train, y_test,
+                             candidates, GoldiLock, seed,
+                             Goldilock_zone=True,
+                             plot_confuse_matrix=True)
 
-        """
-        Goldilock_zone = True   | Creates a npy list of goldilock candidates,
-                                  to be used in goldilock.py
-        """
+        else:
+            NN.NeuralNetwork(X_train, X_test,
+                             y_train, y_test,
+                             candidates, GoldiLock, seed,
+                             Goldilock_zone=False,
+                             plot_confuse_matrix=True)
+
+
+    elif RF_method == True:
 
         print("Random Forest classification on NASA's KOI data")
         print("--"*55)
 
-        RF.Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock, feature_list, header_names, seed, plot_confuse_matrix=True, Goldilock_zone=True)
+        if hab_zone == True:
+            RF.Random_Forest(X_train, X_test,
+                             y_train, y_test,
+                             candidates, GoldiLock,
+                             feature_list, header_names, seed,
+                             plot_confuse_matrix=True,
+                             Goldilock_zone=True)
 
-    elif arg == "XG":
+        else:
+            RF.Random_Forest(X_train, X_test,
+                             y_train, y_test,
+                             candidates, GoldiLock,
+                             feature_list, header_names, seed,
+                             plot_confuse_matrix=True,
+                             Goldilock_zone=False)
+
+    elif XG_method == True:
 
         print("XGBoost classification on NASA's KOI data")
         print("--"*55)
 
-        XG.XG_Boost(X_train, X_test, y_train, y_test, candidates, feature_list, header_names, seed)
+        if hab_zone == True:
+            XG.XG_Boost(X_train, X_test,
+                        y_train, y_test,
+                        candidates, GoldiLock,
+                        feature_list, header_names, seed,
+                        Goldilock_zone=True,
+                        plot_confuse_matrix=True)
 
-    elif arg == "Hab":
-
-        # Ha muligheten for aa regne Goldilock for alle metodene?
-        GL.GoldilocksZone()
-
-    else:
-	    print("Pass method 'LOG', 'NN', 'RF', 'XG' or 'Hab'")
+        else:
+            XG.XG_Boost(X_train, X_test,
+                        y_train, y_test,
+                        candidates, GoldiLock,
+                        feature_list, header_names, seed,
+                        Goldilock_zone=False,
+                        plot_confuse_matrix=True)

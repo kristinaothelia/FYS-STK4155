@@ -4,6 +4,7 @@ FYS-STK4155 - Project 3: XGBoost
 import numpy     as np
 import xgboost   as xgb
 import functions as func
+import goldilock as GL
 
 from sklearn.linear_model    import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -17,7 +18,9 @@ from sklearn.metrics         import precision_score, recall_score,          \
                                     mean_absolute_error, f1_score
 
 #------------------------------------------------------------------------------
-def XG_Boost(X_train, X_test, y_train, y_test, candidates, feature_list, header_names, seed):
+def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock, \
+             feature_list, header_names, seed, Goldilock_zone=False, plot_confuse_matrix=False):
+
 
     D_train    = xgb.DMatrix(X_train, label=y_train)
     D_test     = xgb.DMatrix(X_test, label=y_test)
@@ -26,6 +29,7 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, feature_list, header_
                     "max_depth": 3,
                     "objective": "multi:softprob",
                     "num_class": 2  }
+
     steps      = 20  #the number of training iterations
     model      = xgb.train(param, D_train, steps)
     y_pred     = model.predict(D_test)
@@ -65,3 +69,30 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, feature_list, header_
 
     #plot_importance(y_pred)
     #pyplot.show()
+
+
+
+    # Usikker om dette blir riktig... Predikter alle til exoplanets, ingen false
+    if Goldilock_zone:
+
+        print("Goldilock zone calculations")
+
+        D_test             = xgb.DMatrix(GoldiLock, label=GoldiLock)
+        y_pred             = model.predict(D_test)
+        predict_goldilocks = np.asarray([np.argmax(line) for line in y_pred])
+        np.save('GoldiLock_predicted', predict_goldilocks)
+
+        predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
+        predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
+
+        # Information print to terminal
+        print('\nThe Random Forest Classifier predicted')
+        print('--------------------------------------')
+        print('%-3g exoplanets      of %g candidates'  %(predicted_exoplanets_goldilocks, len(predict_goldilocks)))
+        print('%-3g false positives of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
+
+        # Plotting a bar plot of candidates predicted as confirmed and false positives
+        # Need to fix input title, labels etc maybe?
+        func.Histogram2(predict_goldilocks)
+
+        GL.GoldilocksZone()

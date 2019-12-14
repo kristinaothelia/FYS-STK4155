@@ -6,6 +6,7 @@ import numpy 				 as np
 import matplotlib.pyplot	 as plt
 import scikitplot        	 as skplt
 import functions         	 as func
+import goldilock             as GL
 
 from sklearn.impute 		 import SimpleImputer
 from sklearn.model_selection import train_test_split
@@ -71,12 +72,10 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 
 	if Goldilock_zone:
 
-		predict_goldilocks = np.array(RF.predict(GoldiLock))
-		print(predict_goldilocks)
-		np.save('GoldiLock_predicted', predict_goldilocks)
+		print("Goldilock zone calculations")
 
-		print(GoldiLock)
-		print(predict_goldilocks)
+		predict_goldilocks = np.array(RF.predict(GoldiLock))
+		np.save('GoldiLock_predicted', predict_goldilocks)
 
 		predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
 		predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
@@ -84,12 +83,14 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 		# Information print to terminal
 		print('\nThe Random Forest Classifier predicted')
 		print('--------------------------------------')
-		print('%g exoplanets       of %g candidates'  %(predicted_exoplanets_goldilocks, len(predict_goldilocks)))
-		print('%g false positives   of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
+		print('%-3g exoplanets      of %g candidates'  %(predicted_exoplanets_goldilocks, len(predict_goldilocks)))
+		print('%-3g false positives of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
 
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
 		# Need to fix input title, labels etc maybe?
 		func.Histogram2(predict_goldilocks)
+
+		GL.GoldilocksZone()
 
 
 	'''
