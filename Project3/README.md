@@ -7,6 +7,7 @@ The report: XXX.pdf
 
 ## You might need to install:
 pip install pydot
+
 conda install graphviz
 
 ## Running the code:
