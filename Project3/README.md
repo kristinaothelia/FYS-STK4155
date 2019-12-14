@@ -15,10 +15,10 @@ Run exo_data.py to make required data files.
 
 Run the classification models by main.py, with one of the input arguments listed below.
 
-"-1" or "--LOG" : Logistic regression
-"-2" or "--NN"  : Neural Network
-"-3" or "--RF"  : Random Forest
-"-4" or "--XG"  : XGBoost
+- "-1" or "--LOG" : Logistic regression
+- "-2" or "--NN"  : Neural Network
+- "-3" or "--RF"  : Random Forest
+- "-4" or "--XG"  : XGBoost
 
 In addition, add "-X" or "--hab" to make habitable zone calculations
 
