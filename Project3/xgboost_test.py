@@ -17,6 +17,12 @@ from sklearn.metrics         import precision_score, recall_score,          \
                                     accuracy_score, confusion_matrix,       \
                                     mean_absolute_error, f1_score
 
+
+
+# Burde brukt XGBoost classifier?
+# https://www.programcreek.com/python/example/99824/xgboost.XGBClassifier?
+
+
 #------------------------------------------------------------------------------
 def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock, \
              feature_list, header_names, seed, Goldilock_zone=False, plot_confuse_matrix=False):
