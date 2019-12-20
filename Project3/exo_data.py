@@ -67,14 +67,14 @@ CANDIDATES = df.loc[df['koi_disposition']  == 'CANDIDATE']
 def Histogram(feature_name, x_label, title=None, logscale=False):
 
     if logscale:
-        plt.hist(np.log(NEGATIVE.loc[:,   NEGATIVE.columns == feature_name].values), alpha=0.8, bins=10, label="False positive")
+        plt.hist(np.log(NEGATIVE.loc[:,   NEGATIVE.columns == feature_name].values),   alpha=0.8, bins=10, label="False positive")
         plt.hist(np.log(CANDIDATES.loc[:, CANDIDATES.columns == feature_name].values), alpha=0.8, bins=10, label="Candidates")
-        plt.hist(np.log(CONFIRMED.loc[:,  CONFIRMED.columns == feature_name].values), alpha=0.8, bins=8, label="Confirmed")
+        plt.hist(np.log(CONFIRMED.loc[:,  CONFIRMED.columns == feature_name].values),  alpha=0.8, bins=8, label="Confirmed")
         plt.xlim(-2, 15)
     else:
-        plt.hist(NEGATIVE.loc[:,   NEGATIVE.columns == feature_name].values, alpha=0.8, label="False positive")
+        plt.hist(NEGATIVE.loc[:,   NEGATIVE.columns == feature_name].values,   alpha=0.8, label="False positive")
         plt.hist(CANDIDATES.loc[:, CANDIDATES.columns == feature_name].values, alpha=0.8, label="Candidates")
-        plt.hist(CONFIRMED.loc[:,  CONFIRMED.columns == feature_name].values, alpha=0.8, label="Confirmed")
+        plt.hist(CONFIRMED.loc[:,  CONFIRMED.columns == feature_name].values,  alpha=0.8, label="Confirmed")
 
     plt.title(title)
     plt.xlabel(x_label)
@@ -121,17 +121,17 @@ def GoldiLock_Candidates(temp_max=323, temp_min=273, rad_max=2.5, rad_min=0.5):
 	Default values for goldielock zone:
 	Exoplanet surface temperature max [K]	| 323
 	Exoplanet surface temparature min [K]	| 273
-	Exoplanet radius max [Earth radii]		| 0.5
-	Exoplanet radius min [Earth radii]		| 2.5
+	Exoplanet radius max [Earth radii]		| 2.5
+	Exoplanet radius min [Earth radii]		| 0.5
 	"""
-    GoldiLock = CANDIDATES.loc[CANDIDATES['koi_teq'] < temp_max]
-    GoldiLock = GoldiLock.loc[GoldiLock['koi_teq']   > temp_min]
-    GoldiLock = GoldiLock.loc[GoldiLock['koi_prad']  > rad_max]
-    GoldiLock = GoldiLock.loc[GoldiLock['koi_prad']  < rad_min]
-    return GoldiLock
+	GoldiLock = CANDIDATES.loc[CANDIDATES['koi_teq'] < temp_max]
+	GoldiLock = GoldiLock.loc[GoldiLock['koi_teq']   > temp_min]
+	GoldiLock = GoldiLock.loc[GoldiLock['koi_prad']  < rad_max]
+	GoldiLock = GoldiLock.loc[GoldiLock['koi_prad']  > rad_min]
+	return GoldiLock
 
 # Find predicted exoplanets in goldilock zone, by temperature and radius.
-GoldiLocks = GoldiLock_Candidates(323, 273, 0.2, 2.0)
+GoldiLocks = GoldiLock_Candidates(323, 273, 2.5, 0.5)
 
 # Save files for use in other programs
 np.save('features', features)
