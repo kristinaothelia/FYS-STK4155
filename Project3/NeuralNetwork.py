@@ -43,26 +43,27 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 	#alp_final = 1e-2
 
 
-	#model = MLPClassifier(max_iter=3000, random_state=seed)
+	model = MLPClassifier(max_iter=3000, random_state=seed)
 	"""
 	model = MLPClassifier(solver 			= 'lbfgs',	# 'adam'
 						activation			= 'logistic',
 						hidden_layer_sizes  = 100,		# (200,150,100)
+						random_state=seed,
 						max_iter			= 1000)		# 1500
 	"""
 
-	#trained_model = model.fit(X_train, y_train)
-
+	trained_model = model.fit(X_train, y_train)
+	"""
 	param_test = {"hidden_layer_sizes": [130, 140, 150],
 				  "learning_rate_init": [ 0.125, 0.150, 0.175]}
 
 
-	gsearch = GridSearchCV(MLPClassifier(solver='lbfgs', activation='logistic', max_iter=1500), param_grid = param_test, cv=5)
+	gsearch = GridSearchCV(MLPClassifier(solver='lbfgs', activation='logistic', max_iter=1500, random_state=seed), param_grid = param_test, cv=5)
 	trained_model = gsearch.fit(X_train, y_train)
 	print('aaaaaaaaaaaaaaa')
 	print(trained_model.best_params_)
 	print('aaaaaaaaaaaaaaa')
-
+	"""
 
 	# Calculating different metrics
 	predict     = trained_model.predict(X_test)
