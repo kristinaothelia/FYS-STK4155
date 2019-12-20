@@ -73,7 +73,7 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
 
     if plot_confuse_matrix == True:
         # Plotting a bar plot of candidates predicted as confirmed and false positives
-        func.Histogram2(pred_cand, method='XGBoost Classification')
+        func.Histogram2(pred_cand, method='XGBoost (Candidates)')
 
 
     if Goldilock_zone:
@@ -82,7 +82,7 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
 
         D_test             = GoldiLock
         predict_goldilocks = model2.predict(D_test)
-        np.save('GoldiLock_predicted', predict_goldilocks)
+        #np.save('GoldiLock_predicted', predict_goldilocks)
 
         predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
         predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
@@ -94,6 +94,6 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
         print('%-3g false positives of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
 
         # Plotting a bar plot of candidates predicted as confirmed and false positives
-        func.Histogram2(predict_goldilocks, method='XGBoost Classification')
+        func.Histogram2(predict_goldilocks, method='XGBoost (Goldilock)')
 
-        GL.GoldilocksZone()
+        GL.GoldilocksZone(predict_goldilocks)

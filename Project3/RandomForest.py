@@ -139,7 +139,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 		print("Goldilock zone calculations")
 
 		predict_goldilocks = np.array(RF.predict(GoldiLock))
-		np.save('GoldiLock_predicted', predict_goldilocks)
+		#np.save('GoldiLock_predicted', predict_goldilocks)
 
 		predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
 		predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
@@ -154,7 +154,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 		# Need to fix input title, labels etc maybe?
 		func.Histogram2(predict_goldilocks, 'Random Forest (Goldilock)')
 
-		GL.GoldilocksZone()
+		GL.GoldilocksZone(predict_goldilocks)
 
 
 	'''

@@ -80,7 +80,7 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 		print("Goldilock zone calculations")
 
 		predict_goldilocks = np.array(trained_model.predict(GoldiLock))
-		np.save('GoldiLock_predicted', predict_goldilocks)
+		#np.save('GoldiLock_predicted', predict_goldilocks)
 
 		predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
 		predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
@@ -93,6 +93,6 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
 		# Need to fix input title, labels etc maybe?
-		func.Histogram2(predict_goldilocks, method='NN')
+		func.Histogram2(predict_goldilocks, 'Neural Network (Goldilock)')
 
-		GL.GoldilocksZone()
+		GL.GoldilocksZone(predict_goldilocks)

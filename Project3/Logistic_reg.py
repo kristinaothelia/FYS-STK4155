@@ -48,7 +48,7 @@ def LogReg(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldil
 	if plot_confuse_matrix == True:
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
 		# Need to fix input title, labels etc maybe?
-		func.Histogram2(pred_cand)
+		func.Histogram2(pred_cand, 'Logistic regression (Candidates)')
 
 	# Make AUC curve?
 
@@ -57,7 +57,7 @@ def LogReg(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldil
 		print("Goldilock zone calculations")
 
 		predict_goldilocks = np.array(logreg.predict(GoldiLock))
-		np.save('GoldiLock_predicted', predict_goldilocks)
+		#np.save('GoldiLock_predicted', predict_goldilocks)
 
 		predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
 		predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
@@ -70,6 +70,6 @@ def LogReg(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldil
 
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
 		# Need to fix input title, labels etc maybe?
-		func.Histogram2(predict_goldilocks)
+		func.Histogram2(predict_goldilocks, 'Logistic regression (Goldilock)')
 
-		GL.GoldilocksZone()
+		GL.GoldilocksZone(predict_goldilocks)
