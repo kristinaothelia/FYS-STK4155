@@ -11,7 +11,7 @@ import seaborn               as sns
 import pandas 				 as pd
 
 from sklearn.impute 		 import SimpleImputer
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble 		 import RandomForestClassifier
 #------------------------------------------------------------------------------
 
@@ -23,15 +23,73 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	#pd.DataFrame(X).fillna()
 	# grid search
 
+	'''
+	param_test = {"n_estimators": [100,200,300,400,500,600],
+				"max_features": [None,'auto','sqrt','log2'],
+				"max_depth": [7,8,9],
+				"min_samples_leaf": [5,10,20],
+				"random_state": [0]
+				}
+	'''
+
+	'''
+	param_test = {"n_estimators": [100, 400, 600],
+				"max_features": ['auto', 'log2'],
+				"max_depth": [None, 8],
+				"min_samples_leaf": [2, 5]
+				}
+
+	# {'max_depth': 8, 'max_features': 'auto', 'min_samples_leaf': 2, 'n_estimators': 400}
+	'''
+
+	'''
+	param_test = {"n_estimators": [350, 400, 450],
+				"max_features": ['auto', 'log2'],
+				"max_depth": [7, 8, 9],
+				"min_samples_leaf": [1, 2, 5]
+				}
+	# {'max_depth': 8, 'max_features': 'auto', 'min_samples_leaf': 1, 'n_estimators': 350}
+
+	gsearch = GridSearchCV(RandomForestClassifier(), param_grid = param_test, cv=5)
+	gsearch.fit(X_train, y_train)
+	print(gsearch.best_params_)
+	'''
+	
+
+
 	# Plot error against number of trees?
-	RF = RandomForestClassifier(n_estimators	= 100,
-								max_depth		= None,
-								random_state	= seed,
-								criterion		= 'gini',   # 'gini'
-								bootstrap       = True,
-								min_samples_split = 2,
-								min_weight_fraction_leaf = 0)
+	RF = RandomForestClassifier(n_estimators	 = 350,
+								max_features     = 'auto',
+								max_depth		 = 8,
+								min_samples_leaf = 1,
+								random_state	 = 0,
+								criterion		 = 'gini',   # 'entropy'
+								bootstrap        = True
+								)
 	RF.fit(X_train,y_train)
+
+	# https://github.com/erykml/medium_articles/blob/master/Machine%20Learning/feature_importance.ipynb
+
+	header_names = np.load('feature_names.npy', allow_pickle=True)
+
+	# function for creating a feature importance dataframe
+	def feature_importance(column_names, importances):
+		df = pd.DataFrame({'feature': column_names,'feature_importance': importances}) \
+		.sort_values('feature_importance', ascending = False) \
+		.reset_index(drop = True)
+		return df
+
+	# plotting a feature importance dataframe (horizontal barchart)
+	def feature_importance_plot(feature_importances, title):
+		feature_importances.columns = ['feature', 'feature_importance']
+		sns.barplot(x = 'feature_importance', y = 'feature', data = feature_importances, orient = 'h', color = 'royalblue') \
+		.set_title(title, fontsize = 15)
+		plt.ylabel('feature', fontsize=15)
+		plt.xlabel('feature importance', fontsize=15)
+		plt.show()
+
+	feature_imp = feature_importance(header_names[1:], RF.feature_importances_)
+	feature_importance_plot(feature_imp[:11], "Feature Importance")
 
 	# Calculating different metrics
 	predict     = RF.predict(X_test)
@@ -77,6 +135,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 
 	if Goldilock_zone:
 
+		print("")
 		print("Goldilock zone calculations")
 
 		predict_goldilocks = np.array(RF.predict(GoldiLock))
@@ -96,34 +155,6 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 		func.Histogram2(predict_goldilocks)
 
 		GL.GoldilocksZone()
-
-
-	# https://github.com/erykml/medium_articles/blob/master/Machine%20Learning/feature_importance.ipynb
-
-	header_names = np.load('feature_names.npy', allow_pickle=True)
-
-	# function for creating a feature importance dataframe
-	def feature_importance(column_names, importances):
-		df = pd.DataFrame({'feature': column_names,'feature_importance': importances}) \
-		.sort_values('feature_importance', ascending = False) \
-		.reset_index(drop = True)
-		return df
-
-	# plotting a feature importance dataframe (horizontal barchart)
-	def feature_importance_plot(feature_importances, title):
-		feature_importances.columns = ['feature', 'feature_importance']
-		sns.barplot(x = 'feature_importance', y = 'feature', data = feature_importances, orient = 'h', color = 'royalblue') \
-		.set_title(title, fontsize = 15)
-		plt.ylabel('feature', fontsize=15)
-		plt.xlabel('feature importance', fontsize=15)
-		plt.show()
-
-
-	feature_imp = feature_importance(header_names[1:], RF.feature_importances_)
-
-	#print(feature_imp)
-
-	feature_importance_plot(feature_imp[:11], "Feature Importance")
 
 
 	'''
