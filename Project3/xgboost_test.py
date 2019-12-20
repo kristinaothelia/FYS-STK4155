@@ -68,7 +68,7 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock, \
     pred_Conf  = (pred_cand == 1).sum() 	# Predicted exoplanets/confirmed
 
     # Information print to terminal
-    print('\nThe Neural Network Classifier predicted')
+    print('\nThe XGBoost method predicted')
     print('--------------------------------------')
     print('%-5g exoplanets      of %g candidates'  %(pred_Conf, len(pred_cand)))
     print('%-5g false positives of %g candidates'  %(pred_FP, len(pred_cand)))
@@ -92,7 +92,7 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock, \
         predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
 
         # Information print to terminal
-        print('\nThe Random Forest Classifier predicted')
+        print('\nThe XGBoost method predicted')
         print('--------------------------------------')
         print('%-3g exoplanets      of %g candidates'  %(predicted_exoplanets_goldilocks, len(predict_goldilocks)))
         print('%-3g false positives of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
