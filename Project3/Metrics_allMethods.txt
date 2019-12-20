@@ -8,8 +8,11 @@ The precision is   : 0.796
 The recall is      : 0.808
 The absolute error : 0.201
 -------------------------------------------
+15 exoplanets       of 24 candidates
+9 false positives   of 24 candidates
 
-Noe rart med absolute error?
+
+
 
 Method: XGBoost
 -------------------------------------------
@@ -21,6 +24,8 @@ The absolute error : 0.003
 -------------------------------------------
 
 
+
+
 Method: Random Forest
 -------------------------------------------
 The accuracy is    : 0.990
@@ -29,6 +34,10 @@ The precision is   : 1.000
 The recall is      : 0.976
 The absolute error : 0.010
 -------------------------------------------
+13  exoplanets      of 24 candidates
+11  false positives of 24 candidates
+
+
 
 
 Method: Logistic regression
@@ -39,3 +48,5 @@ The precision is   : 0.791
 The recall is      : 0.800
 The absolute error : 0.201
 -------------------------------------------
+10  exoplanets      of 24 candidates
+14  false positives of 24 candidates
