@@ -23,6 +23,8 @@ Run the classification models by main.py, with one of the input arguments listed
 
 In addition, add "-X" or "--hab" to make habitable zone calculations
 
+In the report, the habitable zone calculations are made by running: main.py --RF --hab
+
 ### Participants:
 - Anna Eliassen
 - Aron Jansson Nordberg
