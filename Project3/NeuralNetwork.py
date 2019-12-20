@@ -96,7 +96,7 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 		predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
 
 		# Information print to terminal
-		print('\nThe Random Forest Classifier predicted')
+		print('\nThe Neural Network Classifier predicted')
 		print('--------------------------------------')
 		print('%g exoplanets       of %g candidates'  %(predicted_exoplanets_goldilocks, len(predict_goldilocks)))
 		print('%g false positives   of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
