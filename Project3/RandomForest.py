@@ -7,6 +7,8 @@ import matplotlib.pyplot	 as plt
 import scikitplot        	 as skplt
 import functions         	 as func
 import goldilock             as GL
+import seaborn               as sns
+import pandas 				 as pd
 
 from sklearn.impute 		 import SimpleImputer
 from sklearn.model_selection import train_test_split
@@ -25,7 +27,10 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	RF = RandomForestClassifier(n_estimators	= 100,
 								max_depth		= None,
 								random_state	= seed,
-								criterion		= 'gini')
+								criterion		= 'gini',   # 'gini'
+								bootstrap       = True,
+								min_samples_split = 2,
+								min_weight_fraction_leaf = 0)
 	RF.fit(X_train,y_train)
 
 	# Calculating different metrics
@@ -93,7 +98,35 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 		GL.GoldilocksZone()
 
 
-	
+	# https://github.com/erykml/medium_articles/blob/master/Machine%20Learning/feature_importance.ipynb
+
+	header_names = np.load('feature_names.npy', allow_pickle=True)
+
+	# function for creating a feature importance dataframe
+	def feature_importance(column_names, importances):
+		df = pd.DataFrame({'feature': column_names,'feature_importance': importances}) \
+		.sort_values('feature_importance', ascending = False) \
+		.reset_index(drop = True)
+		return df
+
+	# plotting a feature importance dataframe (horizontal barchart)
+	def feature_importance_plot(feature_importances, title):
+		feature_importances.columns = ['feature', 'feature_importance']
+		sns.barplot(x = 'feature_importance', y = 'feature', data = feature_importances, orient = 'h', color = 'royalblue') \
+		.set_title(title, fontsize = 15)
+		plt.ylabel('feature', fontsize=15)
+		plt.xlabel('feature importance', fontsize=15)
+		plt.show()
+
+
+	feature_imp = feature_importance(header_names[1:], RF.feature_importances_)
+
+	#print(feature_imp)
+
+	feature_importance_plot(feature_imp[:11], "Feature Importance")
+
+
+	'''
 	feature_importance = RF.feature_importances_
 	print(feature_importance)
 	print(len(feature_importance))
@@ -110,6 +143,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	plt.ylabel('--')
 	#plt.xlim([lb-width/2, ub-width/2])
 	plt.show()
+	'''
 	
 
 	'''
