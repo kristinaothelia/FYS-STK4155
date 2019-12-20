@@ -55,6 +55,7 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 	mlp = MLPClassifier(solver 				= 'lbfgs',
 						activation			= 'logistic',
 						hidden_layer_sizes  = (200,150,100),
+						random_state 		= seed,
 						max_iter			= 1500)
 	mlp.fit(X_train, y_train)
 
@@ -103,7 +104,7 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
 		# Need to fix input title, labels etc maybe?
-		func.Histogram2(predict_goldilocks)
+		func.Histogram2(predict_goldilocks, method='NN')
 
 		GL.GoldilocksZone()
 

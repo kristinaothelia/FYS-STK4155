@@ -12,9 +12,9 @@ conda install graphviz
 
 ## Running the code:
 
-Run exo_data.py to make required data files. 
+1) Run exo_data.py to make required data files.
 
-Run the classification models by main.py, with one of the input arguments listed below.
+2) Run the classification models by main.py, with one of the input arguments listed below.
 
 - "-1" or "--LOG"   : Logistic regression
 - "-2" or "--NN"    : Neural Network
@@ -23,7 +23,9 @@ Run the classification models by main.py, with one of the input arguments listed
 
 In addition, add "-X" or "--hab" to make habitable zone calculations
 
-In the report, the habitable zone calculations are made by running: main.py --RF --hab
+The habitable zone calculations are made by running ex.: main.py --RF --hab
+
+(You need Python 3.X)
 
 ### Participants:
 - Anna Eliassen

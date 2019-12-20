@@ -81,15 +81,15 @@ def Print_parameters(accuracy, f1_score, precision, recall, errors, name=''):
 # Plotting functions
 #------------------------------------------------------------------------------
 
-def Histogram2(g):
+def Histogram2(g, method):
 
 	labels, counts = np.unique(g, return_counts=True)
 
 	#plt.style.use('dark_background')
 	plt.bar(labels, counts, align='center', color='purple')
 	plt.gca().set_xticks(labels)
-	plt.ylabel("Observations count")
-	plt.title("Kepler's objects of interest")
+	plt.ylabel("Observations count", fontsize=15)
+	plt.title("Kepler's objects of interest \n With %s" % method, fontsize=15)
 	plt.show()
 
 
