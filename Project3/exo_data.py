@@ -16,9 +16,6 @@ filename = cwd + '/cumulative_2019_all.xls'
 nanDict  = {}
 df       = pd.read_excel(filename, header=1, skiprows=85, index_col=0, na_values=nanDict)
 
-
-# Check DONE/ACTIVE, if ACTIVE, drop this
-
 # Removing the same columns as mentioned by the scientific article, do we want to drop more features or not?
 df.drop(columns=['koi_longp', 'koi_ingress', 'koi_model_dof', 'koi_model_chisq', 'koi_sage'], axis=1, inplace=True)
 df.drop(columns=['kepoi_name', 'koi_comment', 'koi_limbdark_mod', 'koi_parm_prov', 'koi_trans_mod'], axis=1, inplace=True)
@@ -29,21 +26,9 @@ df.drop(columns=['koi_disp_prov', 'koi_ldm_coeff3', 'koi_ldm_coeff4', 'koi_fitty
 df = df.replace(r'^\s*$', np.nan, regex=True)
 df = pd.DataFrame.dropna(df, axis=0, how='any')
 
-#df = df.replace(np.nan, 0, regex=True)
-#print(df)
-
-print(df)
 header_names = list(df)
 np.save('feature_names', header_names)
 
-
-'''
-# Dropping NaN values or not? If so, how??
-# Asking Morten about this?
-df = df.drop(df[(df.koi_dikco_mra  == 'NaN')].index)
-df = df.drop(df[(df.koi_dikco_mdec == 'NaN')].index)
-df = df.drop(df[(df.koi_dikco_msky == 'NaN')].index)
-'''
 
 def Corr_matrix():
 	""" Creating a correlation matrix for the dataframe """
@@ -52,12 +37,10 @@ def Corr_matrix():
 	plt.tight_layout()
 	plt.show()
 
-#Corr_matrix()
+Corr_matrix()
 
 # Locking the Confirmed, False Positive and Candidates (using this for plotting histogram of distribution?)
 # The Candidates, later used for calculating the probability that a candidate is an exoplanet
-
-#df = df.drop(df[(df.koi_prad > 100)].index)
 
 CONFIRMED  = df.loc[df['koi_disposition']  == 'CONFIRMED']       # = 1
 NEGATIVE   = df.loc[df['koi_disposition']  == 'FALSE POSITIVE']  # = 0
@@ -92,13 +75,6 @@ neg = NEGATIVE.loc[:,   NEGATIVE.columns   == 'koi_prad'].values
 can = CANDIDATES.loc[:, CANDIDATES.columns == 'koi_prad'].values
 con = CONFIRMED.loc[:,  CONFIRMED.columns  == 'koi_prad'].values
 
-"""
-plt.plot(neg, 'ro')
-plt.plot(can, 'go')
-plt.plot(con, 'bo')
-plt.show()
-"""
-
 # Creating DataFrame only with the Confirmed/False Positive (dropping the candidates)
 # The features (not including the column koi_disposition or the Kepler ID)
 # The targets, or the response variable, is the column koi_disposition (also not including the candidates)
@@ -110,11 +86,8 @@ target   = CONFIRMED_NEGATIVE.loc[:,  CONFIRMED_NEGATIVE.columns == 'koi_disposi
 target[target == 'CONFIRMED']      = 1
 target[target == 'FALSE POSITIVE'] = 0
 
-
-print(features[2,:])
 scaler = StandardScaler() #RobustScaler() #MaxAbsScaler() #MinMaxScaler()
 scaler.fit_transform(features)
-print(features)
 
 def GoldiLock_Candidates(temp_max=323, temp_min=273, rad_max=2.5, rad_min=0.5):
 	"""
