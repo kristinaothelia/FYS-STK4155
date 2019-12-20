@@ -93,7 +93,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 		GL.GoldilocksZone()
 
 
-	'''
+	
 	feature_importance = RF.feature_importances_
 	print(feature_importance)
 	print(len(feature_importance))
@@ -110,7 +110,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	plt.ylabel('--')
 	#plt.xlim([lb-width/2, ub-width/2])
 	plt.show()
-	'''
+	
 
 	'''
 	from matplotlib.ticker import MaxNLocator
