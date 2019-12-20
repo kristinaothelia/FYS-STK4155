@@ -54,7 +54,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	gsearch.fit(X_train, y_train)
 	print(gsearch.best_params_)
 	'''
-	
+
 
 
 	# Plot error against number of trees?
@@ -130,7 +130,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	if plot_confuse_matrix == True:
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
 		# Need to fix input title, labels etc maybe?
-		func.Histogram2(predict_candidates)
+		func.Histogram2(predict_candidates, 'Random Forest (Candidates)')
 
 
 	if Goldilock_zone:
@@ -152,7 +152,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
 		# Need to fix input title, labels etc maybe?
-		func.Histogram2(predict_goldilocks)
+		func.Histogram2(predict_goldilocks, 'Random Forest (Goldilock)')
 
 		GL.GoldilocksZone()
 
@@ -175,7 +175,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	#plt.xlim([lb-width/2, ub-width/2])
 	plt.show()
 	'''
-	
+
 
 	'''
 	from matplotlib.ticker import MaxNLocator

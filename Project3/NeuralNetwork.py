@@ -25,25 +25,7 @@ import goldilock             	as GL
 
 def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldilock_zone=False, plot_confuse_matrix=False):
 
-	"""
-	def to_categorical_numpy(integer_vector):
-		n_inputs 	  = len(integer_vector)
-		n_categories  = np.max(integer_vector) + 1
-		onehot_vector = np.zeros((n_inputs, n_categories))
-		onehot_vector[range(n_inputs), integer_vector] = 1
-		return onehot_vector
-	Y_train_onehot, Y_test_onehot = to_categorical_numpy(y_train), to_categorical_numpy(y_test)
-	"""
-	# Make heatmap of the accuracy score with eta_vals and lmbd_vals? See P2
-	#eta_vals         = np.logspace(-6, -1, 6)
-	#lmbd_vals        = np.logspace(-6, -1, 6)
-	# Call heatmap function
-	# Use best values from heatmap
-	#eps_final = 1e-4
-	#alp_final = 1e-2
-
-
-	model = MLPClassifier(max_iter=3000, random_state=seed)
+	model = MLPClassifier(max_iter=1000, random_state=seed)
 	"""
 	model = MLPClassifier(solver 			= 'lbfgs',	# 'adam'
 						activation			= 'logistic',
