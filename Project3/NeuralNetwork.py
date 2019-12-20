@@ -25,13 +25,7 @@ import goldilock             	as GL
 
 def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldilock_zone=False, plot_confuse_matrix=False):
 
-	# MAA HA EN METODE FOR AA FINNE BESTE PARAMETERE?
-
-	#epochs     		 = 500 # 1000
-	#batch_size 		 = 100
-	#n_hidden_neurons 	 = 50
-	#n_categories 	 	 = 2
-    """
+	"""
 	def to_categorical_numpy(integer_vector):
 		n_inputs 	  = len(integer_vector)
 		n_categories  = np.max(integer_vector) + 1
@@ -39,7 +33,7 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 		onehot_vector[range(n_inputs), integer_vector] = 1
 		return onehot_vector
 	Y_train_onehot, Y_test_onehot = to_categorical_numpy(y_train), to_categorical_numpy(y_test)
-    """
+	"""
 	# Make heatmap of the accuracy score with eta_vals and lmbd_vals? See P2
 	#eta_vals         = np.logspace(-6, -1, 6)
 	#lmbd_vals        = np.logspace(-6, -1, 6)
@@ -48,88 +42,74 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 	#eps_final = 1e-4
 	#alp_final = 1e-2
 
-	# Helt random input naa:
 
-
-    model = MLPClassifier(max_iter=3000, random_state=seed)
-    """
-    model = MLPClassifier(solver 			= 'adam',
-                        activation			= 'logistic',
-                        hidden_layer_sizes  = 100,
-                        max_iter			= 1000)
-    """
-
+	#model = MLPClassifier(max_iter=3000, random_state=seed)
 	"""
-	mlp = MLPClassifier(solver 				= 'lbfgs',
+	model = MLPClassifier(solver 			= 'lbfgs',	# 'adam'
 						activation			= 'logistic',
-						hidden_layer_sizes  = (200,150,100),
-						random_state 		= seed,
-						max_iter			= 1500)
-	mlp.fit(X_train, y_train)
+						hidden_layer_sizes  = 100,		# (200,150,100)
+						max_iter			= 1000)		# 1500
 	"""
 
+	#trained_model = model.fit(X_train, y_train)
 
-	trained_model = model.fit(X_train, y_train)
-
-    param_test = {"hidden_layer_sizes": [130, 140, 150],
-                  "learning_rate_init": [ 0.125, 0.150, 0.175]
-                    }
-
-    """
-    gsearch = GridSearchCV(MLPClassifier(solver='lbfgs', activation='logistic', max_iter=1500), param_grid = param_test, cv=5)
-    model = gsearch.fit(X_train, y_train)
-    print('aaaaaaaaaaaaaaa')
-    print(model.best_params_)
-    print('aaaaaaaaaaaaaaa')
-    """
-
-    # Calculating different metrics
-    predict     = trained_model.predict(X_test)
-    accuracy 	= accuracy_score(y_test, predict)
-    precision   = precision_score(y_test, predict, average="macro")
-    recall      = recall_score(y_test, predict, average="macro")
-    F1_score    = f1_score(y_test, predict, average="macro")
-
-    # Calculate the absolute errors
-    errors = abs(predict - y_test)
-
-    # Printing the different metrics:
-    func.Print_parameters(accuracy, F1_score, precision, recall, errors, name='Neural Network classification')
+	param_test = {"hidden_layer_sizes": [130, 140, 150],
+				  "learning_rate_init": [ 0.125, 0.150, 0.175]}
 
 
-    print(confusion_matrix(y_test, predict))
-
-    predict_candidates       = np.array(trained_model.predict(candidates))
-
-    predicted_false_positive = (predict_candidates == 0).sum()
-    predicted_exoplanets     = (predict_candidates == 1).sum()
-
-    # Information print to terminal
-    print('\nThe Neural Network Classifier predicted')
-    print('--------------------------------------')
-    print('%-5g exoplanets      of %g candidates'  %(predicted_exoplanets, len(predict_candidates)))
-    print('%-5g false positives of %g candidates'  %(predicted_false_positive, len(predict_candidates)))
+	gsearch = GridSearchCV(MLPClassifier(solver='lbfgs', activation='logistic', max_iter=1500), param_grid = param_test, cv=5)
+	trained_model = gsearch.fit(X_train, y_train)
+	print('aaaaaaaaaaaaaaa')
+	print(trained_model.best_params_)
+	print('aaaaaaaaaaaaaaa')
 
 
-    if Goldilock_zone:
+	# Calculating different metrics
+	predict     = trained_model.predict(X_test)
+	accuracy 	= accuracy_score(y_test, predict)
+	precision   = precision_score(y_test, predict, average="macro")
+	recall      = recall_score(y_test, predict, average="macro")
+	F1_score    = f1_score(y_test, predict, average="macro")
 
-	    print("Goldilock zone calculations")
+	# Calculate the absolute errors
+	errors = abs(predict - y_test)
 
-	    predict_goldilocks = np.array(trained_model.predict(GoldiLock))
-	    np.save('GoldiLock_predicted', predict_goldilocks)
+	# Printing the different metrics:
+	func.Print_parameters(accuracy, F1_score, precision, recall, errors, name='Neural Network classification')
 
-	    predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
-	    predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
 
-	    # Information print to terminal
-	    print('\nThe Neural Network Classifier predicted')
-	    print('--------------------------------------')
-	    print('%g exoplanets       of %g candidates'  %(predicted_exoplanets_goldilocks, len(predict_goldilocks)))
-	    print('%g false positives   of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
+	print(confusion_matrix(y_test, predict))
 
-	    # Plotting a bar plot of candidates predicted as confirmed and false positives
-	    # Need to fix input title, labels etc maybe?
-	    func.Histogram2(predict_goldilocks)
+	predict_candidates       = np.array(trained_model.predict(candidates))
 
-	    GL.GoldilocksZone()
-    
+	predicted_false_positive = (predict_candidates == 0).sum()
+	predicted_exoplanets     = (predict_candidates == 1).sum()
+
+	# Information print to terminal
+	print('\nThe Neural Network Classifier predicted')
+	print('--------------------------------------')
+	print('%-5g exoplanets      of %g candidates'  %(predicted_exoplanets, len(predict_candidates)))
+	print('%-5g false positives of %g candidates'  %(predicted_false_positive, len(predict_candidates)))
+
+
+	if Goldilock_zone:
+
+		print("Goldilock zone calculations")
+
+		predict_goldilocks = np.array(trained_model.predict(GoldiLock))
+		np.save('GoldiLock_predicted', predict_goldilocks)
+
+		predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
+		predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
+
+		# Information print to terminal
+		print('\nThe Neural Network Classifier predicted')
+		print('--------------------------------------')
+		print('%-5g exoplanets      of %g candidates' %(predicted_exoplanets_goldilocks, len(predict_goldilocks)))
+		print('%-5g false positives of %g candidates' %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
+
+		# Plotting a bar plot of candidates predicted as confirmed and false positives
+		# Need to fix input title, labels etc maybe?
+		func.Histogram2(predict_goldilocks, model='NN')
+
+		GL.GoldilocksZone()
