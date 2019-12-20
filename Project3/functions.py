@@ -1,11 +1,15 @@
+"""
+FYS-STK4155 - Project 3:
+A file that contains various functions used in the project
+"""
 import seaborn             as sns
 import numpy               as np
 import pandas              as pd
 import matplotlib.pyplot   as plt
-#import pydot
+import pydot
 
 from sklearn.tree import export_graphviz
-
+#------------------------------------------------------------------------------
 
 def TRUE_FALSE_PREDICTIONS(y, model):
 	"""
@@ -63,6 +67,16 @@ def F1_score(y, model):
 	r = recall(y, model)
 	f = 2*((p*r)/(p+r))
 	return f
+
+def Print_parameters(accuracy, f1_score, precision, recall, errors, name=''):
+	print('\nMethod: %s' %name)
+	print('-------------------------------------------')
+	print('The accuracy is    : %.3f' % accuracy)
+	print('The F1 score is    : %.3f' % f1_score)
+	print('The precision is   : %.3f' % precision)
+	print('The recall is      : %.3f' % recall)
+	print('The absolute error : %.3f' % np.mean(errors))
+	print('-------------------------------------------')
 
 # Plotting functions
 #------------------------------------------------------------------------------

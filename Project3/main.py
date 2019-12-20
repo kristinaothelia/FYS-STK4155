@@ -1,11 +1,12 @@
 """
-Main program for FYS-STK4155 project 3
+Main program for FYS-STK4155: Project 3
 """
 import sys, os
 import numpy        as np
 
-import functions    as P
-import RandomForest as RF
+#import functions    as P
+#import RandomForest as RF
+import goldilock    as GL
 
 if __name__ == '__main__':
 
@@ -31,6 +32,10 @@ if __name__ == '__main__':
     elif arg == "GX":
 
         print('test GX')
+
+    elif arg == "Hab":
+
+        Goldielock = GL
 
     else:
 	    print('Pass method')
