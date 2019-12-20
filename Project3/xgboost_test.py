@@ -24,22 +24,37 @@ from sklearn.metrics         import precision_score, recall_score,          \
 
 
 #------------------------------------------------------------------------------
-def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock, \
+def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
              feature_list, header_names, seed, Goldilock_zone=False, plot_confuse_matrix=False):
 
 
-    D_train    = xgb.DMatrix(X_train, label=y_train)
-    D_test     = xgb.DMatrix(X_test, label=y_test)
 
-    param      = {  "eta": 0.3,
-                    "max_depth": 3,
-                    "objective": "multi:softprob",
-                    "num_class": 2  }
-
-    steps      = 20  #the number of training iterations
-    model      = xgb.train(param, D_train, steps)
-    y_pred     = model.predict(D_test)
-    best_preds = np.asarray([np.argmax(line) for line in y_pred])
+    # classifier    
+    #model2 = xgb.XGBClassifier()
+    
+    param_test = {"max_depth": [7,8,9],
+                  "n_estimator": [100,200,300,400,500,600],
+                  "learning_rate": [0.1,0.3]
+                  }
+    
+    gsearch = GridSearchCV(xgb.XGBClassifier(), param_grid = param_test, cv=5)
+    model2 = gsearch.fit(X_train, y_train)
+    
+    #train_model1 = model1.fit(X_train, y_train)
+    #train_model2 = model2.fit(X_train, y_train)
+    
+    #model2.fit(X_train, y_train)
+    #model2.predict(X_test)
+    
+    #pred1 = train_model1.predict(X_test)
+    #pred2 = train_model2.predict(X_test)
+    
+    #print("Accuracy for model 1: %g" % accuracy_score(y_test, pred1))
+    #print("Accuracy for model 2: %g" % accuracy_score(y_test, pred2))
+    
+    #best_preds = pred2    
+    #model = model2
+    best_preds = model2.predict(X_test)
 
     #model.dump_model('test.txt')
 
@@ -51,7 +66,7 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock, \
     # Calculate the absolute errors
     errors      = abs(best_preds - y_test) # SE PAA DENNE!!! Blir veldig hoy verdi. Feil input..
 
-    # Printing the different metrics
+    # Printing the different metri
     func.Print_parameters(accuracy, F1_score, precision, recall, errors, name='XGBoost')
 
     # Confusion matrix?
@@ -59,9 +74,15 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock, \
 
     # Hmmm... resultatet blir veldig rart... 90% eksoplaneter
 
-    D_test     = xgb.DMatrix(candidates, label=candidates)
-    y_pred     = model.predict(D_test)
-    pred_cand  = np.asarray([np.argmax(line) for line in y_pred])
+    #D_test     = xgb.DMatrix(candidates, label=candidates)
+    D_test = candidates    
+    #y_pred     = model.predict(D_test)
+    y_pred = model2.predict(D_test) 
+    
+    #pred_cand  = np.asarray([np.argmax(line) for line in y_pred])
+    pred_cand = y_pred
+    
+    #print(pred_cand)
 
     # Divide into predicted false positives and confirmed exoplanets
     pred_FP    = (pred_cand == 0).sum() 	# Predicted false positives
@@ -77,8 +98,9 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock, \
     #pyplot.show()
 
 
-
+    
     # Usikker om dette blir riktig... Predikter alle til exoplanets, ingen false
+    """
     if Goldilock_zone:
 
         print("Goldilock zone calculations")
@@ -99,6 +121,9 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock, \
 
         # Plotting a bar plot of candidates predicted as confirmed and false positives
         # Need to fix input title, labels etc maybe?
+    
         func.Histogram2(predict_goldilocks)
 
         GL.GoldilocksZone()
+    
+    """
