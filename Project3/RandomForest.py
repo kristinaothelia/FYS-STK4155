@@ -95,9 +95,8 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	func.Print_parameters(accuracy, F1_score, precision, recall, errors, name='Random Forest')
 
 	if plot_confuse_matrix == True:
-		skplt.metrics.plot_confusion_matrix(y_test, predict)
-		plt.savefig('ConfusionMatrix/CM_RF.png')
-		plt.show()
+
+		func.ConfusionMatrix_Plot(y_test, predict, 'Random Forest (Candidates)', threshold)
 
 	#print(RF.decision_path(X_test))
 

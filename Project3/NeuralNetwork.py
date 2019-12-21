@@ -42,7 +42,7 @@ def Best_params(seed, X_train, y_train):
 	print("Best parameters: ", trained_model.best_params_)
 	# {'alpha': 0.001, 'hidden_layer_sizes': 100, 'learning_rate_init': 0.001, 'max_iter': 3000}
 
-def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldilock_zone=False, plot_confuse_matrix=False):
+def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, threshold, Goldilock_zone=False, plot_confuse_matrix=False):
 
 	# Print best parameters, this takes time! Parameters set in Best_params()
 	#Best_params(seed, X_train, y_train)
@@ -70,24 +70,26 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 	func.Print_parameters(accuracy, F1_score, precision, recall, errors, name='Neural Network classification')
 
 	if plot_confuse_matrix == True:
-		#print(confusion_matrix(y_test, predict))
-		skplt.metrics.plot_confusion_matrix(y_test, predict)
-		plt.savefig('ConfusionMatrix/CM_NN.png')
-		plt.show()
 
-	predict_candidates       = np.array(trained_model.predict(candidates))
+		func.ConfusionMatrix_Plot(y_test, predict, 'Neural Network (Candidates)', threshold)
 
-	predicted_false_positive = (predict_candidates == 0).sum()
-	predicted_exoplanets     = (predict_candidates == 1).sum()
+	# Prediction with threshold
+	pred_cand = np.array(trained_model.predict_proba(candidates))
+
+	pred_cand[:,0] = (pred_cand[:,0] < threshold).astype('int')
+	pred_cand[:,1] = (pred_cand[:,1] >= threshold).astype('int')
+
+	pred_FP   	   = (pred_cand[:,1] == 0).sum()
+	pred_Conf 	   = (pred_cand[:,1] == 1).sum()
 
 	# Information print to terminal
 	print('\nThe Neural Network Classifier predicted')
 	print('--------------------------------------')
-	print('%-5g exoplanets      of %g candidates'  %(predicted_exoplanets, len(predict_candidates)))
-	print('%-5g false positives of %g candidates'  %(predicted_false_positive, len(predict_candidates)))
+	print('%-5g exoplanets      of %g candidates'  %(pred_Conf, len(pred_cand)))
+	print('%-5g false positives of %g candidates'  %(pred_FP, len(pred_cand)))
 
 	# Plotting a bar plot of candidates predicted as confirmed and false positives
-	func.Histogram2(predict_candidates, 'Neural Network (Candidates)', threshold)
+	func.Histogram2(pred_cand, 'Neural Network (Candidates)', threshold)
 
 	if Goldilock_zone:
 
@@ -96,6 +98,8 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 		# Prediction with threshold
 		predict_goldilocks = np.array(trained_model.predict_proba(GoldiLock))
 
+		# Disse er litt rare...
+		print(predict_goldilocks[:,1])
 		predict_goldilocks[:,0] = (predict_goldilocks[:,0] < threshold).astype('int')
 		predict_goldilocks[:,1] = (predict_goldilocks[:,1] >= threshold).astype('int')
 
