@@ -86,6 +86,7 @@ if __name__ == '__main__':
             NN.NeuralNetwork(X_train, X_test,
                              y_train, y_test,
                              candidates, GoldiLock, seed,
+                             threshold = Threshold,
                              Goldilock_zone=True,
                              plot_confuse_matrix=True)
 
@@ -93,6 +94,7 @@ if __name__ == '__main__':
             NN.NeuralNetwork(X_train, X_test,
                              y_train, y_test,
                              candidates, GoldiLock, seed,
+                             threshold = Threshold,
                              Goldilock_zone=False,
                              plot_confuse_matrix=True)
 

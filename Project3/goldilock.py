@@ -40,8 +40,19 @@ def GoldilocksZone(fil_, method, th):
 	inside   = GC.loc[GC['koi_disposition']  == 'Confirmed']
 	outside  = GC.loc[GC['koi_disposition']  == 'False Positives']
 
-	# Make scatter plot of predicted planets in Goldilock zone
+	# Change threshold number to use in file name
+	if th == 0.9:
+		th_fil = 9
+	elif th == 0.8:
+		th_fil = 8
+	elif th == 0.7:
+		th_fil = 7
+	elif th == 0.6:
+		th_fil = 6
+	elif th == 0.5:
+		th_fil = 5
 
+	# Make scatter plot of predicted planets in Goldilock zone
 	#plt.style.use('dark_background')
 	plt.plot(inside['koi_prad'], inside['koi_teq'], 'go', label='Predicted confirmed')
 	plt.plot(outside['koi_prad'], outside['koi_teq'], 'm^', label='Predicted false positive') #m
@@ -50,5 +61,5 @@ def GoldilocksZone(fil_, method, th):
 	plt.xlabel('Planet radii [Earth radii]', fontsize=15)
 	plt.ylabel('Planet surface temperature', fontsize=15)
 	plt.legend(fontsize=15)
-	plt.savefig('hab_exoplanets/scatter_%s_th%g.png' % (method, th))
+	plt.savefig('hab_exoplanets/scatter_%s_th%g.png' % (method, th_fil))
 	plt.show()

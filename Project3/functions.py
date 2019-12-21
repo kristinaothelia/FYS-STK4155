@@ -6,6 +6,7 @@ import seaborn             as sns
 import numpy               as np
 import pandas              as pd
 import matplotlib.pyplot   as plt
+import scikitplot          as skplt
 import pydot
 
 from sklearn.tree import export_graphviz
@@ -81,7 +82,40 @@ def Print_parameters(accuracy, f1_score, precision, recall, errors, name=''):
 # Plotting functions
 #------------------------------------------------------------------------------
 
+def ConfusionMatrix_Plot(y_test, y_pred, method, th):
+
+	# Change threshold number to use in file name
+	if th == 0.9:
+		th_fil = 9
+	elif th == 0.8:
+		th_fil = 8
+	elif th == 0.7:
+		th_fil = 7
+	elif th == 0.6:
+		th_fil = 6
+	elif th == 0.5:
+		th_fil = 5
+
+	# Change x/y labels
+
+	skplt.metrics.plot_confusion_matrix(y_test, y_pred)
+	plt.title('Confusion Matrix \n %s, th=%g' % (method, th_fil), fontsize=15)
+	plt.savefig('ConfusionMatrix/CM_%s_th%g.png' % (method, th_fil))
+	plt.show()
+
 def Histogram2(g, method, th):
+
+	# Change threshold number to use in file name
+	if th == 0.9:
+		th_fil = 9
+	elif th == 0.8:
+		th_fil = 8
+	elif th == 0.7:
+		th_fil = 7
+	elif th == 0.6:
+		th_fil = 6
+	elif th == 0.5:
+		th_fil = 5
 
 	labels, counts = np.unique(g, return_counts=True)
 
@@ -90,7 +124,7 @@ def Histogram2(g, method, th):
 	plt.gca().set_xticks(labels)
 	plt.ylabel("Observations count", fontsize=15)
 	plt.title("Kepler's objects of interest \n %s and th=%g" % (method, th), fontsize=15)
-	plt.savefig("Histograms/Hist_%s_th%g.png" % (method, th))
+	plt.savefig("Histograms/Hist_%s_th%g.png" % (method, th_fil))
 	plt.show()
 
 

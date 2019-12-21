@@ -55,9 +55,9 @@ def LogReg(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldil
 	func.Print_parameters(accuracy, F1_score, precision, recall, errors, name='Logistic regression')
 
 	if plot_confuse_matrix == True:
-		skplt.metrics.plot_confusion_matrix(y_test, y_pred)
-		plt.savefig('ConfusionMatrix/CM_LOG.png')
-		plt.show()
+
+		func.ConfusionMatrix_Plot(y_test, y_pred, 'Logistic regression (Candidates)', threshold)
+
 
 	# Prediction with threshold
 	pred_cand = np.array(logreg.predict_proba(candidates))

@@ -90,6 +90,9 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
         plt.savefig('ConfusionMatrix/CM_XG.png')
         plt.show()
 
+
+        #func.ConfusionMatrix_Plot(y_test, best_preds, 'XGBoost (Candidates)', threshold)
+
     # Maa legge inn threshold metode her
 
     pred_cand  = model2.predict(candidates)
