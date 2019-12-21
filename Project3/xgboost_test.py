@@ -69,7 +69,6 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
     gsearch = A
     model2 = gsearch.fit(X_train, y_train)
 
-
     # Print best parameters
     #print(gsearch.best_params_)
 
@@ -90,6 +89,8 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
         skplt.metrics.plot_confusion_matrix(y_test, best_preds)
         plt.savefig('ConfusionMatrix/CM_XG.png')
         plt.show()
+
+    # Maa legge inn threshold metode her
 
     pred_cand  = model2.predict(candidates)
     print(pred_cand)
@@ -115,6 +116,8 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
     if Goldilock_zone:
 
         print("Goldilock zone calculations")
+
+        # Maa legge inn threshold metode her
 
         D_test             = GoldiLock
         predict_goldilocks = model2.predict(D_test)
