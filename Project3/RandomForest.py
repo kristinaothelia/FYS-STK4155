@@ -154,7 +154,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
 		func.Histogram2(predict_goldilocks[:,1], 'Random Forest (Goldilock)')
 
-		GL.GoldilocksZone(predict_goldilocks[:,1])
+		GL.GoldilocksZone(predict_goldilocks[:,1], 'RandomForest')
 
 
 	'''

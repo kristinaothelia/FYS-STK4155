@@ -109,4 +109,4 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 		# Need to fix input title, labels etc maybe?
 		func.Histogram2(predict_goldilocks, 'Neural Network (Goldilock)')
 
-		GL.GoldilocksZone(predict_goldilocks)
+		GL.GoldilocksZone(predict_goldilocks, 'Neural Network')

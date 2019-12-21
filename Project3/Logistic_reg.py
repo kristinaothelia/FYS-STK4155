@@ -107,4 +107,4 @@ def LogReg(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldil
 		# Need to fix input title, labels etc maybe?
 		func.Histogram2(predict_goldilocks, 'Logistic regression (Goldilock)')
 
-		GL.GoldilocksZone(predict_goldilocks)
+		GL.GoldilocksZone(predict_goldilocks, 'Logistic regression')

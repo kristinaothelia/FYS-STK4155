@@ -89,7 +89,7 @@ def Histogram2(g, method):
 	plt.bar(labels, counts, align='center', color='purple')
 	plt.gca().set_xticks(labels)
 	plt.ylabel("Observations count", fontsize=15)
-	plt.title("Kepler's objects of interest \n With %s" % method, fontsize=15)
+	plt.title("Kepler's objects of interest \n %s" % method, fontsize=15)
 	plt.savefig("Histograms/Hist_%s.png" % method)
 	plt.show()
 

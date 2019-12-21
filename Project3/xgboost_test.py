@@ -52,7 +52,6 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
 
                   }
 
-
     A = xgb.XGBClassifier(learning_rate = 0.1,
                           max_depths=2,
                           min_child_weight=0,
@@ -89,8 +88,8 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
 
     if plot_confuse_matrix == True:
         skplt.metrics.plot_confusion_matrix(y_test, best_preds)
+        plt.savefig('ConfusionMatrix/CM_XG.png')
         plt.show()
-
 
     pred_cand  = model2.predict(candidates)
     print(pred_cand)
@@ -109,9 +108,8 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
     #plot_importance(y_pred)
     #pyplot.show()
 
-    if plot_confuse_matrix == True:
-        # Plotting a bar plot of candidates predicted as confirmed and false positives
-        func.Histogram2(pred_cand, method='XGBoost (Candidates)')
+    # Plotting a bar plot of candidates predicted as confirmed and false positives
+    func.Histogram2(pred_cand, method='XGBoost (Candidates)')
 
 
     if Goldilock_zone:
@@ -134,4 +132,4 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
         # Plotting a bar plot of candidates predicted as confirmed and false positives
         func.Histogram2(predict_goldilocks, method='XGBoost (Goldilock)')
 
-        GL.GoldilocksZone(predict_goldilocks)
+        GL.GoldilocksZone(predict_goldilocks, 'XGBoost')

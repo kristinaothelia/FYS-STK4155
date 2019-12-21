@@ -52,8 +52,24 @@ __________________________________________
 ------------------------------------------
 Method: XGBoost
 
+-------------------------------------------
+The accuracy is    : 0.999
+The F1 score is    : 0.999
+The precision is   : 0.999
+The recall is      : 0.998
+The absolute error : 0.001
+-------------------------------------------
 
+The XGBoost method predicted
+--------------------------------------
+1590  exoplanets      of 1641 candidates
+51    false positives of 1641 candidates
+Goldilock zone calculations
 
+The XGBoost method predicted
+--------------------------------------
+21  exoplanets      of 24 candidates
+3   false positives of 24 candidates
 
 __________________________________________
 ------------------------------------------
