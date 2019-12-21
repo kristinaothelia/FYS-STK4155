@@ -14,7 +14,7 @@ import pandas as pd
 import numpy  as np
 import matplotlib.pylab as plt
 
-def GoldilocksZone(fil_, method):
+def GoldilocksZone(fil_, method, th):
 
 	# import files
 	cwd      = os.getcwd()
@@ -46,9 +46,9 @@ def GoldilocksZone(fil_, method):
 	plt.plot(inside['koi_prad'], inside['koi_teq'], 'go', label='Predicted confirmed')
 	plt.plot(outside['koi_prad'], outside['koi_teq'], 'm^', label='Predicted false positive') #m
 
-	plt.title('Predicted planets in Goldilock zone \n %s' %method, fontsize=15)
+	plt.title('Predicted planets in Goldilock zone \n %s and threshold=%g' %(method, th), fontsize=15)
 	plt.xlabel('Planet radii [Earth radii]', fontsize=15)
 	plt.ylabel('Planet surface temperature', fontsize=15)
 	plt.legend(fontsize=15)
-	plt.savefig('hab_exoplanets/scatter_%s.png' % method)
+	plt.savefig('hab_exoplanets/scatter_%s_th%g.png' % (method, th))
 	plt.show()

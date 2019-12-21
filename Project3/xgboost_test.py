@@ -110,7 +110,7 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
     #pyplot.show()
 
     # Plotting a bar plot of candidates predicted as confirmed and false positives
-    func.Histogram2(pred_cand, method='XGBoost (Candidates)')
+    func.Histogram2(pred_cand, method='XGBoost (Candidates)', threshold)
 
 
     if Goldilock_zone:
@@ -133,6 +133,6 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
         print('%-3g false positives of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
 
         # Plotting a bar plot of candidates predicted as confirmed and false positives
-        func.Histogram2(predict_goldilocks, method='XGBoost (Goldilock)')
+        func.Histogram2(predict_goldilocks, method='XGBoost (Goldilock)', threshold)
 
-        GL.GoldilocksZone(predict_goldilocks, 'XGBoost')
+        GL.GoldilocksZone(predict_goldilocks, 'XGBoost', threshold)

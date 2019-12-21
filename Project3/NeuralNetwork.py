@@ -87,7 +87,7 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 	print('%-5g false positives of %g candidates'  %(predicted_false_positive, len(predict_candidates)))
 
 	# Plotting a bar plot of candidates predicted as confirmed and false positives
-	func.Histogram2(predict_candidates, 'Neural Network (Candidates)')
+	func.Histogram2(predict_candidates, 'Neural Network (Candidates)', threshold)
 
 	if Goldilock_zone:
 
@@ -110,6 +110,6 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
 		# Need to fix input title, labels etc maybe?
-		func.Histogram2(predict_goldilocks[:,1], 'Neural Network (Goldilock)')
+		func.Histogram2(predict_goldilocks[:,1], 'Neural Network (Goldilock)', threshold)
 
-		GL.GoldilocksZone(predict_goldilocks[:,1], 'Neural Network')
+		GL.GoldilocksZone(predict_goldilocks[:,1], 'Neural Network', threshold)
