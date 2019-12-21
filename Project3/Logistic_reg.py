@@ -59,22 +59,14 @@ def LogReg(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldil
 		plt.savefig('ConfusionMatrix/CM_LOG.png')
 		plt.show()
 
-	"""
-	pred_cand  = np.array(logreg.predict(candidates)) 	# Predict candidates
-
-	# Divide into predicted false positives and confirmed exoplanets
-	pred_FP    = (pred_cand == 0).sum() 	# Predicted false positives
-	pred_Conf  = (pred_cand == 1).sum() 	# Predicted exoplanets/confirmed
-	"""
-	#using threshold
-
+	# Prediction with threshold
 	pred_cand = np.array(logreg.predict_proba(candidates))
 
 	pred_cand[:,0] = (pred_cand[:,0] < threshold).astype('int')
 	pred_cand[:,1] = (pred_cand[:,1] >= threshold).astype('int')
 
-	pred_FP = (pred_cand[:,1] == 0).sum()
-	pred_Conf = (pred_cand[:,1] == 1).sum()
+	pred_FP   	   = (pred_cand[:,1] == 0).sum()
+	pred_Conf 	   = (pred_cand[:,1] == 1).sum()
 
 	# Information print to terminal
 	print('\nThe LOG Classifier predicted')
@@ -91,11 +83,14 @@ def LogReg(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldil
 
 		print("Goldilock zone calculations")
 
-		predict_goldilocks = np.array(logreg.predict(GoldiLock))
-		#np.save('GoldiLock_predicted', predict_goldilocks)
+		# Prediction with threshold
+		predict_goldilocks = np.array(logreg.predict_proba(GoldiLock))
 
-		predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
-		predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
+		predict_goldilocks[:,0] = (predict_goldilocks[:,0] < threshold).astype('int')
+		predict_goldilocks[:,1] = (predict_goldilocks[:,1] >= threshold).astype('int')
+
+		predicted_false_positive_goldilocs  = (predict_goldilocks[:,1] == 0).sum()
+		predicted_exoplanets_goldilocks     = (predict_goldilocks[:,1] == 1).sum()
 
 		# Information print to terminal
 		print('\nThe LOG Classifier predicted')
@@ -105,6 +100,6 @@ def LogReg(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldil
 
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
 		# Need to fix input title, labels etc maybe?
-		func.Histogram2(predict_goldilocks, 'Logistic regression (Goldilock)')
+		func.Histogram2(predict_goldilocks[:,1], 'Logistic regression (Goldilock)')
 
-		GL.GoldilocksZone(predict_goldilocks, 'Logistic regression')
+		GL.GoldilocksZone(predict_goldilocks[:,1], 'Logistic regression')

@@ -109,6 +109,7 @@ if __name__ == '__main__':
                              feature_list, header_names, seed,
                              threshold = Threshold,
                              plot_confuse_matrix=True,
+                             plot_feauture_importance=False,
                              Goldilock_zone=True)
 
         else:
@@ -118,6 +119,7 @@ if __name__ == '__main__':
                              feature_list, header_names, seed,
                              threshold = Threshold,
                              plot_confuse_matrix=True,
+                             plot_feauture_importance=False,
                              Goldilock_zone=False)
 
     elif XG_method == True:

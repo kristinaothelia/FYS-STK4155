@@ -32,7 +32,7 @@ def Best_params(seed, X_train, y_train):
 
 def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 				  feature_list, header_names, seed=0, threshold=0.5, 		\
-				  plot_confuse_matrix=False, Goldilock_zone=False):
+				  plot_confuse_matrix=False, plot_feauture_importance=False, Goldilock_zone=False):
 	"""
 	Ha en input oversikt...?
 
@@ -77,8 +77,9 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 		plt.xlabel('Feature importance', fontsize=15)
 		plt.show()
 
-	feature_imp = feature_importance(header_names[1:], RF.feature_importances_)
-	feature_importance_plot(feature_imp[:11], "Feature Importance (Random Forest)")
+	if plot_feauture_importance == True:
+		feature_imp = feature_importance(header_names[1:], RF.feature_importances_)
+		feature_importance_plot(feature_imp[:11], "Feature Importance (Random Forest)")
 
 	# Calculating different metrics
 	predict     = RF.predict(X_test)
@@ -104,21 +105,16 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	tree_nr = 5
 	tree 	= RF.estimators_[tree_nr]
 
-	#print(len(feature_list), len(header_names)) # 24 og 56
 	func.PlotOneTree(tree, feature_list) # header_names?
-
-	#predict_candidates       = np.array(RF.predict(candidates))
-	#predicted_false_positive = (predict_candidates == 0).sum()
-	#predicted_exoplanets     = (predict_candidates == 1).sum()
 
 	predict_candidates = np.array(RF.predict_proba(candidates))
 
+	# Prediction with threshold
 	predict_candidates[:,0] = (predict_candidates[:,0] < threshold).astype('int')
 	predict_candidates[:,1] = (predict_candidates[:,1] >= threshold).astype('int')
 
 	predicted_false_positive = (predict_candidates[:,1] == 0).sum()
 	predicted_exoplanets     = (predict_candidates[:,1] == 1).sum()
-
 
 	# Information print to terminal
 	print('\nThe Random Forest Classifier predicted')
@@ -140,7 +136,6 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 
 		predict_goldilocks[:,0] = (predict_goldilocks[:,0] < threshold).astype('int')
 		predict_goldilocks[:,1] = (predict_goldilocks[:,1] >= threshold).astype('int')
-		#np.save('GoldiLock_predicted', predict_goldilocks)
 
 		predicted_false_positive_goldilocs  = (predict_goldilocks[:,1] == 0).sum()
 		predicted_exoplanets_goldilocks     = (predict_goldilocks[:,1] == 1).sum()
