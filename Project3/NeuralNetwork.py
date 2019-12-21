@@ -22,33 +22,32 @@ import functions 				as func
 import goldilock             	as GL
 #------------------------------------------------------------------------------
 
-def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldilock_zone=False, plot_confuse_matrix=False):
+def Best_params(seed, X_train, y_train):
 
-	#model = MLPClassifier(max_iter=1000, random_state=seed)
-	"""
-	model = MLPClassifier(solver 			= 'lbfgs',	# 'adam'
-						activation			= 'logistic',
-						hidden_layer_sizes  = 100,		# (200,150,100)
-						random_state=seed,
-						max_iter			= 1000)		# 1500
-	"""
-
-	#trained_model = model.fit(X_train, y_train)
-
-	param_test = {"hidden_layer_sizes": [100, 120, 140],
+	param_test = {"hidden_layer_sizes": [100, 120],
 				  "learning_rate_init": [0.001, 0.01],
-				  #"solver" : 			['lbfgs', 'adam'],
-				  "max_iter" :			[1000, 3000], # only with adam/sgd
+				  "max_iter" :			[1000, 3000],
 				  "alpha" :				[0.0001, 0.001]
 				  }
 
-
 	gsearch = GridSearchCV(MLPClassifier(random_state=seed), param_grid = param_test, cv=5)
 	trained_model = gsearch.fit(X_train, y_train)
-	print('aaaaaaaaaaaaaaa')
-	print(trained_model.best_params_)
-	print('aaaaaaaaaaaaaaa')
+	print("Best parameters: ", trained_model.best_params_)
+	# {'alpha': 0.001, 'hidden_layer_sizes': 100, 'learning_rate_init': 0.001, 'max_iter': 3000}
 
+def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldilock_zone=False, plot_confuse_matrix=False):
+
+	# Print best parameters, this takes time! Parameters set in Best_params()
+	#Best_params(seed, X_train, y_train)
+
+	model = MLPClassifier(random_state		 = seed,
+						  max_iter			 = 4000,
+						  alpha				 = 0.001,
+						  hidden_layer_sizes = 100,
+						  learning_rate_init = 0.001,
+						  )
+
+	trained_model = model.fit(X_train, y_train)
 
 	# Calculating different metrics
 	predict     = trained_model.predict(X_test)

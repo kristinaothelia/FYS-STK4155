@@ -1,11 +1,29 @@
-Without treshold
+Without threshold
 __________________________________________
 ------------------------------------------
 Method: Neural Network 
+-------------------------------------------
+{'alpha': 0.001, 'hidden_layer_sizes': 100, 'learning_rate_init': 0.001, 'max_iter': 3000}
+-------------------------------------------
+The accuracy is    : 0.930
+The F1 score is    : 0.928
+The precision is   : 0.924
+The recall is      : 0.934
+The absolute error : 0.070
+-------------------------------------------
+[[787  73]
+ [ 27 545]]
 
+The Neural Network Classifier predicted
+--------------------------------------
+1343  exoplanets      of 1641 candidates
+298   false positives of 1641 candidates
+Goldilock zone calculations
 
-
-
+The Neural Network Classifier predicted
+--------------------------------------
+16    exoplanets      of 24 candidates
+8     false positives of 24 candidates
 
 __________________________________________
 ------------------------------------------
