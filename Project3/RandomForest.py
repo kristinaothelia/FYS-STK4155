@@ -15,52 +15,40 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble 		 import RandomForestClassifier
 #------------------------------------------------------------------------------
 
-def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
-				  feature_list, header_names, seed=0, threshold=0.5, 		\
-				  plot_confuse_matrix=False, Goldilock_zone=False):
-	print("Exoplanet threshold = %g" % threshold)
-	"""
-	Ha en input oversikt...
 
-	threshold		| 0.5 == RF.predict
-					  0.7 --> 	Need 70$%$ probability to be an exoplanet, to
-					  			be calssified as an exoplanet
-	"""
-	#from sklearn import tree
-	#pd.DataFrame(X).fillna()
-	# grid search
+def Best_params(seed, X_train, y_train):
 
+	param_test = {"n_estimators": 	  [200, 300, 400, 500],
+				  "max_features": 	  [None, 'auto', 'log2'],
+				  "max_depth": 	 	  [7, 8, 9],
+				  "min_samples_leaf": [1, 2, 5, 10]}
 	'''
-	param_test = {"n_estimators": [100,200,300,400,500,600],
-				"max_features": [None,'auto','sqrt','log2'],
-				"max_depth": [7,8,9],
-				"min_samples_leaf": [5,10,20],
-				"random_state": [0]
-				}
-	'''
-
-	'''
-	param_test = {"n_estimators": [100, 400, 600],
-				"max_features": ['auto', 'log2'],
-				"max_depth": [None, 8],
-				"min_samples_leaf": [2, 5]
-				}
-
-	# {'max_depth': 8, 'max_features': 'auto', 'min_samples_leaf': 2, 'n_estimators': 400} --> 16 og 8
-	# {'max_depth': 9, 'max_features': 'auto', 'min_samples_leaf': 1, 'n_estimators': 350} --> 16 og 8
-	'''
-
-	'''
-	param_test = {"n_estimators": [200, 300, 400, 500],
-				  "max_features": ['auto', 'log2'],
-				  "max_depth": [7, 8, 9, None],
+	param_test = {"n_estimators": 	  [200, 300, 400, 500],
+				  "max_features": 	  ['auto', 'log2'],
+				  "max_depth": 	 	  [7, 8, 9, None],
 				  "min_samples_leaf": [1, 2, 3, 4]}
+	'''
 	# {'max_depth': 8, 'max_features': 'auto', 'min_samples_leaf': 1, 'n_estimators': 300}
 
 	gsearch = GridSearchCV(RandomForestClassifier(), param_grid = param_test, cv=5)
 	gsearch.fit(X_train, y_train)
 	print(gsearch.best_params_)
-	'''
+
+
+
+def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
+				  feature_list, header_names, seed=0, threshold=0.5, 		\
+				  plot_confuse_matrix=False, Goldilock_zone=False):
+	"""
+	Ha en input oversikt...?
+
+	threshold		| 0.5 == RF.predict
+					  0.7 --> 	Need 70$%$ probability to be an exoplanet, to
+					  			be calssified as an exoplanet
+	"""
+	print("Exoplanet threshold = %g" % threshold)
+
+	Best_params(seed, X_train, y_train)
 
 	# Plot error against number of trees?
 
