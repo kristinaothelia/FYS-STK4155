@@ -135,7 +135,9 @@ if __name__ == '__main__':
                         candidates, GoldiLock,
                         feature_list, header_names, seed,
                         Goldilock_zone=True,
-                        plot_confuse_matrix=True)
+                        plot_confuse_matrix=True,
+                        plot_feauture_importance=True,
+                        threshold=Threshold)
 
         else:
             XG.XG_Boost(X_train, X_test,
@@ -143,4 +145,6 @@ if __name__ == '__main__':
                         candidates, GoldiLock,
                         feature_list, header_names, seed,
                         Goldilock_zone=False,
-                        plot_confuse_matrix=True)
+                        plot_confuse_matrix=True,
+                        plot_feauture_importance=True,
+                        threshold=Threshold)
