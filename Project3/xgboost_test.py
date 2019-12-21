@@ -25,17 +25,54 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
              feature_list, header_names, seed, Goldilock_zone=False, plot_confuse_matrix=False):
 
 
-    param_test = {"max_depth":      [6,7,8,9],
-                  "n_estimator":    [50, 100],  # 100
-                  "subsample":      [0.6,0.8,1.0],
-                  "learning_rate":  [0.1, 0.2, 0.3]
+
+    """
+    param_test = {
+                  "min_child_weight": [0, 0.5],
+                  "max_depth": [0,1,2]
+                  }
+    """
+    """
+    param_test = {
+                  "gamma": [i/10.0 for i in range(0,5)]
+                  }
+    """
+
+    """
+    param_test = {
+                  "subsample": [i/10.0 for i in range(1,10)],
+                  "colsample_bytree": [i/10.0 for i in range(1,10)]
+
+                  }
+    """
+
+    param_test = {
+                  "subsample": [i/100.0 for i in range(45,55)],
+                  "colsample_bytree": [i/100.0 for i in range(55,65)]
+
                   }
 
-    gsearch = GridSearchCV(xgb.XGBClassifier(), param_grid = param_test, cv=5)
+
+    A = xgb.XGBClassifier(learning_rate = 0.1,
+                          max_depths=2,
+                          min_child_weight=0,
+                          gamma = 0,
+                          n_estimators=1000,
+                          subsample=0.5,
+                          colsample_bytree=0.6,
+                          objective= 'binary:logistic',
+                          nthread=4,
+                          scale_pos_weight=1,
+                          seed=seed)
+    #gsearch = GridSearchCV(A, param_grid = param_test, cv=5)
+
+
+    gsearch = A
     model2 = gsearch.fit(X_train, y_train)
 
+
     # Print best parameters
-    print(gsearch.best_params_)
+    #print(gsearch.best_params_)
 
     best_preds = model2.predict(X_test)
 
@@ -57,6 +94,7 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
 
     pred_cand  = model2.predict(candidates)
     print(pred_cand)
+    print(model2.predict_proba(candidates))
 
     # Divide into predicted false positives and confirmed exoplanets
     pred_FP    = (pred_cand == 0).sum() 	# Predicted false positives
