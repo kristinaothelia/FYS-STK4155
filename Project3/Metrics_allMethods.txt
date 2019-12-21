@@ -1,52 +1,51 @@
-Denne endrer seg, why?
-
-Method: Neural Network classification
--------------------------------------------
-The accuracy is    : 0.799
-The F1 score is    : 0.796
-The precision is   : 0.796
-The recall is      : 0.808
-The absolute error : 0.201
--------------------------------------------
-15 exoplanets       of 24 candidates
-9 false positives   of 24 candidates
+Without treshold
+__________________________________________
+------------------------------------------
+Method: Neural Network 
 
 
 
 
+
+__________________________________________
+------------------------------------------
+Method: Logistic regression
+
+
+
+
+
+__________________________________________
+------------------------------------------
 Method: XGBoost
--------------------------------------------
-The accuracy is    : 0.997
-The F1 score is    : 0.997
-The precision is   : 0.998
-The recall is      : 0.997
-The absolute error : 0.003
--------------------------------------------
 
 
 
 
+__________________________________________
+------------------------------------------
 Method: Random Forest
 -------------------------------------------
-The accuracy is    : 0.990
-The F1 score is    : 0.988
-The precision is   : 1.000
-The recall is      : 0.976
-The absolute error : 0.010
+{'max_depth': 9, 'max_features': 'auto', 'min_samples_leaf': 2, 'n_estimators': 300} 
 -------------------------------------------
-13  exoplanets      of 24 candidates
-11  false positives of 24 candidates
-
-
-
-
-Method: Logistic regression
+The accuracy is    : 0.989
+The F1 score is    : 0.986
+The precision is   : 0.995
+The recall is      : 0.977
+The absolute error : 0.011
 -------------------------------------------
-The accuracy is    : 0.799
-The F1 score is    : 0.794
-The precision is   : 0.791
-The recall is      : 0.800
-The absolute error : 0.201
--------------------------------------------
-10  exoplanets      of 24 candidates
-14  false positives of 24 candidates
+
+The Random Forest Classifier predicted
+--------------------------------------
+1213  exoplanets      of 1641 candidates
+428   false positives of 1641 candidates
+
+Goldilock zone calculations
+
+The Random Forest Classifier predicted
+--------------------------------------
+16  exoplanets      of 24 candidates
+8   false positives of 24 candidates
+
+
+

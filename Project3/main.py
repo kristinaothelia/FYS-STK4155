@@ -15,8 +15,9 @@ import Logistic_reg          as LR
 import xgboost_test          as XG
 #------------------------------------------------------------------------------
 
-seed 	 = 0
-Training = 0.70
+seed 	  = 0
+Training  = 0.7
+Threshold = 0.7
 
 X = np.load('features.npy', allow_pickle=True)
 y = np.load('targets.npy',  allow_pickle=True)
@@ -104,6 +105,7 @@ if __name__ == '__main__':
                              y_train, y_test,
                              candidates, GoldiLock,
                              feature_list, header_names, seed,
+                             threshold = Threshold,
                              plot_confuse_matrix=True,
                              Goldilock_zone=True)
 
@@ -112,6 +114,7 @@ if __name__ == '__main__':
                              y_train, y_test,
                              candidates, GoldiLock,
                              feature_list, header_names, seed,
+                             threshold = Threshold,
                              plot_confuse_matrix=True,
                              Goldilock_zone=False)
 

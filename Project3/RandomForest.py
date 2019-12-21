@@ -16,9 +16,16 @@ from sklearn.ensemble 		 import RandomForestClassifier
 #------------------------------------------------------------------------------
 
 def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
-				  feature_list, header_names, seed=0, 						\
+				  feature_list, header_names, seed=0, threshold=0.5, 		\
 				  plot_confuse_matrix=False, Goldilock_zone=False):
+	print("Exoplanet threshold = %g" % threshold)
+	"""
+	Ha en input oversikt...
 
+	threshold		| 0.5 == RF.predict
+					  0.7 --> 	Need 70$%$ probability to be an exoplanet, to
+					  			be calssified as an exoplanet
+	"""
 	#from sklearn import tree
 	#pd.DataFrame(X).fillna()
 	# grid search
@@ -39,30 +46,29 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 				"min_samples_leaf": [2, 5]
 				}
 
-	# {'max_depth': 8, 'max_features': 'auto', 'min_samples_leaf': 2, 'n_estimators': 400}
+	# {'max_depth': 8, 'max_features': 'auto', 'min_samples_leaf': 2, 'n_estimators': 400} --> 16 og 8
+	# {'max_depth': 9, 'max_features': 'auto', 'min_samples_leaf': 1, 'n_estimators': 350} --> 16 og 8
 	'''
 
 	'''
-	param_test = {"n_estimators": [350, 400, 450],
-				"max_features": ['auto', 'log2'],
-				"max_depth": [7, 8, 9],
-				"min_samples_leaf": [1, 2, 5]
-				}
-	# {'max_depth': 8, 'max_features': 'auto', 'min_samples_leaf': 1, 'n_estimators': 350}
+	param_test = {"n_estimators": [200, 300, 400, 500],
+				  "max_features": ['auto', 'log2'],
+				  "max_depth": [7, 8, 9, None],
+				  "min_samples_leaf": [1, 2, 3, 4]}
+	# {'max_depth': 8, 'max_features': 'auto', 'min_samples_leaf': 1, 'n_estimators': 300}
 
 	gsearch = GridSearchCV(RandomForestClassifier(), param_grid = param_test, cv=5)
 	gsearch.fit(X_train, y_train)
 	print(gsearch.best_params_)
 	'''
 
-
-
 	# Plot error against number of trees?
-	RF = RandomForestClassifier(n_estimators	 = 350,
+
+	RF = RandomForestClassifier(n_estimators	 = 300,
 								max_features     = 'auto',
 								max_depth		 = 8,
 								min_samples_leaf = 1,
-								random_state	 = 0,
+								random_state	 = seed,
 								criterion		 = 'gini',   # 'entropy'
 								bootstrap        = True
 								)
@@ -117,9 +123,18 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	#print(len(feature_list), len(header_names)) # 24 og 56
 	func.PlotOneTree(tree, feature_list) # header_names?
 
-	predict_candidates       = np.array(RF.predict(candidates))
-	predicted_false_positive = (predict_candidates == 0).sum()
-	predicted_exoplanets     = (predict_candidates == 1).sum()
+	#predict_candidates       = np.array(RF.predict(candidates))
+	#predicted_false_positive = (predict_candidates == 0).sum()
+	#predicted_exoplanets     = (predict_candidates == 1).sum()
+
+	predict_candidates = np.array(RF.predict_proba(candidates))
+
+	predict_candidates[:,0] = (predict_candidates[:,0] < threshold).astype('int')
+	predict_candidates[:,1] = (predict_candidates[:,1] >= threshold).astype('int')
+
+	predicted_false_positive = (predict_candidates[:,1] == 0).sum()
+	predicted_exoplanets     = (predict_candidates[:,1] == 1).sum()
+
 
 	# Information print to terminal
 	print('\nThe Random Forest Classifier predicted')
@@ -132,29 +147,32 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 		# Need to fix input title, labels etc maybe?
 		func.Histogram2(predict_candidates, 'Random Forest (Candidates)')
 
+		# func.Histogram2(g=df.loc[:, (df.columns == 'koi_disposition')].values)
 
 	if Goldilock_zone:
 
 		print("")
 		print("Goldilock zone calculations")
 
-		predict_goldilocks = np.array(RF.predict(GoldiLock))
+		predict_goldilocks = np.array(RF.predict_proba(GoldiLock))
+
+		predict_goldilocks[:,0] = (predict_goldilocks[:,0] < threshold).astype('int')
+		predict_goldilocks[:,1] = (predict_goldilocks[:,1] >= threshold).astype('int')
 		#np.save('GoldiLock_predicted', predict_goldilocks)
 
-		predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
-		predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
+		predicted_false_positive_goldilocs  = (predict_goldilocks[:,1] == 0).sum()
+		predicted_exoplanets_goldilocks     = (predict_goldilocks[:,1] == 1).sum()
 
 		# Information print to terminal
 		print('\nThe Random Forest Classifier predicted')
 		print('--------------------------------------')
-		print('%-3g exoplanets      of %g candidates'  %(predicted_exoplanets_goldilocks, len(predict_goldilocks)))
-		print('%-3g false positives of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
+		print('%-3g exoplanets      of %g GL candidates' %(predicted_exoplanets_goldilocks, len(predict_goldilocks)))
+		print('%-3g false positives of %g GL candidates' %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
 
 		# Plotting a bar plot of candidates predicted as confirmed and false positives
-		# Need to fix input title, labels etc maybe?
-		func.Histogram2(predict_goldilocks, 'Random Forest (Goldilock)')
+		func.Histogram2(predict_goldilocks[:,1], 'Random Forest (Goldilock)')
 
-		GL.GoldilocksZone(predict_goldilocks)
+		GL.GoldilocksZone(predict_goldilocks[:,1])
 
 
 	'''

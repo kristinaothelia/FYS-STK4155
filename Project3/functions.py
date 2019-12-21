@@ -90,6 +90,7 @@ def Histogram2(g, method):
 	plt.gca().set_xticks(labels)
 	plt.ylabel("Observations count", fontsize=15)
 	plt.title("Kepler's objects of interest \n With %s" % method, fontsize=15)
+	plt.savefig("Hist_%s.png" % method)
 	plt.show()
 
 
