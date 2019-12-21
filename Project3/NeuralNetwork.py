@@ -24,12 +24,19 @@ import goldilock             	as GL
 
 def Best_params(seed, X_train, y_train):
 
+	param_test = {"hidden_layer_sizes": [100, 110, 120],
+				  "learning_rate_init": [0.0001, 0.001, 0.01],
+				  "max_iter" :			[3000, 5000],
+				  "alpha" :				[0.0001, 0.001]
+				  }
+
+	'''
 	param_test = {"hidden_layer_sizes": [100, 120],
 				  "learning_rate_init": [0.001, 0.01],
 				  "max_iter" :			[1000, 3000],
 				  "alpha" :				[0.0001, 0.001]
 				  }
-
+	'''
 	gsearch = GridSearchCV(MLPClassifier(random_state=seed), param_grid = param_test, cv=5)
 	trained_model = gsearch.fit(X_train, y_train)
 	print("Best parameters: ", trained_model.best_params_)

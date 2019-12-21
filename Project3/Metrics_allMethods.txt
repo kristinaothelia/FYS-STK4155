@@ -1,4 +1,4 @@
-Without threshold
+Without threshold:
 __________________________________________
 ------------------------------------------
 Method: Neural Network 
