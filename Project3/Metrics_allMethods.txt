@@ -29,9 +29,24 @@ __________________________________________
 ------------------------------------------
 Method: Logistic regression
 
+-------------------------------------------
+The accuracy is    : 0.799
+The F1 score is    : 0.794
+The precision is   : 0.791
+The recall is      : 0.800
+The absolute error : 0.201
+-------------------------------------------
 
+The LOG Classifier predicted
+--------------------------------------
+1166  exoplanets      of 1641 candidates
+475   false positives of 1641 candidates
+Goldilock zone calculations
 
-
+The LOG Classifier predicted
+--------------------------------------
+13  exoplanets      of 24 candidates
+11  false positives of 24 candidates
 
 __________________________________________
 ------------------------------------------
@@ -66,4 +81,28 @@ The Random Forest Classifier predicted
 8   false positives of 24 candidates
 
 
+
+
+{'max_depth': 7, 'max_features': None, 'min_samples_leaf': 1, 'n_estimators': 400}
+
+Method: Random Forest
+-------------------------------------------
+The accuracy is    : 0.989
+The F1 score is    : 0.986
+The precision is   : 0.995
+The recall is      : 0.977
+The absolute error : 0.011
+-------------------------------------------
+
+The Random Forest Classifier predicted
+--------------------------------------
+1213  exoplanets      of 1641 candidates
+428   false positives of 1641 candidates
+
+Goldilock zone calculations
+
+The Random Forest Classifier predicted
+--------------------------------------
+16  exoplanets      of 24 GL candidates
+8   false positives of 24 GL candidates
 

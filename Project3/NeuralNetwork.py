@@ -69,8 +69,11 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 	# Printing the different metrics:
 	func.Print_parameters(accuracy, F1_score, precision, recall, errors, name='Neural Network classification')
 
-
-	print(confusion_matrix(y_test, predict))
+	if plot_confuse_matrix == True:
+		#print(confusion_matrix(y_test, predict))
+		skplt.metrics.plot_confusion_matrix(y_test, predict)
+		plt.savefig('ConfusionMatrix/CM_NN.png')
+		plt.show()
 
 	predict_candidates       = np.array(trained_model.predict(candidates))
 
@@ -83,6 +86,8 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 	print('%-5g exoplanets      of %g candidates'  %(predicted_exoplanets, len(predict_candidates)))
 	print('%-5g false positives of %g candidates'  %(predicted_false_positive, len(predict_candidates)))
 
+	# Plotting a bar plot of candidates predicted as confirmed and false positives
+	func.Histogram2(predict_candidates, 'Neural Network (Candidates)')
 
 	if Goldilock_zone:
 

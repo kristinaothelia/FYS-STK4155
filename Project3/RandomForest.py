@@ -15,19 +15,13 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble 		 import RandomForestClassifier
 #------------------------------------------------------------------------------
 
-
 def Best_params(seed, X_train, y_train):
 
-	param_test = {"n_estimators": 	  [200, 300, 400, 500],
-				  "max_features": 	  [None, 'auto', 'log2'],
-				  "max_depth": 	 	  [7, 8, 9],
-				  "min_samples_leaf": [1, 2, 5, 10]}
-	'''
 	param_test = {"n_estimators": 	  [200, 300, 400, 500],
 				  "max_features": 	  ['auto', 'log2'],
 				  "max_depth": 	 	  [7, 8, 9, None],
 				  "min_samples_leaf": [1, 2, 3, 4]}
-	'''
+
 	# {'max_depth': 8, 'max_features': 'auto', 'min_samples_leaf': 1, 'n_estimators': 300}
 
 	gsearch = GridSearchCV(RandomForestClassifier(), param_grid = param_test, cv=5)
@@ -48,7 +42,8 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	"""
 	print("Exoplanet threshold = %g" % threshold)
 
-	Best_params(seed, X_train, y_train)
+	# Print best parameters, this takes time! Parameters set in Best_params()
+	#Best_params(seed, X_train, y_train)
 
 	# Plot error against number of trees?
 
@@ -76,14 +71,14 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	# plotting a feature importance dataframe (horizontal barchart)
 	def feature_importance_plot(feature_importances, title):
 		feature_importances.columns = ['feature', 'feature_importance']
-		sns.barplot(x = 'feature_importance', y = 'feature', data = feature_importances, orient = 'h', color = 'royalblue') \
+		sns.barplot(x = 'feature_importance', y = 'feature', data = feature_importances, orient = 'h') \
 		.set_title(title, fontsize = 15)
-		plt.ylabel('feature', fontsize=15)
-		plt.xlabel('feature importance', fontsize=15)
+		plt.ylabel('Feature', fontsize=15)
+		plt.xlabel('Feature importance', fontsize=15)
 		plt.show()
 
 	feature_imp = feature_importance(header_names[1:], RF.feature_importances_)
-	feature_importance_plot(feature_imp[:11], "Feature Importance")
+	feature_importance_plot(feature_imp[:11], "Feature Importance (Random Forest)")
 
 	# Calculating different metrics
 	predict     = RF.predict(X_test)
@@ -100,6 +95,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 
 	if plot_confuse_matrix == True:
 		skplt.metrics.plot_confusion_matrix(y_test, predict)
+		plt.savefig('ConfusionMatrix/CM_RF.png')
 		plt.show()
 
 	#print(RF.decision_path(X_test))
@@ -130,12 +126,10 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	print('%-5g exoplanets      of %g candidates'  %(predicted_exoplanets, len(predict_candidates)))
 	print('%-5g false positives of %g candidates'  %(predicted_false_positive, len(predict_candidates)))
 
-	if plot_confuse_matrix == True:
-		# Plotting a bar plot of candidates predicted as confirmed and false positives
-		# Need to fix input title, labels etc maybe?
-		func.Histogram2(predict_candidates, 'Random Forest (Candidates)')
+	# Plotting a bar plot of candidates predicted as confirmed and false positives
+	func.Histogram2(predict_candidates, 'Random Forest (Candidates)')
 
-		# func.Histogram2(g=df.loc[:, (df.columns == 'koi_disposition')].values)
+	#func.Histogram2(g=df.loc[:, (df.columns == 'koi_disposition')].values)
 
 	if Goldilock_zone:
 

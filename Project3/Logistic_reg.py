@@ -1,16 +1,21 @@
 """
 FYS-STK4155 - Project 3: Logistic regression
 """
-import numpy 			 	as np
-import functions 			as func
-import goldilock            as GL
+import os
+import numpy 				 as np
+import matplotlib.pyplot	 as plt
+import scikitplot        	 as skplt
+import seaborn               as sns
+import pandas 				 as pd
+import functions 			 as func
+import goldilock             as GL
 
-from random 				import random, seed
-from sklearn.metrics 		import classification_report, f1_score,		\
-								   precision_score, recall_score,       \
-                                   accuracy_score, mean_squared_error,  \
-                                   confusion_matrix
-from sklearn.linear_model 	import LogisticRegression
+from random 				 import random, seed
+from sklearn.metrics 		 import classification_report, f1_score,		\
+								    precision_score, recall_score,       \
+                                    accuracy_score, mean_squared_error,  \
+                                    confusion_matrix
+from sklearn.linear_model 	 import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 #------------------------------------------------------------------------------
 
@@ -28,11 +33,10 @@ def Best_params(seed, X_train, y_train):
 def LogReg(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldilock_zone=False, plot_confuse_matrix=False,
 			threshold=0.5):
 
-	#find best parameters
-	Best_params(seed, X_train, y_train)
 	print("Exoplanet threshold = %g" % threshold)
 
-
+	# Find best parameters
+	#Best_params(seed, X_train, y_train)
 
 	# Make Logistic regression analysis
 	logreg = LogisticRegression(solver='liblinear', max_iter = 100, random_state=seed)
@@ -50,7 +54,11 @@ def LogReg(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldil
 	# Printing the different metrics:
 	func.Print_parameters(accuracy, F1_score, precision, recall, errors, name='Logistic regression')
 
-	print(confusion_matrix(y_test, y_pred))
+	if plot_confuse_matrix == True:
+		skplt.metrics.plot_confusion_matrix(y_test, y_pred)
+		plt.savefig('ConfusionMatrix/CM_LOG.png')
+		plt.show()
+
 	"""
 	pred_cand  = np.array(logreg.predict(candidates)) 	# Predict candidates
 
@@ -74,10 +82,8 @@ def LogReg(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldil
 	print('%-5g exoplanets      of %g candidates'  %(pred_Conf, len(pred_cand)))
 	print('%-5g false positives of %g candidates'  %(pred_FP, len(pred_cand)))
 
-	if plot_confuse_matrix == True:
-		# Plotting a bar plot of candidates predicted as confirmed and false positives
-		# Need to fix input title, labels etc maybe?
-		func.Histogram2(pred_cand, 'Logistic regression (Candidates)')
+	# Plotting a bar plot of candidates predicted as confirmed and false positives
+	func.Histogram2(pred_cand, 'Logistic regression (Candidates)')
 
 	# Make AUC curve?
 
