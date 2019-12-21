@@ -41,7 +41,7 @@ def NeuralNetwork(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed,
 	#Best_params(seed, X_train, y_train)
 
 	model = MLPClassifier(random_state		 = seed,
-						  max_iter			 = 4000,
+						  max_iter			 = 3000,
 						  alpha				 = 0.001,
 						  hidden_layer_sizes = 100,
 						  learning_rate_init = 0.001,
