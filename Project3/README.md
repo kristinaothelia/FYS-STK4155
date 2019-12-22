@@ -1,9 +1,4 @@
 # Project 3: "Exoplanet classification: A search for habitable exoplanets discovered by the Kepler mission"
-## Overview:
-
-Blabla
-
-The report: XXX.pdf
 
 ## You might need to install:
 pip install pydot
