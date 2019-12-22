@@ -40,6 +40,8 @@ def GoldilocksZone(fil_, method, th):
 	inside   = GC.loc[GC['koi_disposition']  == 'Confirmed']
 	outside  = GC.loc[GC['koi_disposition']  == 'False Positives']
 
+	print(GC['koi_disposition']  == 'Confirmed')
+
 	# Change threshold number to use in file name
 	if th == 0.9:
 		th_fil = 9
