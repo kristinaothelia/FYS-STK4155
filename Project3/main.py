@@ -12,12 +12,12 @@ from sklearn.model_selection import train_test_split
 import NeuralNetwork         as NN
 import RandomForest          as RF
 import Logistic_reg          as LR
-import xgboost_test          as XG
+import XGBoost               as XG
 #------------------------------------------------------------------------------
 
 seed 	  = 0
 Training  = 0.7
-Threshold = 0.9
+Threshold = 0.5
 
 X = np.load('features.npy', allow_pickle=True)
 y = np.load('targets.npy',  allow_pickle=True)
