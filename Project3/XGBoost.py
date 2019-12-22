@@ -62,7 +62,7 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
                           n_estimators=1000,
                           subsample=0.5,
                           colsample_bytree=0.6,
-                          objective= 'binary:logistic',
+                          objective= 'reg:logistic',
                           nthread=4,
                           scale_pos_weight=1,
                           seed=seed)
@@ -115,9 +115,11 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
 
     # Maa legge inn threshold metode her
 
-    pred_cand  = model2.predict(candidates)
-    print(pred_cand)
-    print(model2.predict_proba(candidates))
+    pred_cand  = model2.predict_proba(candidates)
+
+    # Prediction with threshold
+    pred_cand[:,0] = (pred_cand[:,0] < threshold).astype('int')
+    pred_cand[:,1] = (pred_cand[:,1] >= threshold).astype('int')
 
     # Divide into predicted false positives and confirmed exoplanets
     pred_FP    = (pred_cand == 0).sum() 	# Predicted false positives
@@ -143,11 +145,14 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
         # Maa legge inn threshold metode her
 
         D_test             = GoldiLock
-        predict_goldilocks = model2.predict(D_test)
+        predict_goldilocks = model2.predict_proba(D_test)
         #np.save('GoldiLock_predicted', predict_goldilocks)
 
-        predicted_false_positive_goldilocs  = (predict_goldilocks == 0).sum()
-        predicted_exoplanets_goldilocks     = (predict_goldilocks == 1).sum()
+        predict_goldilocks[:,0] = (predict_goldilocks[:,0] < threshold).astype('int')
+        predict_goldilocks[:,1] = (predict_goldilocks[:,1] >= threshold).astype('int')
+
+        predicted_false_positive_goldilocs  = (predict_goldilocks[:,1] == 0).sum()
+        predicted_exoplanets_goldilocks     = (predict_goldilocks[:,1] == 1).sum()
 
         # Information print to terminal
         print('\nThe XGBoost method predicted')
@@ -156,6 +161,6 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
         print('%-3g false positives of %g candidates'  %(predicted_false_positive_goldilocs, len(predict_goldilocks)))
 
         # Plotting a bar plot of candidates predicted as confirmed and false positives
-        func.Histogram2(predict_goldilocks, 'XGBoost (Goldilock)', threshold)
+        func.Histogram2(predict_goldilocks[:,1], 'XGBoost (Goldilock)', threshold)
 
-        GL.GoldilocksZone(predict_goldilocks, 'XGBoost', threshold)
+        GL.GoldilocksZone(predict_goldilocks[:,1], 'XGBoost', threshold)
