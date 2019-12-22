@@ -75,7 +75,7 @@ def LogReg(X_train, X_test, y_train, y_test, candidates, GoldiLock, seed, Goldil
 	print('%-5g false positives of %g candidates'  %(pred_FP, len(pred_cand)))
 
 	# Plotting a bar plot of candidates predicted as confirmed and false positives
-	func.Histogram2(pred_cand, 'Logistic regression (Candidates)', threshold)
+	func.Histogram2(pred_cand[:,1], 'Logistic regression (Candidates)', threshold)
 
 	# Make AUC curve?
 

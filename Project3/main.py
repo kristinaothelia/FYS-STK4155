@@ -17,7 +17,7 @@ import XGBoost               as XG
 
 seed 	  = 0
 Training  = 0.7
-Threshold = 0.5
+Threshold = 0.9
 
 X = np.load('features.npy', allow_pickle=True)
 y = np.load('targets.npy',  allow_pickle=True)

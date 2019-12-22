@@ -122,8 +122,8 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
     pred_cand[:,1] = (pred_cand[:,1] >= threshold).astype('int')
 
     # Divide into predicted false positives and confirmed exoplanets
-    pred_FP    = (pred_cand == 0).sum() 	# Predicted false positives
-    pred_Conf  = (pred_cand == 1).sum() 	# Predicted exoplanets/confirmed
+    pred_FP    = (pred_cand[:,1] == 0).sum() 	# Predicted false positives
+    pred_Conf  = (pred_cand[:,1] == 1).sum() 	# Predicted exoplanets/confirmed
 
     # Information print to terminal
     print('\nThe XGBoost method predicted')
@@ -135,7 +135,7 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
     #pyplot.show()
 
     # Plotting a bar plot of candidates predicted as confirmed and false positives
-    func.Histogram2(pred_cand, 'XGBoost (Candidates)', threshold)
+    func.Histogram2(pred_cand[:,1], 'XGBoost (Candidates)', threshold)
 
 
     if Goldilock_zone:

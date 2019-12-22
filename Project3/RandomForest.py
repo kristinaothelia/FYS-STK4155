@@ -122,7 +122,7 @@ def Random_Forest(X_train, X_test, y_train, y_test, candidates, GoldiLock,	\
 	print('%-5g false positives of %g candidates'  %(predicted_false_positive, len(predict_candidates)))
 
 	# Plotting a bar plot of candidates predicted as confirmed and false positives
-	func.Histogram2(predict_candidates, 'Random Forest (Candidates)', threshold)
+	func.Histogram2(predict_candidates[:,1], 'Random Forest (Candidates)', threshold)
 
 	#func.Histogram2(g=df.loc[:, (df.columns == 'koi_disposition')].values)
 
