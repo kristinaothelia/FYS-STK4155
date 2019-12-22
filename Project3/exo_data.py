@@ -69,7 +69,7 @@ def Histogram(feature_name, x_label, title=None, logscale=False):
 #Histogram('koi_duration', "Transit duration [Hours]", title="Histogram for koi_duration")
 
 # Make histogram of candidates, confirmed and false positive objects
-F.Histogram2(g=df.loc[:, (df.columns == 'koi_disposition')].values)
+F.HistogramKOI(g=df.loc[:, (df.columns == 'koi_disposition')].values)
 
 neg = NEGATIVE.loc[:,   NEGATIVE.columns   == 'koi_prad'].values
 can = CANDIDATES.loc[:, CANDIDATES.columns == 'koi_prad'].values
@@ -89,11 +89,11 @@ target[target == 'FALSE POSITIVE'] = 0
 scaler = StandardScaler() #RobustScaler() #MaxAbsScaler() #MinMaxScaler()
 scaler.fit_transform(features)
 
-def GoldiLock_Candidates(temp_max=323, temp_min=273, rad_max=2.5, rad_min=0.5):
+def GoldiLock_Candidates(temp_max=390, temp_min=260, rad_max=2.5, rad_min=0.5):
 	"""
 	Default values for goldielock zone:
-	Exoplanet surface temperature max [K]	| 323
-	Exoplanet surface temparature min [K]	| 273
+	Exoplanet surface temperature max [K]	| 390
+	Exoplanet surface temparature min [K]	| 260
 	Exoplanet radius max [Earth radii]		| 2.5
 	Exoplanet radius min [Earth radii]		| 0.5
 	"""

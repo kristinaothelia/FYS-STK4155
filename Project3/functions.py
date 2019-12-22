@@ -103,6 +103,17 @@ def ConfusionMatrix_Plot(y_test, y_pred, method, th):
 	plt.savefig('ConfusionMatrix/CM_%s_th%g.png' % (method, th_fil))
 	plt.show()
 
+def HistogramKOI(g):
+	labels, counts = np.unique(g, return_counts=True)
+
+	#plt.style.use('dark_background')
+	plt.bar(labels, counts, align='center', color='purple')
+	plt.gca().set_xticks(labels)
+	plt.ylabel("Observations count", fontsize=15)
+	plt.title("Kepler's objects of interest", fontsize=15)
+	plt.savefig("Histograms/Hist_KOI.png")
+	plt.show()
+
 def Histogram2(g, method, th):
 
 	# Change threshold number to use in file name
