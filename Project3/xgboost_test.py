@@ -7,6 +7,8 @@ import matplotlib.pyplot	 as plt
 import xgboost               as xgb
 import functions             as func
 import goldilock             as GL
+import pandas                as pd
+import seaborn               as sns
 
 from sklearn.linear_model    import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -22,7 +24,8 @@ from sklearn.metrics         import precision_score, recall_score,          \
 
 #------------------------------------------------------------------------------
 def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
-             feature_list, header_names, seed, Goldilock_zone=False, plot_confuse_matrix=False):
+             feature_list, header_names, seed, Goldilock_zone=False,
+             plot_confuse_matrix=False, plot_feauture_importance=False, threshold=0.5):
 
 
 
@@ -71,6 +74,28 @@ def XG_Boost(X_train, X_test, y_train, y_test, candidates, GoldiLock,   \
 
     # Print best parameters
     #print(gsearch.best_params_)
+
+
+
+    def feature_importance(column_names, importances):
+    	df = pd.DataFrame({'feature': column_names,'feature_importance': importances}) \
+    	.sort_values('feature_importance', ascending = False) \
+    	.reset_index(drop = True)
+    	return df
+
+    # plotting a feature importance dataframe (horizontal barchart)
+    def feature_importance_plot(feature_importances, title):
+    	feature_importances.columns = ['feature', 'feature_importance']
+    	sns.barplot(x = 'feature_importance', y = 'feature', data = feature_importances, orient = 'h') \
+    	.set_title(title, fontsize = 15)
+    	plt.ylabel('Feature', fontsize=15)
+    	plt.xlabel('Feature importance', fontsize=15)
+    	plt.show()
+
+    if plot_feauture_importance == True:
+    	feature_imp = feature_importance(header_names[1:], model2.feature_importances_)
+    	feature_importance_plot(feature_imp[:11], "Feature Importance (XGBoost)")
+
 
     best_preds = model2.predict(X_test)
 
